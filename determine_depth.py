@@ -7,4 +7,10 @@ import numpy as np
 #the stat we will use to determine cutoff will be aiming for the equation of (Sampling depth * samples)/(sum of all samples) between
 #22 and 26%, we will calc this by adding in samples one by one until that range is met. 
 
-print('hello world')
+#this comes from the compressed archive table.qzv which comes from feature-table summarize
+#the dir structure is UUID/data/sample-frequency-detail.csv
+input_file = 'sample-frequency-detail.csv'
+
+features = pd.read_csv(input_file, index_col=0,header=None)
+
+print(features)
