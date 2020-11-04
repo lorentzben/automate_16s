@@ -13,4 +13,8 @@ input_file = 'sample-frequency-detail.csv'
 
 features = pd.read_csv(input_file, index_col=0,header=None)
 
-print(features)
+total_count = sum(features[1])
+sampling_depth = 0 
+perc_features_retain = 0.0
+
+print(total_count)
