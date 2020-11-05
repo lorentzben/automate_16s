@@ -18,3 +18,9 @@ sampling_depth = 0
 perc_features_retain = 0.0
 
 print(total_count)
+
+feature_array = np.array(features)
+
+for i in range(len(feature_array)-1, -1,-1):
+    print(feature_array[i][0])
+    
