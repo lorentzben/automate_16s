@@ -23,4 +23,14 @@ feature_array = np.array(features)
 
 for i in range(len(feature_array)-1, -1,-1):
     print(feature_array[i][0])
+    sampling_depth = feature_array[i][0]
+    perc_features_retain = ((sampling_depth * (i+1))/total_count)
+    if perc_features_retain >= .26:
+        sampling_depth = feature_array[i][0]
+        print("sampling depth: " + str(sampling_depth) + " " + str(perc_features_retain) + " " + str(i))
+        break
+
+
+        
+    
     
