@@ -1,10 +1,47 @@
 #A script to check the manifest provided, the presence of the fastq files, and that dependencies are all setup
 import subprocess
+from subprocess import PIPE
 import os
 from os import path
+import logging
+
+def setup_logging():
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
+    # Logging handler which catches EVERYTHING
+    file_logger = logging.FileHandler('automate_16s_setup.log')
+    file_logger.setLevel(logging.DEBUG)
+    # Logging handler which logs less
+    console_logger = logging.StreamHandler()
+    console_logger.setLevel(logging.ERROR)
+
+    # Formats the logs so they are pretty
+    logFormatter = '%(asctime)s- %(name)s - %(lineno)s - %(levelname)s - %(message)s'
+    formatter = logging.Formatter(logFormatter)
+    file_logger.setFormatter(formatter)
+    console_logger.setFormatter(formatter)
+
+    #  adds handlers to logger
+    logger.addHandler(file_logger)
+    logger.addHandler(console_logger)
 
 def check_dependencies():
-    print('all software installed and ready to go')
+    #checks to see if nextflow is installed
+    try:
+        command = subprocess.run(['nextflow -v'], stdout=PIPE, stderr=PIPE)
+        logger.info("nextflow installed: " + command.stdout)
+    except FileNotFoundError:
+        logger.critical("It appears nextflow is not installed or loaded")
+        exit(1)
+
+    try:
+        command = subprocess.run(['qiime info'], stdout=PIPE, stderr=PIPE)
+        logger.info(command.stdout)
+    except FileNotFoundError:
+        logger.critical("It appears qiime2 is not installed or loaded")
+        exit(1)
+    
+    logger.info('all software installed and ready to go')
 
 def verify_manifest(mainfest):
     print("the manifest called: " +manifest+ " is valid and ready to go")
