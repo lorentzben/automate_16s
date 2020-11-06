@@ -53,6 +53,7 @@ def verify_manifest(mainfest):
     found = []
     not_found = []
 
+    #it will make more sense to iterate over the manifest as opposed to the files in the directory
     for item in list_of_fastq:
         print(item)
         found.append(item)
