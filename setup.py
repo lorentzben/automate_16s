@@ -35,14 +35,14 @@ def check_dependencies():
         logger.info("nextflow installed: " + command.stdout)
     except FileNotFoundError:
         logger.critical("It appears nextflow is not installed or loaded")
-        exit(1)
+        #exit(1)
     #checks to see if qiime is installed, all software versions are saved to log
     try:
         command = subprocess.run(['qiime info'], stdout=PIPE, stderr=PIPE)
         logger.info(command.stdout)
     except FileNotFoundError:
         logger.critical("It appears qiime2 is not installed or loaded")
-        exit(1)
+        #exit(1)
     logger.info('all software installed and ready to go')
 
 def verify_manifest(mainfest):
