@@ -93,7 +93,7 @@ def verify_manifest(mainfest):
 
     # if missing is not an empty list, i.e. a file listed in the manifest is not detected, it raises an error and 
     # creates a list for the user
-    if missing not []:
+    if missing != []:
 
         logger.critical("files are missing, please see missing.csv to correct")
 
