@@ -98,13 +98,13 @@ def verify_manifest(mainfest):
         logger.critical("files are missing, please see missing.csv to correct")
 
         with open('missing.csv', 'w', newline='') as csvfile:
-        fieldnames = ['filename']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            fieldnames = ['filename']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-        writer.writeheader()
+            writer.writeheader()
 
-        for filename in missing:
-            writer.writerow({'filename': filename})
+            for filename in missing:
+                writer.writerow({'filename': filename})
 
         exit(0)
 
