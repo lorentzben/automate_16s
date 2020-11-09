@@ -45,8 +45,8 @@ def check_dependencies():
         #exit(1)
     logger.info('all software installed and ready to go')
 
-def verify_manifest(mainfest):
-    read_manifest = pd.read_table(maifest, index_col=0, sep='\t')
+def verify_manifest(manifest):
+    read_manifest = pd.read_table(manifest, index_col=0, sep='\t')
 
     # sets current dir and finds the fastq and fastq.gz files in the current directory
     p = Path.cwd()
