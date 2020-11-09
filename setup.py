@@ -7,6 +7,7 @@ import logging
 from pathlib import Path
 from pathlib import PurePath
 import pandas as pd 
+import csv
 
 
 logger = logging.getLogger(__name__)
