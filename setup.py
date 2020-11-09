@@ -1,4 +1,4 @@
-#A script to check the manifest provided, the presence of the fastq files, and that dependencies are all setup
+# A script to check the manifest provided, the presence of the fastq files, and that dependencies are all setup
 import subprocess
 from subprocess import PIPE
 import os
@@ -6,7 +6,7 @@ from os import path
 import logging
 from pathlib import Path
 from pathlib import PurePath
-import pandas as pd 
+import pandas as pd
 import csv
 import argparse
 
@@ -30,22 +30,26 @@ console_logger.setFormatter(formatter)
 logger.addHandler(file_logger)
 logger.addHandler(console_logger)
 
+
 def check_dependencies():
-    #checks to see if nextflow is installed, version is saved to log
+    # checks to see if nextflow is installed, version is saved to log
     try:
         command = subprocess.run(['nextflow -v'], stdout=PIPE, stderr=PIPE)
         logger.info("nextflow installed: " + command.stdout)
     except FileNotFoundError:
-        logger.info("It appears nextflow is possibly not installed or loaded, but this error appears when everything works ok too")
-        #exit(1)
-    #checks to see if qiime is installed, all software versions are saved to log
+        logger.info(
+            "It appears nextflow is possibly not installed or loaded, but this error appears when everything works ok too")
+        # exit(1)
+    # checks to see if qiime is installed, all software versions are saved to log
     try:
         command = subprocess.run(['qiime info'], stdout=PIPE, stderr=PIPE)
         logger.info(command.stdout)
     except FileNotFoundError:
-        logger.info("It appears qiime2 is possibly not installed or loaded, but this error appears when everything works ok too")
-        #exit(1)
+        logger.info(
+            "It appears qiime2 is possibly not installed or loaded, but this error appears when everything works ok too")
+        # exit(1)
     logger.info('all software installed and ready to go')
+
 
 def verify_manifest(manifest):
     try:
@@ -68,7 +72,7 @@ def verify_manifest(manifest):
     for item in list_of_fastq:
         filename = os.path.split(item)[1]
         fastq_files.append(filename)
-    
+
     for item in list_of_gz:
         filename = os.path.split(item)[1]
         gz_files.append(filename)
@@ -90,7 +94,7 @@ def verify_manifest(manifest):
     except KeyError:
         logger.info('single read project')
 
-    # try except in the case that the user only has single end reads. 
+    # try except in the case that the user only has single end reads.
     try:
         for item in read_manifest['reverse-absolute-filepath']:
             filename = os.path.split(item)[1]
@@ -107,6 +111,8 @@ def verify_manifest(manifest):
 
     except KeyError:
         logger.info("looking for forward only reads")
+
+    # this case is if there are only single reads and after which we can figure that the manifest file is wrong
     try:
         for item in read_manifest['absolute-filepath']:
             filename = os.path.split(item)[1]
@@ -122,8 +128,9 @@ def verify_manifest(manifest):
                     missing.append(filename)
     except KeyError:
         logger.critical("headings in the manifest appear to be incorrect")
+        exit(1)
 
-    # if missing is not an empty list, i.e. a file listed in the manifest is not detected, it raises an error and 
+    # if missing is not an empty list, i.e. a file listed in the manifest is not detected, it raises an error and
     # creates a list for the user
     if missing != []:
 
@@ -140,15 +147,19 @@ def verify_manifest(manifest):
 
         exit(0)
 
-    logging.info("the manifest called: " +manifest+ " is valid and ready to go")
+    logging.info("the manifest called: " + manifest +
+                 " is valid and ready to go")
+
 
 def error():
     print("something is wrong and I will try to tell you what the problem is")
 
+
 def main(arg):
     check_dependencies()
-    # TODO can come back and make this user-editable, but for right now I will hard-code it. 
+    # TODO can come back and make this user-editable, but for right now I will hard-code it.
     verify_manifest(arg.manifest_name)
+
 
 if __name__ == "__main__":
     # Build Argument Parser in order to facilitate ease of use for user
