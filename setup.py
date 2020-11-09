@@ -74,7 +74,8 @@ def verify_manifest(manifest):
         if filename in fastq_files:
             logger.info(filename + ' found')
             found.append(filename)
-            elif filename in gz_files:
+        else:
+            if filename in gz_files:
                 logger.info(filename + ' found')
                 found.append(filename)
                 else:
@@ -88,7 +89,8 @@ def verify_manifest(manifest):
             if filename in fastq_files:
                 logger.info(filename + ' found')
                 found.append(filename)
-                elif filename in gz_files:
+            else:
+                if filename in gz_files:
                     logger.info(filename + ' found')
                     found.append(filename)
                     else:
