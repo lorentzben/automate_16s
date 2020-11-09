@@ -8,25 +8,25 @@ from pathlib import Path
 from pathlib import PurePath
 import pandas as pd 
 
-def setup_logging():
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
-    # Logging handler which catches EVERYTHING
-    file_logger = logging.FileHandler('automate_16s_setup.log')
-    file_logger.setLevel(logging.DEBUG)
-    # Logging handler which logs less
-    console_logger = logging.StreamHandler()
-    console_logger.setLevel(logging.ERROR)
 
-    # Formats the logs so they are pretty
-    logFormatter = '%(asctime)s- %(name)s - %(lineno)s - %(levelname)s - %(message)s'
-    formatter = logging.Formatter(logFormatter)
-    file_logger.setFormatter(formatter)
-    console_logger.setFormatter(formatter)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+# Logging handler which catches EVERYTHING
+file_logger = logging.FileHandler('automate_16s_setup.log')
+file_logger.setLevel(logging.DEBUG)
+# Logging handler which logs less
+console_logger = logging.StreamHandler()
+console_logger.setLevel(logging.ERROR)
 
-    #  adds handlers to logger
-    logger.addHandler(file_logger)
-    logger.addHandler(console_logger)
+# Formats the logs so they are pretty
+logFormatter = '%(asctime)s- %(name)s - %(lineno)s - %(levelname)s - %(message)s'
+formatter = logging.Formatter(logFormatter)
+file_logger.setFormatter(formatter)
+console_logger.setFormatter(formatter)
+
+#  adds handlers to logger
+logger.addHandler(file_logger)
+logger.addHandler(console_logger)
 
 def check_dependencies():
     #checks to see if nextflow is installed, version is saved to log
@@ -113,7 +113,7 @@ def verify_manifest(mainfest):
 def error():
     print("something is wrong and I will try to tell you what the problem is")
 
-setup_logging()
+
 check_dependencies()
 # TODO can come back and make this user-editable, but for right now I will hard-code it. 
 verify_manifest('manifest.tsv')
