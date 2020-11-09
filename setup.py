@@ -113,7 +113,9 @@ def verify_manifest(mainfest):
 def error():
     print("something is wrong and I will try to tell you what the problem is")
 
+def main():
+    check_dependencies()
+    # TODO can come back and make this user-editable, but for right now I will hard-code it. 
+    verify_manifest("manifest.tsv")
 
-check_dependencies()
-# TODO can come back and make this user-editable, but for right now I will hard-code it. 
-verify_manifest("manifest.tsv")
+main()
