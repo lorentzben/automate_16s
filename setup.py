@@ -72,8 +72,10 @@ def verify_manifest(manifest):
     for item in read_manifest['forward-absolute-filepath']:
         filename = os.path.split(item)[1]
         if filename in fastq_files:
+            logger.info(filename + ' found')
             found.append(filename)
         if filename in gz_files:
+            logger.info(filename + ' found')
             found.append(filename)
         else:
             logger.info(filename + ' missing')
@@ -84,8 +86,10 @@ def verify_manifest(manifest):
         for item in read_manifest['reverse-absolute-filepath']:
             filename = os.path.split(item)[1]
             if filename in fastq_files:
+                logger.info(filename + ' found')
                 found.append(filename)
             if filename in gz_files:
+                logger.info(filename + ' found')
                 found.append(filename)
             else:
                 logger.info(filename + ' missing')
