@@ -48,23 +48,65 @@ def check_dependencies():
 def verify_manifest(mainfest):
     read_manifest = pd.read_table(maifest, index_col=0, sep='\t')
 
+    # sets current dir and finds the fastq and fastq.gz files in the current directory
     p = Path.cwd()
-    list_of_fastq = list(p.glob('*.fastq'))
-    list_of_gz = list(p.glob('*.fastq.gz'))
+    list_of_fastq = list(p.glob('**/*.fastq'))
+    list_of_gz = list(p.glob('**/*.fastq.gz'))
+
     fastq_files = []
     gz_files = []
+    found = []
+    missing = []
 
+    # pulls only the filename and saves to a list
     for item in list_of_fastq:
         filename = os.path.split(item)[1]
         fastq_files.append(filename)
     
-    for item in list_of_gz
-    found = []
-    not_found = []
+    for item in list_of_gz:
+        filename = os.path.split(item)[1]
+        gz_files.append(filename)
 
+    # iterates over the forward reads and then the reverse reads to check to make sure they are all accounted for
     for item in read_manifest['forward-absolute-filepath']:
         filename = os.path.split(item)[1]
-        
+        if filename in fastq_files:
+            found.append(filename)
+        if filename in gz_files:
+            found.append(filename)
+        else:
+            missing.append(filename)
+
+    # try except in the case that the user only has single end reads. 
+    try:
+        for item in read_manifest['reverse-absolute-filepath']:
+            filename = os.path.split(item)[1]
+            if filename in fastq_files:
+                found.append(filename)
+            if filename in gz_files:
+                found.append(filename)
+            else:
+                missing.append(filename)
+
+    except KeyError:
+        logger.info("looking for forward only reads")
+
+    # if missing is not an empty list, i.e. a file listed in the manifest is not detected, it raises an error and 
+    # creates a list for the user
+    if missing in not []:
+
+        logger.critical("files are missing, please see missing.csv to correct")
+
+        with open('missing.csv', 'w', newline='') as csvfile:
+        fieldnames = ['filename']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+        writer.writeheader()
+
+        for filename in missing:
+            writer.writerow({'filename': filename})
+
+        exit(0)
 
     #it will make more sense to iterate over the manifest as opposed to the files in the directory
     for item in list_of_fastq:
