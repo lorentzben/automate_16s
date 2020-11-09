@@ -74,12 +74,12 @@ def verify_manifest(manifest):
         if filename in fastq_files:
             logger.info(filename + ' found')
             found.append(filename)
-        if filename in gz_files:
-            logger.info(filename + ' found')
-            found.append(filename)
-        else:
-            logger.info(filename + ' missing')
-            missing.append(filename)
+            if filename in gz_files:
+                logger.info(filename + ' found')
+                found.append(filename)
+                else:
+                    logger.info(filename + ' missing')
+                    missing.append(filename)
 
     # try except in the case that the user only has single end reads. 
     try:
@@ -88,12 +88,12 @@ def verify_manifest(manifest):
             if filename in fastq_files:
                 logger.info(filename + ' found')
                 found.append(filename)
-            if filename in gz_files:
-                logger.info(filename + ' found')
-                found.append(filename)
-            else:
-                logger.info(filename + ' missing')
-                missing.append(filename)
+                if filename in gz_files:
+                    logger.info(filename + ' found')
+                    found.append(filename)
+                    else:
+                        logger.info(filename + ' missing')
+                        missing.append(filename)
 
     except KeyError:
         logger.info("looking for forward only reads")
