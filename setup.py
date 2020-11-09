@@ -52,6 +52,7 @@ def verify_manifest(manifest):
         read_manifest = pd.read_table(manifest, index_col=0, sep='\t')
     except FileNotFoundError:
         logger.critical("that manifest file does not exist")
+        exit(1)
 
     # sets current dir and finds the fastq and fastq.gz files in the current directory
     p = Path.cwd()
