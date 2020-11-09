@@ -108,18 +108,12 @@ def verify_manifest(mainfest):
 
         exit(0)
 
-    #it will make more sense to iterate over the manifest as opposed to the files in the directory
-    for item in list_of_fastq:
-        print(item)
-        found.append(item)
-    for item in list_of_gz:
-        print(item)
-        found.append(item)
-
-    if len(found) not len(read_manifest):
-        logger.critical("The files in the manifest were not found in this directory")
-    else:
-        logging.info("the manifest called: " +manifest+ " is valid and ready to go")
+    logging.info("the manifest called: " +manifest+ " is valid and ready to go")
 
 def error():
     print("something is wrong and I will try to tell you what the problem is")
+
+setup_logging()
+check_dependencies()
+# TODO can come back and make this user-editable, but for right now I will hard-code it. 
+verify_manifest('manifest.tsv')
