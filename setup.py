@@ -76,6 +76,7 @@ def verify_manifest(manifest):
         if filename in gz_files:
             found.append(filename)
         else:
+            logger.info(filename + ' missing')
             missing.append(filename)
 
     # try except in the case that the user only has single end reads. 
@@ -87,6 +88,7 @@ def verify_manifest(manifest):
             if filename in gz_files:
                 found.append(filename)
             else:
+                logger.info(filename + ' missing')
                 missing.append(filename)
 
     except KeyError:
