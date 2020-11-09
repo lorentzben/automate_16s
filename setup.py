@@ -6,6 +6,7 @@ from os import path
 import logging
 from pathlib import Path
 from pathlib import PurePath
+import pandas as pd 
 
 def setup_logging():
     logger = logging.getLogger(__name__)
@@ -45,13 +46,25 @@ def check_dependencies():
     logger.info('all software installed and ready to go')
 
 def verify_manifest(mainfest):
-    read_manifest = pd.read_csv(maifest, index_col=0,)
+    read_manifest = pd.read_table(maifest, index_col=0, sep='\t')
 
     p = Path.cwd()
-    list_of_fastq = list(p.glob('**/*.fastq'))
-    list_of_gz = list(p.glob('**/*.fastq.gz'))
+    list_of_fastq = list(p.glob('*.fastq'))
+    list_of_gz = list(p.glob('*.fastq.gz'))
+    fastq_files = []
+    gz_files = []
+
+    for item in list_of_fastq:
+        filename = os.path.split(item)[1]
+        fastq_files.append(filename)
+    
+    for item in list_of_gz
     found = []
     not_found = []
+
+    for item in read_manifest['forward-absolute-filepath']:
+        filename = os.path.split(item)[1]
+        
 
     #it will make more sense to iterate over the manifest as opposed to the files in the directory
     for item in list_of_fastq:
