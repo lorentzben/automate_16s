@@ -8,6 +8,7 @@ from pathlib import Path
 from pathlib import PurePath
 import pandas as pd 
 import csv
+import argparse
 
 
 logger = logging.getLogger(__name__)
@@ -140,9 +141,20 @@ def verify_manifest(manifest):
 def error():
     print("something is wrong and I will try to tell you what the problem is")
 
-def main():
+def main(arg):
     check_dependencies()
     # TODO can come back and make this user-editable, but for right now I will hard-code it. 
-    verify_manifest("manifest.tsv")
+    verify_manifest(arg.manifest_name)
 
-main()
+if __name__ == "__main__":
+    # Build Argument Parser in order to facilitate ease of use for user
+    parser = argparse.ArgumentParser(
+        description="Checks dependencies are installed, and validates a manifest file for qiime 2")
+    parser.add_argument('-n', action='store', required=True,
+                        help="name for the manifest, typically manifest.tsv", dest='manifest_name')
+    parser.add_argument('-v', '--version', action='version',
+                        version='%(prog)s 1.0')
+
+    args = parser.parse_args()
+    # print(args)
+    main(args)
