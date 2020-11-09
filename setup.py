@@ -150,7 +150,7 @@ if __name__ == "__main__":
     # Build Argument Parser in order to facilitate ease of use for user
     parser = argparse.ArgumentParser(
         description="Checks dependencies are installed, and validates a manifest file for qiime 2")
-    parser.add_argument('-n', action='store', required=True,
+    parser.add_argument('-n', '--name' action='store', required=True,
                         help="name for the manifest, typically manifest.tsv", dest='manifest_name')
     parser.add_argument('-v', '--version', action='version',
                         version='%(prog)s 1.0')
