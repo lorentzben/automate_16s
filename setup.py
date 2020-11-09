@@ -69,18 +69,21 @@ def verify_manifest(manifest):
         gz_files.append(filename)
 
     # iterates over the forward reads and then the reverse reads to check to make sure they are all accounted for
-    for item in read_manifest['forward-absolute-filepath']:
-        filename = os.path.split(item)[1]
-        if filename in fastq_files:
-            logger.info(filename + ' found')
-            found.append(filename)
-        else:
-            if filename in gz_files:
+    try:
+        for item in read_manifest['forward-absolute-filepath']:
+            filename = os.path.split(item)[1]
+            if filename in fastq_files:
                 logger.info(filename + ' found')
                 found.append(filename)
             else:
-                logger.info(filename + ' missing')
-                missing.append(filename)
+                if filename in gz_files:
+                    logger.info(filename + ' found')
+                    found.append(filename)
+                else:
+                    logger.info(filename + ' missing')
+                    missing.append(filename)
+    except KeyError:
+        logger.info('single read project')
 
     # try except in the case that the user only has single end reads. 
     try:
@@ -99,6 +102,21 @@ def verify_manifest(manifest):
 
     except KeyError:
         logger.info("looking for forward only reads")
+    try:
+        for item in read_manifest['absolute-filepath']:
+            filename = os.path.split(item)[1]
+            if filename in fastq_files:
+                logger.info(filename + ' found')
+                found.append(filename)
+            else:
+                if filename in gz_files:
+                    logger.info(filename + ' found')
+                    found.append(filename)
+                else:
+                    logger.info(filename + ' missing')
+                    missing.append(filename)
+    except KeyError:
+        logger.critical("headings in the manifest appear to be incorrect")
 
     # if missing is not an empty list, i.e. a file listed in the manifest is not detected, it raises an error and 
     # creates a list for the user
