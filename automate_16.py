@@ -9,6 +9,7 @@ import pandas as pd
 import csv
 import argparse
 import qiime2
+import numpy as np
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -65,8 +66,9 @@ def qual_control():
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
 
 def calc_qual_cutoff():
-    input_file = 'inflate/*/data/forward-seven-number-summaries.tsv'
-    summary = pd.read_table(input_file, index_col=0,sep='\t')
+    input_file = glob.glob('./inflate/*/data/forward-seven-number-summaries.tsv')
+    #input_file = 'inflate/*/data/forward-seven-number-summaries.tsv'
+    summary = pd.read_table(input_file[0], index_col=0,sep='\t')
 
     mean_qual = summary[4:5]
 
@@ -104,7 +106,7 @@ def calc_qual_cutoff():
     
 
 
-
+#TODO put checks in to pickeup from where a failed run left off.
 def main(arg):
     single_or_pair = single_or_paired_read(arg.manifest_name)
 
