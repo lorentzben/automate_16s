@@ -29,6 +29,23 @@ console_logger.setFormatter(formatter)
 logger.addHandler(file_logger)
 logger.addHandler(console_logger)
 
+def single_or_paired_read(manifest):
+    try:
+        read_manifest = pd.read_table(manifest, index_col=0, sep='\t')
+    except FileNotFoundError:
+        logger.critical("that manifest file does not exist")
+        exit(1)
+        
+    if read_manifest.columns[0] == 'absolute-filepath':
+        logger.info("single end analysis")
+        return 'single'
+    elif read_manifest.columns[0] == 'forward-absolute-filepath':
+        logger.info("paired end analsis")
+        return 'paired'
+    else:
+        logger.critical("cannot determine if paired or single end, check manifest file")
+        exit(1)
+    
 # TODO method to parse the manifest doc to determine if single or paired end anaylsis
 def generate_seq_object(manifest, seq_format):
     manifest = "manifest_trunc.tsv"
