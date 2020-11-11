@@ -91,8 +91,8 @@ def calc_qual_cutoff():
             left_cutoff = len(mean_qual_vals)-i
             break
 
-    logger.info("right cutoff: "+right_cutoff)
-    logger.info("left cutoff: " +left_cutoff)
+    logger.info("right cutoff: "+str(right_cutoff))
+    logger.info("left cutoff: " +str(left_cutoff))
 
     with open('cutoffs.csv', 'w', newline='') as csvfile:
         fieldnames = ['cutoff', 'value']
