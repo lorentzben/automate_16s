@@ -76,59 +76,59 @@ def verify_manifest(manifest, seq_dir):
     for item in list_of_gz:
         filename = os.path.split(item)[1]
         gz_files.append(filename)
-
-    # iterates over the forward reads and then the reverse reads to check to make sure they are all accounted for
-    try:
-        for item in read_manifest['forward-absolute-filepath']:
-            filename = os.path.split(item)[1]
-            if filename in fastq_files:
-                logger.info(filename + ' found')
-                found.append(filename)
-            else:
-                if filename in gz_files:
+    if read_manifest.columns[0] == 'forward-absolute-filepath':
+        # iterates over the forward reads and then the reverse reads to check to make sure they are all accounted for
+        try:
+            for item in read_manifest['forward-absolute-filepath']:
+                filename = os.path.split(item)[1]
+                    if filename in fastq_files:
                     logger.info(filename + ' found')
                     found.append(filename)
                 else:
-                    logger.info(filename + ' missing')
-                    missing.append(filename)
-    except KeyError:
-        logger.info('single read project')
+                    if filename in gz_files:
+                        logger.info(filename + ' found')
+                        found.append(filename)
+                    else:
+                        logger.info(filename + ' missing')
+                        missing.append(filename)
+        except KeyError:
+            logger.info('single read project')
 
-    # try except in the case that the user only has single end reads.
-    try:
-        for item in read_manifest['reverse-absolute-filepath']:
-            filename = os.path.split(item)[1]
-            if filename in fastq_files:
-                logger.info(filename + ' found')
-                found.append(filename)
-            else:
-                if filename in gz_files:
+        # try except in the case that the user only has single end reads.
+        try:
+            for item in read_manifest['reverse-absolute-filepath']:
+                filename = os.path.split(item)[1]
+                if filename in fastq_files:
                     logger.info(filename + ' found')
                     found.append(filename)
                 else:
-                    logger.info(filename + ' missing')
-                    missing.append(filename)
+                    if filename in gz_files:
+                        logger.info(filename + ' found')
+                        found.append(filename)
+                    else:
+                        logger.info(filename + ' missing')
+                        missing.append(filename)
 
-    except KeyError:
-        logger.info("looking for forward only reads")
-
-    # this case is if there are only single reads and after which we can figure that the manifest file is wrong
-    try:
-        for item in read_manifest['absolute-filepath']:
-            filename = os.path.split(item)[1]
-            if filename in fastq_files:
-                logger.info(filename + ' found')
-                found.append(filename)
-            else:
-                if filename in gz_files:
+        except KeyError:
+            logger.info("looking for forward only reads")
+    else:
+        # this case is if there are only single reads and after which we can figure that the manifest file is wrong
+        try:
+            for item in read_manifest['absolute-filepath']:
+                filename = os.path.split(item)[1]
+                if filename in fastq_files:
                     logger.info(filename + ' found')
                     found.append(filename)
                 else:
-                    logger.info(filename + ' missing')
-                    missing.append(filename)
-    except KeyError:
-        logger.critical("headings in the manifest appear to be incorrect")
-        #exit(1)
+                    if filename in gz_files:
+                        logger.info(filename + ' found')
+                        found.append(filename)
+                    else:
+                        logger.info(filename + ' missing')
+                        missing.append(filename)
+        except KeyError:
+            logger.critical("headings in the manifest appear to be incorrect")
+            exit(1)
 
     # if missing is not an empty list, i.e. a file listed in the manifest is not detected, it raises an error and
     # creates a list for the user
