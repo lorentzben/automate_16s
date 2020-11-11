@@ -105,14 +105,14 @@ def calc_qual_cutoff():
 
 
 def main(arg):
-    single_or_pair = single_or_paired_read(arg.manifest)
+    single_or_pair = single_or_paired_read(arg.manifest_name)
 
     if single_or_pair == "single":
         category = "SingleEndFastqManifestPhred33V2"
     elif single_or_pair == "paired":
         category = "PairedEndFastqManifestPhred33V2"
     
-    generate_seq_object(arg.manifest, category)
+    generate_seq_object(arg.manifest_name, category)
     qual_control()
     cutoffs = calc_qual_cutoff()
     right_cutoff = cutoffs[0]
