@@ -5,6 +5,6 @@ module load Nextflow/20.04.1
 module load QIIME2/2020.6
 
 python3 -m pip install --user pandas
-python3 setup.py
+python3 setup.py -n manifest.tsv -d $seq
 
 nextflow run automate_16s.nf

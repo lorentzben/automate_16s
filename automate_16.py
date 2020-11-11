@@ -35,7 +35,7 @@ def single_or_paired_read(manifest):
     except FileNotFoundError:
         logger.critical("that manifest file does not exist")
         exit(1)
-        
+
     if read_manifest.columns[0] == 'absolute-filepath':
         logger.info("single end analysis")
         return 'single'
@@ -46,10 +46,10 @@ def single_or_paired_read(manifest):
         logger.critical("cannot determine if paired or single end, check manifest file")
         exit(1)
     
-# TODO method to parse the manifest doc to determine if single or paired end anaylsis
+
 def generate_seq_object(manifest, seq_format):
-    manifest = "manifest_trunc.tsv"
-    seq_format = "SingleEndFastqManifestPhred33V2"
+    #manifest = "manifest_trunc.tsv"
+    #seq_format = "SingleEndFastqManifestPhred33V2"
     command = "qiime tools import --type 'SampleData[SequencesWithQuality]' --input-path "+manifest+" --output-path single_end_demux.qza --input-format " +seq_format
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
 
@@ -105,10 +105,20 @@ def calc_qual_cutoff():
 
 
 def main(arg):
-    check_dependencies()
-    # TODO can come back and make this user-editable, but for right now I will hard-code it.
-    verify_manifest(arg.manifest_name)
+    single_or_pair = single_or_paired_read(arg.manifest)
 
+    if single_or_pair == "single":
+        category = "SingleEndFastqManifestPhred33V2"
+    elif single_or_pair == "paired":
+        category = "PairedEndFastqManifestPhred33V2"
+    
+    generate_seq_object(arg.manifest, category)
+    qual_control()
+    cutoffs = calc_qual_cutoff()
+    right_cutoff = cutoffs[0]
+    left_cutoff = cutoffs[1]
+
+    print(right_cutoff, left_cutoff)
 
 if __name__ == "__main__":
     # Build Argument Parser in order to facilitate ease of use for user
