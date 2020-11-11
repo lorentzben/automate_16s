@@ -15,7 +15,7 @@ import glob
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 # Logging handler which catches EVERYTHING
-file_logger = logging.FileHandler('automate_16s_setup.log')
+file_logger = logging.FileHandler('automate_16s.log')
 file_logger.setLevel(logging.DEBUG)
 # Logging handler which logs less
 console_logger = logging.StreamHandler()
