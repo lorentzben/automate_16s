@@ -10,6 +10,7 @@ import csv
 import argparse
 import qiime2
 import numpy as np
+import glob
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
