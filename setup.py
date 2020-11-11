@@ -51,7 +51,7 @@ def check_dependencies():
     logger.info('all software installed and ready to go')
 
 
-def verify_manifest(manifest):
+def verify_manifest(manifest, seq_dir):
     try:
         read_manifest = pd.read_table(manifest, index_col=0, sep='\t')
     except FileNotFoundError:
@@ -60,8 +60,8 @@ def verify_manifest(manifest):
 
     # sets current dir and finds the fastq and fastq.gz files in the current directory
     p = Path.cwd()
-    list_of_fastq = list(p.glob('**/*.fastq'))
-    list_of_gz = list(p.glob('**/*.fastq.gz'))
+    list_of_fastq = list(p.glob(seq_dir+ '/*.fastq'))
+    list_of_gz = list(p.glob(seq_dir+'/*.fastq.gz'))
 
     fastq_files = []
     gz_files = []
@@ -158,7 +158,7 @@ def error():
 def main(arg):
     check_dependencies()
     # TODO can come back and make this user-editable, but for right now I will hard-code it.
-    verify_manifest(arg.manifest_name)
+    verify_manifest(arg.manifest_name, arg.seq_dir)
 
 
 if __name__ == "__main__":
@@ -167,6 +167,8 @@ if __name__ == "__main__":
         description="Checks dependencies are installed, and validates a manifest file for qiime 2")
     parser.add_argument('-n', '--name', action='store', required=True,
                         help="name for the manifest, typically manifest.tsv", dest='manifest_name')
+    parser.add_argument('-d', '--dir', action='store', required=True,
+                        help="directory where sequences are stored", dest="seq_dir")
     parser.add_argument('-v', '--version', action='version',
                         version='%(prog)s 1.0')
 
