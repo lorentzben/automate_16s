@@ -65,8 +65,8 @@ def qual_control():
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
 
 def calc_qual_cutoff():
-    input_file = 'inflate/*/data/forward-seven-number-summaries.csv'
-    summary = pd.read_csv(input_file, index_col=0,)
+    input_file = 'inflate/*/data/forward-seven-number-summaries.tsv'
+    summary = pd.read_tsv(input_file, index_col=0,sep='\t')
 
     mean_qual = summary[4:5]
 
