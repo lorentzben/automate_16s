@@ -103,7 +103,7 @@ def calc_qual_cutoff():
         writer.writerow({'cutoff': 'left', 'value': left_cutoff})
         writer.writerow({'cutoff': 'filename', 'value': input_file})
 
-    return(tuple(right_cutoff,left_cutoff))
+    return(right_cutoff,left_cutoff)
     
 
 
