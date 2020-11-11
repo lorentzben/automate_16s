@@ -81,7 +81,7 @@ def verify_manifest(manifest, seq_dir):
         try:
             for item in read_manifest['forward-absolute-filepath']:
                 filename = os.path.split(item)[1]
-                    if filename in fastq_files:
+                if filename in fastq_files:
                     logger.info(filename + ' found')
                     found.append(filename)
                 else:
