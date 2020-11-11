@@ -128,7 +128,7 @@ def verify_manifest(manifest, seq_dir):
                     missing.append(filename)
     except KeyError:
         logger.critical("headings in the manifest appear to be incorrect")
-        exit(1)
+        #exit(1)
 
     # if missing is not an empty list, i.e. a file listed in the manifest is not detected, it raises an error and
     # creates a list for the user
