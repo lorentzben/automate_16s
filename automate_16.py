@@ -62,7 +62,7 @@ def qual_control():
     logger.info(result.stdout)
     logger.critical(result.stderr)
     command = "unzip -d inflate demux_summary.qzv"
-    result = subprocess.run([command], sterr=PIPE, stdout=PIPE, shell=True)
+    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
 
 def calc_qual_cutoff():
     input_file = 'inflate/*/forward-seven-number-summaries.csv'
