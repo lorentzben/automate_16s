@@ -9,8 +9,10 @@ import pandas as pd
 import csv
 import argparse
 import qiime2
+from qiime2.plugins import dada2
 import numpy as np
 import glob
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -31,6 +33,7 @@ console_logger.setFormatter(formatter)
 logger.addHandler(file_logger)
 logger.addHandler(console_logger)
 
+
 def single_or_paired_read(manifest):
     try:
         read_manifest = pd.read_table(manifest, index_col=0, sep='\t')
@@ -45,54 +48,57 @@ def single_or_paired_read(manifest):
         logger.info("paired end analsis")
         return 'paired'
     else:
-        logger.critical("cannot determine if paired or single end, check manifest file")
+        logger.critical(
+            "cannot determine if paired or single end, check manifest file")
         exit(1)
-    
+
 
 def generate_seq_object(manifest, seq_format):
     #manifest = "manifest_trunc.tsv"
     #seq_format = "SingleEndFastqManifestPhred33V2"
-    command = "qiime tools import --type 'SampleData[SequencesWithQuality]' --input-path "+manifest+" --output-path single_end_demux.qza --input-format " +seq_format
+    command = "qiime tools import --type 'SampleData[SequencesWithQuality]' --input-path " + \
+        manifest+" --output-path demux.qza --input-format " + seq_format
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
 
     logger.info(result.stdout)
     logger.critical(result.stderr)
 
+
 def qual_control():
-    command = "qiime demux summarize --i-data single_end_demux.qza --o-visualization demux_summary.qzv"
+    command = "qiime demux summarize --i-data demux.qza --o-visualization demux_summary.qzv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
     logger.critical(result.stderr)
     command = "unzip -d inflate demux_summary.qzv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
 
+
 def calc_qual_cutoff():
-    input_file = glob.glob('./inflate/*/data/forward-seven-number-summaries.tsv')
+    input_file = glob.glob(
+        './inflate/*/data/forward-seven-number-summaries.tsv')
     #input_file = 'inflate/*/data/forward-seven-number-summaries.tsv'
-    summary = pd.read_table(input_file[0], index_col=0,sep='\t')
+    summary = pd.read_table(input_file[0], index_col=0, sep='\t')
 
     mean_qual = summary[4:5]
 
     average_qual = np.round(mean_qual.mean(axis=1), 0)
     mean_qual_vals = np.array(mean_qual)[0]
 
-
     if int(average_qual) < 30:
         print("The Average Quality of these sequences may be a concern would you like to continue?")
         exit(0)
 
-
     for i in range(0, len(mean_qual_vals)):
         if mean_qual_vals[i] >= int(average_qual):
-            right_cutoff = i+1
+            left_cutoff = i+1
             break
-    for i in range(0,len(mean_qual_vals)):
+    for i in range(0, len(mean_qual_vals)):
         if mean_qual_vals[len(mean_qual_vals)-1-i] >= int(average_qual):
-            left_cutoff = len(mean_qual_vals)-i
+            right_cutoff = len(mean_qual_vals)-i
             break
 
     logger.info("right cutoff: "+str(right_cutoff))
-    logger.info("left cutoff: " +str(left_cutoff))
+    logger.info("left cutoff: " + str(left_cutoff))
 
     with open('cutoffs.csv', 'w', newline='') as csvfile:
         fieldnames = ['cutoff', 'value']
@@ -103,11 +109,23 @@ def calc_qual_cutoff():
         writer.writerow({'cutoff': 'left', 'value': left_cutoff})
         writer.writerow({'cutoff': 'filename', 'value': input_file})
 
-    return(right_cutoff,left_cutoff)
-    
+    return(right_cutoff, left_cutoff)
 
 
-#TODO put checks in to pickeup from where a failed run left off.
+def call_denoise(right, left, seq_format):
+    if seq_format == 'single':
+        command = "qiime dada2 denoise-single --i-demultiplexed-seqs demux.qza --p-trunc-left " + left+" --p-trunc-len " + \
+            right + " --o-representative-sequences rep_seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
+    elif seq_format == 'paired':
+        command = "qiime dada2 denoise-paired --i-demultiplexed-seqs demux.qza --p-trunc-left " + left+" --p-trunc-len " + \
+            right + " --o-representative-sequences rep_seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+
+    logger.info(result.stdout)
+    logger.critical(result.stderr)
+
+
+# TODO put checks in to pickeup from where a failed run left off.
 def main(arg):
     single_or_pair = single_or_paired_read(arg.manifest_name)
 
@@ -115,7 +133,7 @@ def main(arg):
         category = "SingleEndFastqManifestPhred33V2"
     elif single_or_pair == "paired":
         category = "PairedEndFastqManifestPhred33V2"
-    
+
     generate_seq_object(arg.manifest_name, category)
     qual_control()
     cutoffs = calc_qual_cutoff()
@@ -123,6 +141,9 @@ def main(arg):
     left_cutoff = cutoffs[1]
 
     print(right_cutoff, left_cutoff)
+
+    call_denoise(right_cutoff, left_cutoff, single_or_pair)
+
 
 if __name__ == "__main__":
     # Build Argument Parser in order to facilitate ease of use for user
