@@ -35,7 +35,7 @@ def check_dependencies():
     # checks to see if nextflow is installed, version is saved to log
     try:
         command = subprocess.run(['nextflow -v'], stdout=PIPE, stderr=PIPE, shell=True )
-        logger.info("nextflow installed: " + command.stdout)
+        logger.info("nextflow installed: " + str(command.stdout))
     except FileNotFoundError:
         logger.info(
             "It appears nextflow is possibly not installed or loaded, but this error appears when everything works ok too")
