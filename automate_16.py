@@ -196,7 +196,7 @@ def determine_depth():
 
 def diversity_measure(metadata, depth):
     command = "qiime diversity core-metrics-phylogenetic --i-phylogeny rooted-tree.qza --i-table table.qza --p-sampling-depth " + \
-        str(depth) + " --m-metadata-file " + metadata + " --output-dir core-metrics-results"
+        str(int(depth)) + " --m-metadata-file " + metadata + " --output-dir core-metrics-results"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.critical(result.stderr)
