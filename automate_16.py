@@ -114,11 +114,11 @@ def calc_qual_cutoff():
 
 def call_denoise(right, left, seq_format):
     if seq_format == 'single':
-        command = "qiime dada2 denoise-single --i-demultiplexed-seqs demux.qza --p-trunc-left " + left+" --p-trunc-len " + \
-            right + " --o-representative-sequences rep_seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
+        command = "qiime dada2 denoise-single --i-demultiplexed-seqs demux.qza --p-trunc-left " + str(left)+" --p-trunc-len " + \
+            str(right) + " --o-representative-sequences rep_seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
     elif seq_format == 'paired':
-        command = "qiime dada2 denoise-paired --i-demultiplexed-seqs demux.qza --p-trunc-left " + left+" --p-trunc-len " + \
-            right + " --o-representative-sequences rep_seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
+        command = "qiime dada2 denoise-paired --i-demultiplexed-seqs demux.qza --p-trunc-left " + str(left)+" --p-trunc-len " + \
+            str(right) + " --o-representative-sequences rep_seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
 
     logger.info(result.stdout)
