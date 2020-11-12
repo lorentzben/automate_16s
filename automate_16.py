@@ -167,7 +167,7 @@ def determine_depth():
     sampling_depth = 0 
     perc_features_retain = 0.0
 
-    print("total count" + str(total_count))
+    print("total count: " + str(total_count))
 
     feature_array = np.array(features)
 
