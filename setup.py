@@ -34,7 +34,7 @@ logger.addHandler(console_logger)
 def check_dependencies():
     # checks to see if nextflow is installed, version is saved to log
     try:
-        command = subprocess.run(['nextflow -v'], stdout=PIPE, stderr=PIPE)
+        command = subprocess.run(['nextflow -v'], stdout=PIPE, stderr=PIPE, shell=True )
         logger.info("nextflow installed: " + command.stdout)
     except FileNotFoundError:
         logger.info(
@@ -42,7 +42,7 @@ def check_dependencies():
         # exit(1)
     # checks to see if qiime is installed, all software versions are saved to log
     try:
-        command = subprocess.run(['qiime info'], stdout=PIPE, stderr=PIPE)
+        command = subprocess.run(['qiime info'], stdout=PIPE, stderr=PIPE, shell=True)
         logger.info(command.stdout)
     except FileNotFoundError:
         logger.info(
