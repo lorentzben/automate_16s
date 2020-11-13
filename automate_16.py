@@ -275,10 +275,10 @@ def main(arg):
 
     # in: table.qzv  out: sampling_depth.csv
     depth = determine_depth()
-    
+
     # in: rooted-tree.qza table-dada2.qza out: core-metrics-results/
     if(not os.path.exists(os.getcwd()+"core-metrics-results")):
-        diversity_measure(arg.metadata, subdepth)
+        diversity_measure(arg.metadata, depth)
 
     # in: core-metrics-results/faith_pd_vector.qza out: core-metrics-results/faith-pd-group-significance.qzv
     alpha_div_calc(arg.metadata)
