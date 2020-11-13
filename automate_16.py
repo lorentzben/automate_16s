@@ -115,14 +115,14 @@ def calc_qual_cutoff():
     return(right_cutoff, left_cutoff)
 
 
-def call_denoise(right, left, seq_format):
+def call_denoise(right, left, seq_format, nproc):
     logger.debug("denoising using dada2")
     if seq_format == 'single':
         command = "qiime dada2 denoise-single --i-demultiplexed-seqs demux.qza --p-trim-left " + str(left)+" --p-trunc-len " + \
-            str(right) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
+            str(right) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza --p-n-threads " +str(nproc)
     elif seq_format == 'paired':
         command = "qiime dada2 denoise-paired --i-demultiplexed-seqs demux.qza --p-trim-left " + str(left)+" --p-trunc-len " + \
-            str(right) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
+            str(right) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza --p-n-threads " +str(nproc)
 
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
@@ -148,9 +148,9 @@ def feature_visualizations(metadata):
     logger.critical(result.stderr)
 
 
-def tree_construction():
+def tree_construction(nproc):
     logger.debug("generating phylogenetic tree")
-    command = "qiime phylogeny align-to-tree-mafft-fasttree --i-sequences rep-seqs-dada2.qza --o-alignment aligned-rep-seqs.qza --o-masked-alignment masked-aligned-rep-seqs.qza --o-tree unrooted-tree.qza --o-rooted-tree rooted-tree.qza"
+    command = "qiime phylogeny align-to-tree-mafft-fasttree --i-sequences rep-seqs-dada2.qza --o-alignment aligned-rep-seqs.qza --o-masked-alignment masked-aligned-rep-seqs.qza --o-tree unrooted-tree.qza --o-rooted-tree rooted-tree.qza -p-n-threads " +str(nproc)
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.critical(result.stderr)
@@ -206,7 +206,7 @@ def diversity_measure(metadata, depth):
     logger.debug("calculating general diversity measurments")
     command = "qiime diversity core-metrics-phylogenetic --i-phylogeny rooted-tree.qza --i-table table-dada2.qza --p-sampling-depth " + \
         str(int(depth)) + " --m-metadata-file " + \
-        metadata + " --output-dir core-metrics-results"
+        metadata + " --output-dir core-metrics-results --p-n-jobs-or-threads 'auto'"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.critical(result.stderr)
@@ -243,6 +243,12 @@ def beta_div_calc(metadata, item_of_interest):
 
 
 def main(arg):
+    
+    if arg.threads:
+        nproc = arg.threads
+    else:
+        nproc = 0
+
     single_or_pair = single_or_paired_read(arg.manifest_name)
 
     if single_or_pair == "single":
@@ -258,11 +264,11 @@ def main(arg):
 
     print(right_cutoff, left_cutoff)
 
-    call_denoise(right_cutoff, left_cutoff, single_or_pair)
+    call_denoise(right_cutoff, left_cutoff, single_or_pair,nproc)
 
     feature_visualizations(arg.metadata)
 
-    tree_construction()
+    tree_construction(nproc)
 
     depth = determine_depth()
 
@@ -286,6 +292,7 @@ if __name__ == "__main__":
                         help="name of the metadata file, usually metadata.tsv", dest='metadata')
     parser.add_argument('-i', "--interest", action='store', required=False,
                         help="item of interest for beta diversity analysis, must match one of the column-names in the metadata file", dest="interest")
+    parser.add_argument('-t', "--threads", action='store',required=False, help="number of threads to use for analysis, if not provided all threads will be used", dest="threads")
     parser.add_argument('-v', '--version', action='version',
                         version='%(prog)s 1.0')
 
