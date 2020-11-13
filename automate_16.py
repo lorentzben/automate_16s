@@ -274,9 +274,8 @@ def main(arg):
         tree_construction()
 
     # in: table.qzv  out: sampling_depth.csv
-    if(not os.path.isfile("sampling_depth.csv")):
-        depth = determine_depth()
-    subdepth = depth
+    depth = determine_depth()
+    
     # in: rooted-tree.qza table-dada2.qza out: core-metrics-results/
     if(not os.path.exists(os.getcwd()+"core-metrics-results")):
         diversity_measure(arg.metadata, subdepth)
