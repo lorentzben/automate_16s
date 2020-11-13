@@ -203,7 +203,7 @@ def diversity_measure(metadata, depth):
     logger.info(result.stdout)
     logger.critical(result.stderr)
 
-
+#TODO pull the data out of the viz and put that info in a logging line
 def alpha_div_calc(metadata):
     command = "qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results/faith_pd_vector.qza --m-metadata-file " + \
         metadata + " --o-visualization core-metrics-results/faith-pd-group-significance.qzv"
@@ -221,7 +221,7 @@ def alpha_div_calc(metadata):
 def beta_div_calc(metadata, item_of_interest):
     command = "qiime diversity beta-group-significance --i-distance-matrix core-metrics-results/unweighted_unifrac_distance_matrix.qza --m-metadata-file " + \
         metadata + " --m-metadata-column "+item_of_interest + \
-        " --o-visualization core-metric-results/unwighted-unifrac-body-site-significance.qzv --p-pairwise"
+        " --o-visualization core-metrics-results/unwighted-unifrac-body-site-significance.qzv --p-pairwise"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.critical(result.stderr)
