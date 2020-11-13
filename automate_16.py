@@ -268,7 +268,8 @@ def main(arg):
         print(right_cutoff, left_cutoff)
 
     # in: out:
-    call_denoise(right_cutoff, left_cutoff, single_or_pair, nproc)
+    if True:
+        call_denoise(right_cutoff, left_cutoff, single_or_pair, nproc)
 
     # in: out:
     feature_visualizations(arg.metadata)
