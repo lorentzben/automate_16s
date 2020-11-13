@@ -221,7 +221,7 @@ def alpha_div_calc(metadata):
 def beta_div_calc(metadata, item_of_interest):
     command = "qiime diversity beta-group-significance --i-distance-matrix core-metrics-results/unweighted_unifrac_distance_matrix.qza --m-metadata-file " + \
         metadata + " --m-metadata-column "+item_of_interest + \
-        " --o-visualization fore-metric-results/unwighted-unifrac-body-site-significance.qzv --p-pairwise"
+        " --o-visualization core-metric-results/unwighted-unifrac-body-site-significance.qzv --p-pairwise"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.critical(result.stderr)
