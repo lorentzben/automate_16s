@@ -261,27 +261,30 @@ def main(arg):
 
         print(right_cutoff, left_cutoff)
 
-    # in: out:
-    if True:
+    # in: demux.qza out: rep-seqs-dada2.qza table-dada2.qza stats-dada2.qza
+    if(not os.path.isfile("table-dada2.qza")) and if(not os.path.isfile("rep-seqs-dada2.qza")):
         call_denoise(right_cutoff, left_cutoff, single_or_pair)
 
-    # in: out:
-    feature_visualizations(arg.metadata)
+    # in: table-dada2.qza out: table.qzv rep-seqs.qzv 
+    if(not os.path.isfile("table.qzv")):
+        feature_visualizations(arg.metadata)
 
-    # in: out:
-    tree_construction()
+    # in: rep-seqs-dada2.qza out: aligned-rep-seqs.qza
+    if(not os.path.isfile("aligned-rep-seqs.qza")):
+        tree_construction()
 
-    # in: out:
-    depth = determine_depth()
+    # in: table.qzv  out: sampling_depth.csv
+    if(not os.path.isfile("sampling_depth.csv")):
+        depth = determine_depth()
 
-    # in: out:
-    diversity_measure(arg.metadata, depth)
+    # in: rooted-tree.qza table-dada2.qza out: core-metrics-results/
+    if(not os.path.exists(os.getcwd()+"core-metrics-results")):
+        diversity_measure(arg.metadata, depth)
 
-    # in: out:
+    # in: core-metrics-results/faith_pd_vector.qza out: core-metrics-results/faith-pd-group-significance.qzv
     alpha_div_calc(arg.metadata)
 
     if arg.interest:
-        # in: out:
         beta_div_calc(arg.metadata, arg.interest)
 
     logger.info('done')
