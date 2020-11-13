@@ -265,7 +265,7 @@ def main(arg):
     if((not os.path.isfile("table-dada2.qza")) and (not os.path.isfile("rep-seqs-dada2.qza"))):
         call_denoise(right_cutoff, left_cutoff, single_or_pair)
 
-    # in: table-dada2.qza out: table.qzv rep-seqs.qzv 
+    # in: table-dada2.qza out: table.qzv rep-seqs.qzv
     if(not os.path.isfile("table.qzv")):
         feature_visualizations(arg.metadata)
 
@@ -276,10 +276,10 @@ def main(arg):
     # in: table.qzv  out: sampling_depth.csv
     if(not os.path.isfile("sampling_depth.csv")):
         depth = determine_depth()
-
+    subdepth = depth
     # in: rooted-tree.qza table-dada2.qza out: core-metrics-results/
     if(not os.path.exists(os.getcwd()+"core-metrics-results")):
-        diversity_measure(arg.metadata, depth)
+        diversity_measure(arg.metadata, subdepth)
 
     # in: core-metrics-results/faith_pd_vector.qza out: core-metrics-results/faith-pd-group-significance.qzv
     alpha_div_calc(arg.metadata)
@@ -300,8 +300,6 @@ if __name__ == "__main__":
                         help="name of the metadata file, usually metadata.tsv", dest='metadata')
     parser.add_argument('-i', "--interest", action='store', required=False,
                         help="item of interest for beta diversity analysis, must match one of the column-names in the metadata file", dest="interest")
-    parser.add_argument('-t', "--threads", action='store', required=False,
-                        help="number of threads to use for analysis, if not provided all threads will be used", dest="threads")
     parser.add_argument('-v', '--version', action='version',
                         version='%(prog)s 1.0')
 
