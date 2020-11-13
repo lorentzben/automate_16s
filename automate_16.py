@@ -8,8 +8,6 @@ from pathlib import PurePath
 import pandas as pd
 import csv
 import argparse
-import qiime2
-from qiime2.plugins import dada2
 import numpy as np
 import glob
 
