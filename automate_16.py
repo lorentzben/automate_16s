@@ -159,56 +159,69 @@ def determine_depth():
 
     input_file = glob.glob(
         './inflate/*/data/sample-frequency-detail.csv')
-   
 
-    features = pd.read_csv(input_file[0], index_col=0,header=None)
+    features = pd.read_csv(input_file[0], index_col=0, header=None)
 
     total_count = sum(features[1])
-    sampling_depth = 0 
+    sampling_depth = 0
     perc_features_retain = 0.0
 
     print("total count: " + str(total_count))
 
     feature_array = np.array(features)
 
-    for i in range(len(feature_array)-1, -1,-1):
+    for i in range(len(feature_array)-1, -1, -1):
         sampling_depth = feature_array[i][0]
         perc_features_retain = ((sampling_depth * (i+1))/total_count)
         if perc_features_retain > .22:
             sampling_depth = feature_array[i][0]
-            print("sampling depth: " + str(sampling_depth) + " % features retained: " + str(round(perc_features_retain,3)) + " samples retained: " + str(i))
+            print("sampling depth: " + str(sampling_depth) + " % features retained: " +
+                  str(round(perc_features_retain, 3)) + " samples retained: " + str(i))
             break
-
 
     with open('sampling_depth.csv', 'w', newline='') as csvfile:
         fieldnames = ['stat', 'value']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
         writer.writeheader()
-        writer.writerow({'stat': 'sampling_depth' , 'value': sampling_depth})
-        writer.writerow({'stat': '%_features_retained', 'value': perc_features_retain})
+        writer.writerow({'stat': 'sampling_depth', 'value': sampling_depth})
+        writer.writerow({'stat': '%_features_retained',
+                         'value': perc_features_retain})
         writer.writerow({'stat': 'filename', 'value': input_file})
 
     logger.info("sampling_depth: "+str(sampling_depth))
-    logger.info("%_features_retained: " +str(perc_features_retain))
-    
+    logger.info("%_features_retained: " + str(perc_features_retain))
+
     return(sampling_depth)
+
 
 def diversity_measure(metadata, depth):
     command = "qiime diversity core-metrics-phylogenetic --i-phylogeny rooted-tree.qza --i-table table-dada2.qza --p-sampling-depth " + \
-        str(int(depth)) + " --m-metadata-file " + metadata + " --output-dir core-metrics-results"
+        str(int(depth)) + " --m-metadata-file " + \
+        metadata + " --output-dir core-metrics-results"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.critical(result.stderr)
 
-def alpha_div_calc():
-    command = "qiime diversity alpha-group-significance"
+
+def alpha_div_calc(metadata):
+    command = "qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results/faith_pd_vector.qza --m-metadata-file " + \
+        metadata + "--o-visualization core-metrics-results/faith-pd-group-significance.qzv"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.critical(result.stderr)
 
-def beta_div_calc():
-    command = "qiime diversity alpha-group-significance"
+    command = "qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results/evenness_vector.qza --m-metadata-file " + \
+        metadata + "--o-visualization core-metrics-results/evenness-group-significance.qzv"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.critical(result.stderr)
+
+
+def beta_div_calc(metadata, item_of_interest):
+    command = "qiime diversity beta-group-significance --i-distance-matrix core-metrics-results/unweighted_unifrac_distance_matrix.qza --m-metadata-file " + \
+        metadata + " --m-metadata-column "+item_of_interest + \
+        " --o-visualization fore-metric-results/unwighted-unifrac-body-site-significance.qzv --p-pairwise"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.critical(result.stderr)
@@ -242,10 +255,10 @@ def main(arg):
 
     diversity_measure(arg.metadata, depth)
 
-    alpha_div_calc()
+    alpha_div_calc(arg.metadata)
 
-    beta_div_calc()
-
+    if arg.interest:
+        beta_div_calc(arg.metadata, arg.interest)
 
 
 if __name__ == "__main__":
@@ -256,6 +269,8 @@ if __name__ == "__main__":
                         help="name for the manifest, typically manifest.tsv", dest='manifest_name')
     parser.add_argument('-m', '--metadata', action='store', required=True,
                         help="name of the metadata file, usually metadata.tsv", dest='metadata')
+    parser.add_argument('-i', "--interest", action='store', required=False,
+                        help="item of interest for beta diversity analysis, must match one of the column-names in the metadata file", dest="interest")
     parser.add_argument('-v', '--version', action='version',
                         version='%(prog)s 1.0')
 
