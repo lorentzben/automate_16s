@@ -204,13 +204,13 @@ def diversity_measure(metadata, depth):
 
 def alpha_div_calc(metadata):
     command = "qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results/faith_pd_vector.qza --m-metadata-file " + \
-        metadata + "--o-visualization core-metrics-results/faith-pd-group-significance.qzv"
+        metadata + " --o-visualization core-metrics-results/faith-pd-group-significance.qzv"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.critical(result.stderr)
 
     command = "qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results/evenness_vector.qza --m-metadata-file " + \
-        metadata + "--o-visualization core-metrics-results/evenness-group-significance.qzv"
+        metadata + " --o-visualization core-metrics-results/evenness-group-significance.qzv"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.critical(result.stderr)
