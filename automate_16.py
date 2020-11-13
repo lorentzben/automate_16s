@@ -201,7 +201,17 @@ def diversity_measure(metadata, depth):
     logger.info(result.stdout)
     logger.critical(result.stderr)
 
+def alpha_div_calc():
+    command = "qiime diversity alpha-group-significance"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.critical(result.stderr)
 
+def beta_div_calc():
+    command = "qiime diversity alpha-group-significance"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.critical(result.stderr)
 
 # TODO put checks in to pickeup from where a failed run left off.
 
@@ -231,6 +241,11 @@ def main(arg):
     depth = determine_depth()
 
     diversity_measure(arg.metadata, depth)
+
+    alpha_div_calc()
+
+    beta_div_calc()
+
 
 
 if __name__ == "__main__":
