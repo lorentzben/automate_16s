@@ -262,7 +262,7 @@ def main(arg):
         print(right_cutoff, left_cutoff)
 
     # in: demux.qza out: rep-seqs-dada2.qza table-dada2.qza stats-dada2.qza
-    if(not os.path.isfile("table-dada2.qza")) and if(not os.path.isfile("rep-seqs-dada2.qza")):
+    if((not os.path.isfile("table-dada2.qza")) and (not os.path.isfile("rep-seqs-dada2.qza"))):
         call_denoise(right_cutoff, left_cutoff, single_or_pair)
 
     # in: table-dada2.qza out: table.qzv rep-seqs.qzv 
