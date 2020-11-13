@@ -16,7 +16,8 @@ import datetime
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 # Logging handler which catches EVERYTHING
-logfile_name = "automate_"+str(datetime.datetime.now().date())+'_'+str(datetime.datetime.now().time()).replace(':','.')+'.log'
+logfile_name = "automate_"+str(datetime.datetime.now().date()) + \
+    '_'+str(datetime.datetime.now().time()).replace(':', '.')+'.log'
 file_logger = logging.FileHandler(logfile_name)
 file_logger.setLevel(logging.DEBUG)
 # Logging handler which logs less
@@ -35,6 +36,7 @@ logger.addHandler(console_logger)
 
 
 def single_or_paired_read(manifest):
+    logger.debug("determining paired or single end design")
     try:
         read_manifest = pd.read_table(manifest, index_col=0, sep='\t')
     except FileNotFoundError:
@@ -54,8 +56,7 @@ def single_or_paired_read(manifest):
 
 
 def generate_seq_object(manifest, seq_format):
-    #manifest = "manifest_trunc.tsv"
-    #seq_format = "SingleEndFastqManifestPhred33V2"
+    logger.debug("importing fastq files to qiime2 artifact format")
     command = "qiime tools import --type 'SampleData[SequencesWithQuality]' --input-path " + \
         manifest+" --output-path demux.qza --input-format " + seq_format
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
@@ -65,6 +66,7 @@ def generate_seq_object(manifest, seq_format):
 
 
 def qual_control():
+    logger.debug("checking quality of reads")
     command = "qiime demux summarize --i-data demux.qza --o-visualization demux_summary.qzv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
@@ -74,9 +76,10 @@ def qual_control():
 
 
 def calc_qual_cutoff():
+    logger.debug("determining left and right cutoffs based on qual score")
     input_file = glob.glob(
         './inflate/*/data/forward-seven-number-summaries.tsv')
-    #input_file = 'inflate/*/data/forward-seven-number-summaries.tsv'
+
     summary = pd.read_table(input_file[0], index_col=0, sep='\t')
 
     mean_qual = summary[4:5]
@@ -113,6 +116,7 @@ def calc_qual_cutoff():
 
 
 def call_denoise(right, left, seq_format):
+    logger.debug("denoising using dada2")
     if seq_format == 'single':
         command = "qiime dada2 denoise-single --i-demultiplexed-seqs demux.qza --p-trim-left " + str(left)+" --p-trunc-len " + \
             str(right) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
@@ -132,6 +136,7 @@ def call_denoise(right, left, seq_format):
 
 
 def feature_visualizations(metadata):
+    logger.debug("creating visualization objects")
     command = "qiime feature-table summarize --i-table table-dada2.qza --o-visualization table.qzv --m-sample-metadata-file " + metadata
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
@@ -144,6 +149,7 @@ def feature_visualizations(metadata):
 
 
 def tree_construction():
+    logger.debug("generating phylogenetic tree")
     command = "qiime phylogeny align-to-tree-mafft-fasttree --i-sequences rep-seqs-dada2.qza --o-alignment aligned-rep-seqs.qza --o-masked-alignment masked-aligned-rep-seqs.qza --o-tree unrooted-tree.qza --o-rooted-tree rooted-tree.qza"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
@@ -151,6 +157,7 @@ def tree_construction():
 
 
 def determine_depth():
+    logger.debug("determining the best sampling depth to use ")
     command = "unzip -d inflate table.qzv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
 
@@ -178,7 +185,7 @@ def determine_depth():
             print("sampling depth: " + str(sampling_depth) + " % features retained: " +
                   str(round(perc_features_retain, 3)) + " samples retained: " + str(i))
             break
-
+    logger.debug("writing dept out to file")
     with open('sampling_depth.csv', 'w', newline='') as csvfile:
         fieldnames = ['stat', 'value']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -196,6 +203,7 @@ def determine_depth():
 
 
 def diversity_measure(metadata, depth):
+    logger.debug("calculating general diversity measurments")
     command = "qiime diversity core-metrics-phylogenetic --i-phylogeny rooted-tree.qza --i-table table-dada2.qza --p-sampling-depth " + \
         str(int(depth)) + " --m-metadata-file " + \
         metadata + " --output-dir core-metrics-results"
@@ -203,8 +211,11 @@ def diversity_measure(metadata, depth):
     logger.info(result.stdout)
     logger.critical(result.stderr)
 
-#TODO pull the data out of the viz and put that info in a logging line
+# TODO pull the data out of the viz and put that info in a logging line
+
+
 def alpha_div_calc(metadata):
+    logger.debug('calculating alpha diversity')
     command = "qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results/faith_pd_vector.qza --m-metadata-file " + \
         metadata + " --o-visualization core-metrics-results/faith-pd-group-significance.qzv"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
@@ -219,6 +230,8 @@ def alpha_div_calc(metadata):
 
 
 def beta_div_calc(metadata, item_of_interest):
+    logger.debug(
+        'calculating beta diversity, only done if column of metadata is provided')
     command = "qiime diversity beta-group-significance --i-distance-matrix core-metrics-results/unweighted_unifrac_distance_matrix.qza --m-metadata-file " + \
         metadata + " --m-metadata-column "+item_of_interest + \
         " --o-visualization core-metrics-results/unweighted-unifrac-body-site-significance.qzv --p-pairwise"
