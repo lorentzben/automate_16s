@@ -9,12 +9,15 @@ from pathlib import PurePath
 import pandas as pd
 import csv
 import argparse
+import pandas as pd
+import datetime
 
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 # Logging handler which catches EVERYTHING
-file_logger = logging.FileHandler('automate_16s_setup.log')
+logfile_name = "setup_"+str(datetime.datetime.now().date())+'_'+str(datetime.datetime.now().time()).replace(':','.')+'.log'
+file_logger = logging.FileHandler(logfile_name)
 file_logger.setLevel(logging.DEBUG)
 # Logging handler which logs less
 console_logger = logging.StreamHandler()
@@ -30,7 +33,7 @@ console_logger.setFormatter(formatter)
 logger.addHandler(file_logger)
 logger.addHandler(console_logger)
 
-
+#TODO add a check for pandas 
 def check_dependencies():
     # checks to see if nextflow is installed, version is saved to log
     try:

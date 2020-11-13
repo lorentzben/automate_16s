@@ -10,12 +10,14 @@ import csv
 import argparse
 import numpy as np
 import glob
+import datetime
 
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 # Logging handler which catches EVERYTHING
-file_logger = logging.FileHandler('automate_16s.log')
+logfile_name = "automate_"+str(datetime.datetime.now().date())+'_'+str(datetime.datetime.now().time()).replace(':','.')+'.log'
+file_logger = logging.FileHandler(logfile_name)
 file_logger.setLevel(logging.DEBUG)
 # Logging handler which logs less
 console_logger = logging.StreamHandler()
