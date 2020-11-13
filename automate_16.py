@@ -115,14 +115,14 @@ def calc_qual_cutoff():
     return(right_cutoff, left_cutoff)
 
 
-def call_denoise(right, left, seq_format, nproc):
+def call_denoise(right, left, seq_format):
     logger.debug("denoising using dada2")
     if seq_format == 'single':
         command = "qiime dada2 denoise-single --i-demultiplexed-seqs demux.qza --p-trim-left " + str(left)+" --p-trunc-len " + \
-            str(right) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"# --p-n-threads " + str(nproc)
+            str(right) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
     elif seq_format == 'paired':
         command = "qiime dada2 denoise-paired --i-demultiplexed-seqs demux.qza --p-trim-left " + str(left)+" --p-trunc-len " + \
-            str(right) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"# --p-n-threads " + str(nproc)
+            str(right) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
 
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
@@ -148,10 +148,9 @@ def feature_visualizations(metadata):
     logger.critical(result.stderr)
 
 
-def tree_construction(nproc):
+def tree_construction():
     logger.debug("generating phylogenetic tree")
-    command = "qiime phylogeny align-to-tree-mafft-fasttree --i-sequences rep-seqs-dada2.qza --o-alignment aligned-rep-seqs.qza --o-masked-alignment masked-aligned-rep-seqs.qza --o-tree unrooted-tree.qza --o-rooted-tree rooted-tree.qza -p-n-threads " + \
-        str(nproc)
+    command = "qiime phylogeny align-to-tree-mafft-fasttree --i-sequences rep-seqs-dada2.qza --o-alignment aligned-rep-seqs.qza --o-masked-alignment masked-aligned-rep-seqs.qza --o-tree unrooted-tree.qza --o-rooted-tree rooted-tree.qza"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.critical(result.stderr)
@@ -245,11 +244,6 @@ def beta_div_calc(metadata, item_of_interest):
 
 def main(arg):
 
-    if arg.threads:
-        nproc = arg.threads
-    else:
-        nproc = 0
-
     single_or_pair = single_or_paired_read(arg.manifest_name)
 
     if single_or_pair == "single":
@@ -269,13 +263,13 @@ def main(arg):
 
     # in: out:
     if True:
-        call_denoise(right_cutoff, left_cutoff, single_or_pair, nproc)
+        call_denoise(right_cutoff, left_cutoff, single_or_pair)
 
     # in: out:
     feature_visualizations(arg.metadata)
 
     # in: out:
-    tree_construction(nproc)
+    tree_construction()
 
     # in: out:
     depth = determine_depth()
