@@ -119,10 +119,10 @@ def call_denoise(right, left, seq_format, nproc):
     logger.debug("denoising using dada2")
     if seq_format == 'single':
         command = "qiime dada2 denoise-single --i-demultiplexed-seqs demux.qza --p-trim-left " + str(left)+" --p-trunc-len " + \
-            str(right) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza --p-n-threads " +str(nproc)
+            str(right) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza --p-n-threads " + str(nproc)
     elif seq_format == 'paired':
         command = "qiime dada2 denoise-paired --i-demultiplexed-seqs demux.qza --p-trim-left " + str(left)+" --p-trunc-len " + \
-            str(right) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza --p-n-threads " +str(nproc)
+            str(right) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza --p-n-threads " + str(nproc)
 
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
@@ -150,7 +150,8 @@ def feature_visualizations(metadata):
 
 def tree_construction(nproc):
     logger.debug("generating phylogenetic tree")
-    command = "qiime phylogeny align-to-tree-mafft-fasttree --i-sequences rep-seqs-dada2.qza --o-alignment aligned-rep-seqs.qza --o-masked-alignment masked-aligned-rep-seqs.qza --o-tree unrooted-tree.qza --o-rooted-tree rooted-tree.qza -p-n-threads " +str(nproc)
+    command = "qiime phylogeny align-to-tree-mafft-fasttree --i-sequences rep-seqs-dada2.qza --o-alignment aligned-rep-seqs.qza --o-masked-alignment masked-aligned-rep-seqs.qza --o-tree unrooted-tree.qza --o-rooted-tree rooted-tree.qza -p-n-threads " + \
+        str(nproc)
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.critical(result.stderr)
@@ -243,7 +244,7 @@ def beta_div_calc(metadata, item_of_interest):
 
 
 def main(arg):
-    
+
     if arg.threads:
         nproc = arg.threads
     else:
@@ -256,27 +257,36 @@ def main(arg):
     elif single_or_pair == "paired":
         category = "PairedEndFastqManifestPhred33V2"
 
-    generate_seq_object(arg.manifest_name, category)
-    qual_control()
-    cutoffs = calc_qual_cutoff()
-    right_cutoff = cutoffs[0]
-    left_cutoff = cutoffs[1]
+    #out: demux.qza
+    if(not os.path.isfile("demux.qza")):
+        generate_seq_object(arg.manifest_name, category)
+        qual_control()
+        cutoffs = calc_qual_cutoff()
+        right_cutoff = cutoffs[0]
+        left_cutoff = cutoffs[1]
 
-    print(right_cutoff, left_cutoff)
+        print(right_cutoff, left_cutoff)
 
-    call_denoise(right_cutoff, left_cutoff, single_or_pair,nproc)
+    # in: out:
+    call_denoise(right_cutoff, left_cutoff, single_or_pair, nproc)
 
+    # in: out:
     feature_visualizations(arg.metadata)
 
+    # in: out:
     tree_construction(nproc)
 
+    # in: out:
     depth = determine_depth()
 
+    # in: out:
     diversity_measure(arg.metadata, depth)
 
+    # in: out:
     alpha_div_calc(arg.metadata)
 
     if arg.interest:
+        # in: out:
         beta_div_calc(arg.metadata, arg.interest)
 
     logger.info('done')
@@ -292,7 +302,8 @@ if __name__ == "__main__":
                         help="name of the metadata file, usually metadata.tsv", dest='metadata')
     parser.add_argument('-i', "--interest", action='store', required=False,
                         help="item of interest for beta diversity analysis, must match one of the column-names in the metadata file", dest="interest")
-    parser.add_argument('-t', "--threads", action='store',required=False, help="number of threads to use for analysis, if not provided all threads will be used", dest="threads")
+    parser.add_argument('-t', "--threads", action='store', required=False,
+                        help="number of threads to use for analysis, if not provided all threads will be used", dest="threads")
     parser.add_argument('-v', '--version', action='version',
                         version='%(prog)s 1.0')
 
