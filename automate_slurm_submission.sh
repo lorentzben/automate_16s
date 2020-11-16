@@ -1,7 +1,5 @@
 #!/bin/bash
 
-EMAIL = "${USER}@uga.edu"
-
 #SBATCH --partition=batch
 #SBATCH --job-name=16s_analysis
 #SBATCH --nodes=2
@@ -9,6 +7,8 @@ EMAIL = "${USER}@uga.edu"
 #SBATCH --time=24:00:00
 #SBATCH --mem=16gb
 
+
+EMAIL = "${USER}@uga.edu"
 #SBATCH --mail-user= $EMAIL
 #SBATCH --mail-type=BEGIN,END,FAIL
 
