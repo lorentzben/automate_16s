@@ -1,5 +1,7 @@
 #!/bin/bash
 
+EMAIL = "${USER}@uga.edu"
+
 #SBATCH --partition=batch
 #SBATCH --job-name=16s_analysis
 #SBATCH --nodes=2
@@ -7,7 +9,7 @@
 #SBATCH --time=24:00:00
 #SBATCH --mem=16gb
 
-#SBATCH --mail-user= "${USER}@uga.edu"
+#SBATCH --mail-user= $EMAIL
 #SBATCH --mail-type=BEGIN,END,FAIL
 
 MANIFEST="manifest.tsv"
