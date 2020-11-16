@@ -1,4 +1,14 @@
 #!/usr/bin/env bash
+TIME =  date +"%FT%H%M%S"
+#SBATCH --partition=batch
+#SBATCH --job-name= $TIME
+#SBATCH --ntasks=8
+#SBATCH --time=24:00:00
+#SBATCH --mem=16G
+
+#SBATCH --mail-user= "${USER}@uga.edu"
+#SBATCH --mail-type=BEGIN,END,FAIL
+
 MANIFEST="manifest.tsv"
 METADATA="metadata_fake.tsv"
 SEQS="demultiplexed_seqs"
