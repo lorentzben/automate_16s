@@ -7,9 +7,8 @@
 #SBATCH --time=24:00:00
 #SBATCH --mem=16gb
 
-
-EMAIL = "${USER}@uga.edu"
-#SBATCH --mail-user= $EMAIL
+#Replace this with your UGA email to get notified on completion
+#SBATCH --mail-user= ""
 #SBATCH --mail-type=BEGIN,END,FAIL
 
 MANIFEST="manifest.tsv"
