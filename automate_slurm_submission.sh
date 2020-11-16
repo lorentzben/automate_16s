@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 TIME =  date +"%FT%H%M%S"
 #SBATCH --partition=batch
-#SBATCH --job-name= "${USER}"
+#SBATCH --job-name=16s_analysis
 #SBATCH --nodes=2
 #SBATCH --ntasks=8
 #SBATCH --time=24:00:00
