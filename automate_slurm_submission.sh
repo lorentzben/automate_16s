@@ -2,9 +2,10 @@
 TIME =  date +"%FT%H%M%S"
 #SBATCH --partition=batch
 #SBATCH --job-name= $TIME
+#SBATCH --nodes=2
 #SBATCH --ntasks=8
 #SBATCH --time=24:00:00
-#SBATCH --mem=16G
+#SBATCH --mem=16gb
 
 #SBATCH --mail-user= "${USER}@uga.edu"
 #SBATCH --mail-type=BEGIN,END,FAIL
