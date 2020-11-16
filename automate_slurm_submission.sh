@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
-TIME =  date +"%FT%H%M%S"
+#!/bin/bash
+
 #SBATCH --partition=batch
 #SBATCH --job-name=16s_analysis
 #SBATCH --nodes=2
