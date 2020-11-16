@@ -11,6 +11,7 @@
 #SBATCH --mail-user= ""
 #SBATCH --mail-type=BEGIN,END,FAIL
 
+#These values need to be be replaced with your files
 MANIFEST="manifest.tsv"
 METADATA="metadata_fake.tsv"
 SEQS="demultiplexed_seqs"

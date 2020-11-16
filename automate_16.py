@@ -34,6 +34,7 @@ console_logger.setFormatter(formatter)
 logger.addHandler(file_logger)
 logger.addHandler(console_logger)
 
+folder = "inflate_" + str(datetime.datetime.now().date()) + '_'+str(datetime.datetime.now().time()).replace(':', '.')
 
 def single_or_paired_read(manifest):
     logger.debug("determining paired or single end design")
@@ -55,12 +56,14 @@ def single_or_paired_read(manifest):
         exit(1)
 
 
-def generate_seq_object(manifest, seq_format):
+def generate_seq_object(manifest, seq_format,seq_format2):
     logger.debug("importing fastq files to qiime2 artifact format")
-    command = "qiime tools import --type 'SampleData[SequencesWithQuality]' --input-path " + \
+    command = "qiime tools import --type "+seq_format2+" --input-path " + \
         manifest+" --output-path demux.qza --input-format " + seq_format
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
-
+    if result.returncode == 1:
+        logger.critical("There are missing files please review manifest")
+        exit(1)
     logger.info(result.stdout)
     logger.critical(result.stderr)
 
@@ -71,14 +74,15 @@ def qual_control():
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
     logger.critical(result.stderr)
-    command = "unzip -d inflate demux_summary.qzv"
+    
+    command = "unzip -d " +folder+ " demux_summary.qzv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
 
 
 def calc_qual_cutoff():
     logger.debug("determining left and right cutoffs based on qual score")
     input_file = glob.glob(
-        './inflate/*/data/forward-seven-number-summaries.tsv')
+        './'+folder+'/*/data/forward-seven-number-summaries.tsv')
 
     summary = pd.read_table(input_file[0], index_col=0, sep='\t')
 
@@ -158,14 +162,14 @@ def tree_construction():
 
 def determine_depth():
     logger.debug("determining the best sampling depth to use ")
-    command = "unzip -d inflate table.qzv"
+    command = "unzip -d "+folder+" table.qzv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
 
     logger.info(result.stdout)
     logger.critical(result.stderr)
 
     input_file = glob.glob(
-        './inflate/*/data/sample-frequency-detail.csv')
+        './'+folder+'/*/data/sample-frequency-detail.csv')
 
     features = pd.read_csv(input_file[0], index_col=0, header=None)
 
@@ -251,11 +255,13 @@ def main(arg):
 
     if single_or_pair == "single":
         category = "SingleEndFastqManifestPhred33V2"
+        cat2 = "SampleData[SequencesWithQuality]"
     elif single_or_pair == "paired":
         category = "PairedEndFastqManifestPhred33V2"
+        cat2 = "SampleData[PairedEndSequencesWithQuality]"
 
     #out: demux.qza
-    generate_seq_object(arg.manifest_name, category)
+    generate_seq_object(arg.manifest_name, category, cat2)
     qual_control()
     cutoffs = calc_qual_cutoff()
     right_cutoff = cutoffs[0]
