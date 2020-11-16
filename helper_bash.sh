@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-$manifest = "manifest.tsv"
+"manifest.tsv" = $manifest
 $metadata = "metadata.tsv"
 $seqs = "seq"
 
