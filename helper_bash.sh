@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 MANIFEST="manifest.tsv"
-METADATA="metadata.tsv"
-SEQS="seq"
+METADATA="metadata_fake.tsv"
+SEQS="demultiplexed_seqs"
 
 #this must be a column name in the metadata.tsv file 
 VAR_OF_INTEREST="treatment"
