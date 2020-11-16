@@ -4,7 +4,7 @@ METADATA="metadata_fake.tsv"
 SEQS="demultiplexed_seqs"
 
 #this must be a column name in the metadata.tsv file 
-VAR_OF_INTEREST="treatment"
+VAR_OF_INTEREST="body-site"
 
 module load Python/3.8.2-GCCcore-8.3.0
 module load Nextflow/20.04.1
