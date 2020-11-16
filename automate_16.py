@@ -125,8 +125,8 @@ def call_denoise(right, left, seq_format):
         command = "qiime dada2 denoise-single --i-demultiplexed-seqs demux.qza --p-trim-left " + str(left)+" --p-trunc-len " + \
             str(right) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
     elif seq_format == 'paired':
-        command = "qiime dada2 denoise-paired --i-demultiplexed-seqs demux.qza --p-trim-left " + str(left)+" --p-trunc-len " + \
-            str(right) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
+        command = "qiime dada2 denoise-paired --i-demultiplexed-seqs demux.qza --p-trunc-len-f " + str(left)+" --p-trunc-len-r " + \
+            str(left) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
 
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
