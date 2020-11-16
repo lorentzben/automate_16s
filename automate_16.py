@@ -238,6 +238,9 @@ def beta_div_calc(metadata, item_of_interest):
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.critical(result.stderr)
+    if result.returncode == 1:
+        logger.critical("the variable provided does not appear to be a column of the metadata file, please review")
+        exit(1)
 
 # TODO put checks in to pickeup from where a failed run left off.
 
