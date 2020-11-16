@@ -255,33 +255,28 @@ def main(arg):
         category = "PairedEndFastqManifestPhred33V2"
 
     #out: demux.qza
-    if(not os.path.isfile("demux.qza")):
-        generate_seq_object(arg.manifest_name, category)
-        qual_control()
-        cutoffs = calc_qual_cutoff()
-        right_cutoff = cutoffs[0]
-        left_cutoff = cutoffs[1]
+    generate_seq_object(arg.manifest_name, category)
+    qual_control()
+    cutoffs = calc_qual_cutoff()
+    right_cutoff = cutoffs[0]
+    left_cutoff = cutoffs[1]
 
-        print(right_cutoff, left_cutoff)
+    print(right_cutoff, left_cutoff)
 
     # in: demux.qza out: rep-seqs-dada2.qza table-dada2.qza stats-dada2.qza
-    if((not os.path.isfile("table-dada2.qza")) and (not os.path.isfile("rep-seqs-dada2.qza"))):
-        call_denoise(right_cutoff, left_cutoff, single_or_pair)
+    call_denoise(right_cutoff, left_cutoff, single_or_pair)
 
     # in: table-dada2.qza out: table.qzv rep-seqs.qzv
-    if(not os.path.isfile("table.qzv")):
-        feature_visualizations(arg.metadata)
+    feature_visualizations(arg.metadata)
 
     # in: rep-seqs-dada2.qza out: aligned-rep-seqs.qza
-    if(not os.path.isfile("aligned-rep-seqs.qza")):
-        tree_construction()
+    tree_construction()
 
     # in: table.qzv  out: sampling_depth.csv
     depth = determine_depth()
 
     # in: rooted-tree.qza table-dada2.qza out: core-metrics-results/
-    if(not os.path.exists(os.getcwd()+"core-metrics-results")):
-        diversity_measure(arg.metadata, depth)
+    diversity_measure(arg.metadata, depth)
 
     # in: core-metrics-results/faith_pd_vector.qza out: core-metrics-results/faith-pd-group-significance.qzv
     alpha_div_calc(arg.metadata)
