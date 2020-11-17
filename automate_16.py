@@ -67,7 +67,7 @@ def generate_seq_object(manifest, seq_format, seq_format2):
         logger.critical("There are missing files please review manifest")
         exit(1)
     logger.info(result.stdout)
-    logger.critical(result.stderr)
+    logger.error(result.stderr)
 
 
 def qual_control():
@@ -75,7 +75,7 @@ def qual_control():
     command = "qiime demux summarize --i-data demux.qza --o-visualization demux_summary.qzv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
-    logger.critical(result.stderr)
+    logger.error(result.stderr)
 
     command = "unzip -d " + folder + " demux_summary.qzv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
@@ -180,13 +180,13 @@ def call_denoise(cutoff, seq_format):
 
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
-    logger.critical(result.stderr)
+    logger.error(result.stderr)
 
     command = "qiime metadata tabulate --m-input-file stats-dada2.qza --o-visualization stats-dada2.qza"
 
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
-    logger.critical(result.stderr)
+    logger.error(result.stderr)
 
 
 def feature_visualizations(metadata):
@@ -194,12 +194,12 @@ def feature_visualizations(metadata):
     command = "qiime feature-table summarize --i-table table-dada2.qza --o-visualization table.qzv --m-sample-metadata-file " + metadata
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
-    logger.critical(result.stderr)
+    logger.error(result.stderr)
 
     command = "qiime feature-table tabulate-seqs --i-data rep-seqs-dada2.qza --o-visualization rep-seqs.qzv"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
-    logger.critical(result.stderr)
+    logger.error(result.stderr)
 
 
 def tree_construction():
@@ -207,7 +207,7 @@ def tree_construction():
     command = "qiime phylogeny align-to-tree-mafft-fasttree --i-sequences rep-seqs-dada2.qza --o-alignment aligned-rep-seqs.qza --o-masked-alignment masked-aligned-rep-seqs.qza --o-tree unrooted-tree.qza --o-rooted-tree rooted-tree.qza"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
-    logger.critical(result.stderr)
+    logger.error(result.stderr)
 
 
 def determine_depth():
@@ -216,7 +216,7 @@ def determine_depth():
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
 
     logger.info(result.stdout)
-    logger.critical(result.stderr)
+    logger.error(result.stderr)
 
     input_file = glob.glob(
         './'+folder+'/*/data/sample-frequency-detail.csv')
@@ -263,7 +263,7 @@ def diversity_measure(metadata, depth):
         metadata + " --output-dir core-metrics-results --p-n-jobs-or-threads 'auto'"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
-    logger.critical(result.stderr)
+    logger.error(result.stderr)
 
 # TODO pull the data out of the viz and put that info in a logging line
 
@@ -274,13 +274,13 @@ def alpha_div_calc(metadata):
         metadata + " --o-visualization core-metrics-results/faith-pd-group-significance.qzv"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
-    logger.critical(result.stderr)
+    logger.error(result.stderr)
 
     command = "qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results/evenness_vector.qza --m-metadata-file " + \
         metadata + " --o-visualization core-metrics-results/evenness-group-significance.qzv"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
-    logger.critical(result.stderr)
+    logger.error(result.stderr)
 
 
 def beta_div_calc(metadata, item_of_interest):
@@ -292,7 +292,7 @@ def beta_div_calc(metadata, item_of_interest):
         item_of_interest+"-significance.qzv --p-pairwise"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
-    logger.critical(result.stderr)
+    logger.error(result.stderr)
     if result.returncode == 1:
         logger.critical(
             "the variable provided does not appear to be a column of the metadata file, please review")

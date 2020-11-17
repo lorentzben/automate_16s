@@ -68,7 +68,6 @@ def check_provided_dir(manifest, seq_dir):
         logger.critical("that manifest file does not exist")
         exit(1)
 
-
     path = read_manifest.iloc[[1][0]][0]
     manifest_seq_dir = os.path.split(os.path.split(path)[0])[1]
 
@@ -161,7 +160,7 @@ def verify_manifest(manifest, seq_dir):
     # creates a list for the user
     if missing != []:
 
-        logger.critical("files are missing, please see missing.csv to correct")
+        logger.error("files are missing, please see missing.csv to correct")
 
         with open('missing.csv', 'w', newline='') as csvfile:
             fieldnames = ['filename']
