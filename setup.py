@@ -69,7 +69,7 @@ def check_provided_dir(manifest, seq_dir):
         exit(1)
 
 
-    path = read_manifest[[1][0]][0]
+    path = read_manifest.iloc[[1][0]][0]
     manifest_seq_dir = os.path.split(os.path.split(path)[0])[1]
 
     if seq_dir != manifest_seq_dir:
