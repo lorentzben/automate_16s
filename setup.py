@@ -53,6 +53,7 @@ def check_dependencies():
         # exit(1)
     logger.info('all software installed and ready to go')
 
+#TODO determine a way to verify the dir provided is the same as the manifest
 
 def verify_manifest(manifest, seq_dir):
     try:

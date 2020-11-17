@@ -80,8 +80,6 @@ def qual_control():
     command = "unzip -d " + folder + " demux_summary.qzv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
 
-# TODO, remake this function to take in a csv file and return cutoffs, return paired or single
-
 
 def find_cutoffs(dataframe):
     mean_qual = dataframe[4:5]
@@ -137,7 +135,7 @@ def calc_qual_cutoff(seq_format):
         fr_summary = pd.read_table(forward_file[0], index_col=0, sep='\t')
 
         forward = find_cutoffs(fr_summary)
-        
+
         reverse_file = glob.glob(
             './'+folder+'/*/data/reverse-seven-number-summaries.tsv')
         rev_summary = pd.read_table(reverse_file[0], index_col=0, sep='\t')
@@ -162,7 +160,6 @@ def calc_qual_cutoff(seq_format):
         return(forward, reverse)
 
 
-# TODO check paired
 def call_denoise(cutoff, seq_format):
     logger.debug("denoising using dada2")
     if seq_format == 'single':
@@ -176,7 +173,8 @@ def call_denoise(cutoff, seq_format):
         rev_left = cutoff[1][0]
         rev_right = cutoff[1][1]
         command = "qiime dada2 denoise-paired --i-demultiplexed-seqs demux.qza --p-trunc-len-f " + str(forward_right)+" --p-trunc-len-r " + \
-            str(rev_right) + " --p-trim-left-f " +str(forward_left)+" --p-trim-left-r " +str(rev_left)+" --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
+            str(rev_right) + " --p-trim-left-f " + str(forward_left)+" --p-trim-left-r " + str(rev_left) + \
+            " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
 
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
