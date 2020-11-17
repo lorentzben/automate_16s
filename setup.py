@@ -68,7 +68,6 @@ def check_provided_dir(manifest, seq_dir):
         logger.critical("that manifest file does not exist")
         exit(1)
 
-    p = Path.cwd()
 
     path = read_manifest[[1][0]][0]
     manifest_seq_dir = os.path.split(os.path.split(path)[0])[1]
@@ -182,7 +181,7 @@ def verify_manifest(manifest, seq_dir):
 def main(arg):
     check_dependencies()
     # TODO can come back and make this user-editable, but for right now I will hard-code it.
-    check_provided_dir(arg.manifest, arg.seq_dir)
+    check_provided_dir(arg.manifest_name, arg.seq_dir)
     verify_manifest(arg.manifest_name, arg.seq_dir)
 
 
