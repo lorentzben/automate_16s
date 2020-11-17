@@ -132,15 +132,15 @@ def calc_qual_cutoff(seq_format):
     elif seq_format == "paired":
         logger.debug(
             "determining forward and revese, left and right cutoffs based on qual score")
-        input_file = glob.glob(
+        forward_file = glob.glob(
             './'+folder+'/*/data/forward-seven-number-summaries.tsv')
-        fr_summary = pd.read_table(input_file[0], index_col=0, sep='\t')
+        fr_summary = pd.read_table(forward_file[0], index_col=0, sep='\t')
 
         forward = find_cutoffs(fr_summary)
-
-        input_file = glob.glob(
+        
+        reverse_file = glob.glob(
             './'+folder+'/*/data/reverse-seven-number-summaries.tsv')
-        rev_summary = pd.read_table(input_file[0], index_col=0, sep='\t')
+        rev_summary = pd.read_table(reverse_file[0], index_col=0, sep='\t')
 
         reverse = find_cutoffs(rev_summary)
 
