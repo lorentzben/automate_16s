@@ -24,6 +24,18 @@ module load Nextflow/20.04.1
 module load QIIME2/2020.6
 
 python3 -m pip install --user pandas
-python3 setup.py -n $MANIFEST -d $SEQS
+CODE=python3 setup.py -n $MANIFEST -d $SEQS
 
-python3 automate_16.py -n $MANIFEST -m $METADATA -i $VAR_OF_INTEREST
+if [[ $CODE -eq 1 ]]
+then
+   echo "There was an issue validating please review the logfile"
+   exit(1)
+fi
+
+CODE2=python3 automate_16.py -n $MANIFEST -m $METADATA -i $VAR_OF_INTEREST
+
+if [[ $CODE2 -eq 1 ]]
+then
+   echo "There was an issue please review the logfile"
+   exit(1)
+fi
