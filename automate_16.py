@@ -80,6 +80,8 @@ def qual_control():
     command = "unzip -d " + folder + " demux_summary.qzv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
 
+# point of optimization: increase the quality score higher by 3 points? for reverse reads.
+
 
 def find_cutoffs(dataframe):
     mean_qual = dataframe[4:5]

@@ -16,7 +16,8 @@ import datetime
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 # Logging handler which catches EVERYTHING
-logfile_name = "setup_"+str(datetime.datetime.now().date())+'_'+str(datetime.datetime.now().time()).replace(':','.')+'.log'
+logfile_name = "setup_"+str(datetime.datetime.now().date()) + \
+    '_'+str(datetime.datetime.now().time()).replace(':', '.')+'.log'
 file_logger = logging.FileHandler(logfile_name)
 file_logger.setLevel(logging.DEBUG)
 # Logging handler which logs less
@@ -33,11 +34,14 @@ console_logger.setFormatter(formatter)
 logger.addHandler(file_logger)
 logger.addHandler(console_logger)
 
-#TODO add a check for pandas 
+# TODO add a check for pandas
+
+
 def check_dependencies():
     # checks to see if nextflow is installed, version is saved to log
     try:
-        command = subprocess.run(['nextflow -v'], stdout=PIPE, stderr=PIPE, shell=True )
+        command = subprocess.run(
+            ['nextflow -v'], stdout=PIPE, stderr=PIPE, shell=True)
         logger.info("nextflow installed: " + str(command.stdout))
     except FileNotFoundError:
         logger.info(
@@ -45,7 +49,8 @@ def check_dependencies():
         # exit(1)
     # checks to see if qiime is installed, all software versions are saved to log
     try:
-        command = subprocess.run(['qiime info'], stdout=PIPE, stderr=PIPE, shell=True)
+        command = subprocess.run(
+            ['qiime info'], stdout=PIPE, stderr=PIPE, shell=True)
         logger.info(command.stdout)
     except FileNotFoundError:
         logger.info(
@@ -53,7 +58,26 @@ def check_dependencies():
         # exit(1)
     logger.info('all software installed and ready to go')
 
-#TODO determine a way to verify the dir provided is the same as the manifest
+# TODO determine a way to verify the dir provided is the same as the manifest
+
+
+def check_provided_dir(manifest, seq_dir):
+    try:
+        read_manifest = pd.read_table(manifest, index_col=0, sep='\t')
+    except FileNotFoundError:
+        logger.critical("that manifest file does not exist")
+        exit(1)
+
+    p = Path.cwd()
+
+    path = read_manifest[[1][0]][0]
+    manifest_seq_dir = os.path.split(os.path.split(path)[0])[1]
+
+    if seq_dir != manifest_seq_dir:
+        logger.critical(
+            "The provided directory is not the same as the directory outlined in the manifest; This check will not function correctly")
+        exit(1)
+
 
 def verify_manifest(manifest, seq_dir):
     try:
@@ -64,7 +88,7 @@ def verify_manifest(manifest, seq_dir):
 
     # sets current dir and finds the fastq and fastq.gz files in the current directory
     p = Path.cwd()
-    list_of_fastq = list(p.glob(seq_dir+ '/*.fastq'))
+    list_of_fastq = list(p.glob(seq_dir + '/*.fastq'))
     list_of_gz = list(p.glob(seq_dir+'/*.fastq.gz'))
 
     fastq_files = []
@@ -153,10 +177,6 @@ def verify_manifest(manifest, seq_dir):
 
     logging.info("the manifest called: " + manifest +
                  " is valid and ready to go")
-
-
-def error():
-    print("something is wrong and I will try to tell you what the problem is")
 
 
 def main(arg):
