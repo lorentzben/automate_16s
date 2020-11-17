@@ -127,7 +127,7 @@ def calc_qual_cutoff(seq_format):
             writer.writerow({'cutoff': 'left', 'value': left_cutoff})
             writer.writerow({'cutoff': 'filename', 'value': input_file})
 
-        return(right_cutoff, left_cutoff)
+        return(left_cutoff, right_cutoff)
 
     elif seq_format == "paired":
         logger.debug(
@@ -162,14 +162,20 @@ def calc_qual_cutoff(seq_format):
 
 
 # TODO check paired
-def call_denoise(right, left, seq_format):
+def call_denoise(cutoff, seq_format):
     logger.debug("denoising using dada2")
     if seq_format == 'single':
+        left = cutoff[0]
+        right = cutoff[0]
         command = "qiime dada2 denoise-single --i-demultiplexed-seqs demux.qza --p-trim-left " + str(left)+" --p-trunc-len " + \
             str(right) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
     elif seq_format == 'paired':
-        command = "qiime dada2 denoise-paired --i-demultiplexed-seqs demux.qza --p-trunc-len-f " + str(right)+" --p-trunc-len-r " + \
-            str(right) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
+        forward_left = cutoff[0][0]
+        forward_right = cutoff[0][1]
+        rev_left = cutoff[1][0]
+        rev_right = cutoff[1][1]
+        command = "qiime dada2 denoise-paired --i-demultiplexed-seqs demux.qza --p-trunc-len-f " + str(forward_right)+" --p-trunc-len-r " + \
+            str(rev_right) + " --p-trim-left-f " +str(forward_left)+" --p-trim-left-r " +str(rev_left)+" --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
 
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
@@ -309,13 +315,11 @@ def main(arg):
     generate_seq_object(arg.manifest_name, category, cat2)
     qual_control()
     cutoffs = calc_qual_cutoff(single_or_pair)
-    right_cutoff = cutoffs[0]
-    left_cutoff = cutoffs[1]
 
-    print(right_cutoff, left_cutoff)
+    print(cutoffs)
 
     # in: demux.qza out: rep-seqs-dada2.qza table-dada2.qza stats-dada2.qza
-    call_denoise(right_cutoff, left_cutoff, single_or_pair)
+    call_denoise(cutoffs, single_or_pair)
 
     # in: table-dada2.qza out: table.qzv rep-seqs.qzv
     feature_visualizations(arg.metadata)
