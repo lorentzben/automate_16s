@@ -34,7 +34,9 @@ console_logger.setFormatter(formatter)
 logger.addHandler(file_logger)
 logger.addHandler(console_logger)
 
-folder = "inflate_" + str(datetime.datetime.now().date()) + '_'+str(datetime.datetime.now().time()).replace(':', '.')
+folder = "inflate_" + str(datetime.datetime.now().date()) + \
+    '_'+str(datetime.datetime.now().time()).replace(':', '.')
+
 
 def single_or_paired_read(manifest):
     logger.debug("determining paired or single end design")
@@ -56,7 +58,7 @@ def single_or_paired_read(manifest):
         exit(1)
 
 
-def generate_seq_object(manifest, seq_format,seq_format2):
+def generate_seq_object(manifest, seq_format, seq_format2):
     logger.debug("importing fastq files to qiime2 artifact format")
     command = "qiime tools import --type "+seq_format2+" --input-path " + \
         manifest+" --output-path demux.qza --input-format " + seq_format
@@ -74,25 +76,22 @@ def qual_control():
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
     logger.critical(result.stderr)
-    
-    command = "unzip -d " +folder+ " demux_summary.qzv"
+
+    command = "unzip -d " + folder + " demux_summary.qzv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
 
+# TODO, remake this function to take in a csv file and return cutoffs, return paired or single
 
-def calc_qual_cutoff():
-    logger.debug("determining left and right cutoffs based on qual score")
-    input_file = glob.glob(
-        './'+folder+'/*/data/forward-seven-number-summaries.tsv')
 
-    summary = pd.read_table(input_file[0], index_col=0, sep='\t')
-
-    mean_qual = summary[4:5]
+def find_cutoffs(dataframe):
+    mean_qual = dataframe[4:5]
 
     average_qual = np.round(mean_qual.mean(axis=1), 0)
     mean_qual_vals = np.array(mean_qual)[0]
 
     if int(average_qual) < 30:
-        print("The Average Quality of these sequences may be a concern would you like to continue?")
+        print(
+            "The Average Quality of these sequences may be a concern would you like to continue?")
         exit(0)
 
     for i in range(0, len(mean_qual_vals)):
@@ -103,22 +102,66 @@ def calc_qual_cutoff():
         if mean_qual_vals[len(mean_qual_vals)-1-i] >= int(average_qual):
             right_cutoff = len(mean_qual_vals)-i
             break
-
-    logger.info("right cutoff: "+str(right_cutoff))
-    logger.info("left cutoff: " + str(left_cutoff))
-
-    with open('cutoffs.csv', 'w', newline='') as csvfile:
-        fieldnames = ['cutoff', 'value']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-
-        writer.writeheader()
-        writer.writerow({'cutoff': 'right', 'value': right_cutoff})
-        writer.writerow({'cutoff': 'left', 'value': left_cutoff})
-        writer.writerow({'cutoff': 'filename', 'value': input_file})
-
-    return(right_cutoff, left_cutoff)
+    return(left_cutoff, right_cutoff)
 
 
+def calc_qual_cutoff(seq_format):
+    if seq_format == "single":
+        logger.debug("determining left and right cutoffs based on qual score")
+
+        input_file = glob.glob(
+            './'+folder+'/*/data/forward-seven-number-summaries.tsv')
+
+        summary = pd.read_table(input_file[0], index_col=0, sep='\t')
+        left_cutoff, right_cutoff = find_cutoffs(summary)
+
+        logger.info("right cutoff: "+str(right_cutoff))
+        logger.info("left cutoff: " + str(left_cutoff))
+
+        with open('cutoffs.csv', 'w', newline='') as csvfile:
+            fieldnames = ['cutoff', 'value']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+            writer.writeheader()
+            writer.writerow({'cutoff': 'right', 'value': right_cutoff})
+            writer.writerow({'cutoff': 'left', 'value': left_cutoff})
+            writer.writerow({'cutoff': 'filename', 'value': input_file})
+
+        return(right_cutoff, left_cutoff)
+
+    elif seq_format == "paired":
+        logger.debug(
+            "determining forward and revese, left and right cutoffs based on qual score")
+        input_file = glob.glob(
+            './'+folder+'/*/data/forward-seven-number-summaries.tsv')
+        fr_summary = pd.read_table(input_file[0], index_col=0, sep='\t')
+
+        forward = find_cutoffs(fr_summary)
+
+        input_file = glob.glob(
+            './'+folder+'/*/data/reverse-seven-number-summaries.tsv')
+        rev_summary = pd.read_table(input_file[0], index_col=0, sep='\t')
+
+        reverse = find_cutoffs(rev_summary)
+
+        logger.info("forward cutoffs: "+str(forward))
+        logger.info("reverse cutoffs: " + str(reverse))
+
+        with open('cutoffs.csv', 'w', newline='') as csvfile:
+            fieldnames = ['cutoff', 'value']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+            writer.writeheader()
+            writer.writerow({'cutoff': 'forward left', 'value': forward[0]})
+            writer.writerow({'cutoff': 'forward right', 'value': forward[1]})
+            writer.writerow({'cutoff': 'reverse left', 'value': reverse[0]})
+            writer.writerow({'cutoff': 'reverse right', 'value': reverse[1]})
+            writer.writerow({'cutoff': 'filename', 'value': input_file})
+
+        return(forward, reverse)
+
+
+# TODO check paired
 def call_denoise(right, left, seq_format):
     logger.debug("denoising using dada2")
     if seq_format == 'single':
@@ -238,12 +281,14 @@ def beta_div_calc(metadata, item_of_interest):
         'calculating beta diversity, only done if column of metadata is provided')
     command = "qiime diversity beta-group-significance --i-distance-matrix core-metrics-results/unweighted_unifrac_distance_matrix.qza --m-metadata-file " + \
         metadata + " --m-metadata-column "+item_of_interest + \
-        " --o-visualization core-metrics-results/unweighted-unifrac-"+item_of_interest+"-significance.qzv --p-pairwise"
+        " --o-visualization core-metrics-results/unweighted-unifrac-" + \
+        item_of_interest+"-significance.qzv --p-pairwise"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.critical(result.stderr)
     if result.returncode == 1:
-        logger.critical("the variable provided does not appear to be a column of the metadata file, please review")
+        logger.critical(
+            "the variable provided does not appear to be a column of the metadata file, please review")
         exit(1)
 
 # TODO put checks in to pickeup from where a failed run left off.
@@ -263,7 +308,7 @@ def main(arg):
     #out: demux.qza
     generate_seq_object(arg.manifest_name, category, cat2)
     qual_control()
-    cutoffs = calc_qual_cutoff()
+    cutoffs = calc_qual_cutoff(single_or_pair)
     right_cutoff = cutoffs[0]
     left_cutoff = cutoffs[1]
 
