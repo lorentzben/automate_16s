@@ -182,6 +182,7 @@ def verify_manifest(manifest, seq_dir):
 def main(arg):
     check_dependencies()
     # TODO can come back and make this user-editable, but for right now I will hard-code it.
+    check_provided_dir(arg.manifest, arg.seq_dir)
     verify_manifest(arg.manifest_name, arg.seq_dir)
 
 
