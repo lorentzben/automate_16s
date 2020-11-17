@@ -29,7 +29,7 @@ CODE= python3 setup.py -n $MANIFEST -d $SEQS
 if [[ $CODE -eq 1 ]]
 then
    echo "There was an issue validating please review the logfile"
-   exit(1)
+   exit
 fi
 
 CODE2= python3 automate_16.py -n $MANIFEST -m $METADATA -i $VAR_OF_INTEREST
@@ -37,5 +37,5 @@ CODE2= python3 automate_16.py -n $MANIFEST -m $METADATA -i $VAR_OF_INTEREST
 if [[ $CODE2 -eq 1 ]]
 then
    echo "There was an issue please review the logfile"
-   exit(1)
+   exit
 fi
