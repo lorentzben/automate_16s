@@ -156,7 +156,8 @@ def calc_qual_cutoff(seq_format):
             writer.writerow({'cutoff': 'forward right', 'value': forward[1]})
             writer.writerow({'cutoff': 'reverse left', 'value': reverse[0]})
             writer.writerow({'cutoff': 'reverse right', 'value': reverse[1]})
-            writer.writerow({'cutoff': 'filename', 'value': input_file})
+            writer.writerow({'cutoff': 'filename', 'value': forward_file})
+            writer.writerow({'cutoff': 'filename', 'value': reverse_file})
 
         return(forward, reverse)
 
