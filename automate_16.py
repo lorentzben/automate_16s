@@ -299,8 +299,7 @@ def beta_div_calc(metadata, item_of_interest):
         exit(1)
 
 def generate_result_file():
-    # this might be better handled as a pdf, but I'm not certain
-    # cutoffs calculated cutoffs.csv    
+    # this might be better handled as a pdf, but I'm not certain    
 
     # dada 2 stats extracted from stats-dada2.qza.qzv
 
@@ -309,6 +308,16 @@ def generate_result_file():
     # Alpha diversity core-metrics-results/evenness-group-significance.qzv AND faith-pd-group-significance.qzv
 
     # Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv 
+    filename='report.Rmd'
+    command = 'Rscript -e "rmarkdown::render(\'report.Rmd\', clean=TRUE)"'
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+    if result.returncode == 1:
+        logger.critical(
+            "there was an issue generating the report for this analysis")
+        exit(1)
+    
 
 def main(arg):
 
