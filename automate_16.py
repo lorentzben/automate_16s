@@ -298,8 +298,17 @@ def beta_div_calc(metadata, item_of_interest):
             "the variable provided does not appear to be a column of the metadata file, please review")
         exit(1)
 
-# TODO put checks in to pickeup from where a failed run left off.
+def generate_result_file():
+    # this might be better handled as a pdf, but I'm not certain
+    # cutoffs calculated cutoffs.csv    
 
+    # dada 2 stats extracted from stats-dada2.qza.qzv
+
+    # sampling depth selected sampling_depth.csv
+
+    # Alpha diversity core-metrics-results/evenness-group-significance.qzv AND faith-pd-group-significance.qzv
+
+    # Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv 
 
 def main(arg):
 
