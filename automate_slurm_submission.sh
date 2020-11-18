@@ -22,6 +22,7 @@ VAR_OF_INTEREST="body-site"
 module load Python/3.8.2-GCCcore-8.3.0
 module load Nextflow/20.04.1
 module load QIIME2/2020.6
+module load R/4.0.0-foss-2019b
 
 python3 -m pip install --user pandas
 CODE= python3 setup.py -n $MANIFEST -d $SEQS

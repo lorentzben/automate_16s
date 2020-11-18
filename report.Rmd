@@ -3,16 +3,18 @@ title: "Analysis Report"
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+This is a report generated to summarize the major results from the analysis. It is not intended to be a full picture, rather a jumping off point. This report will reference the files displayed in case you would like to examine them further.
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
-
+### cutoffs calculated cutoffs.csv
 ```{r}
-plot(cars)
+cutoffs = read.csv("cutoffs.csv")
+print(cutoffs)
 ```
+### dada 2 stats extracted from stats-dada2.qza.qzv
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+### sampling depth selected sampling_depth.csv
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+### Alpha diversity core-metrics-results/evenness-group-significance.qzv AND faith-pd-group-significance.qzv
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+### Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv 
+
