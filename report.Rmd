@@ -2,20 +2,41 @@
 title: "Analysis Report"
 output: html_notebook
 ---
-
+```{r include=FALSE}
+install.packages("kableExtra")
+library(kableExtra)
+```
 This is a report generated to summarize the major results from the analysis. It is not intended to be a full picture, rather a jumping off point. This report will reference the files displayed in case you would like to examine them further.
 
 ### Cutoffs Calculated 
 This table comes from cutoffs.csv
 ```{r}
 cutoffs = read.csv("cutoffs.csv",sep = ',',strip.white = TRUE)
-knitr::kable(cutoffs)
+#cutoffs = knitr::kable(cutoffs)
+cutoffs
 ```
-### dada 2 stats extracted from stats-dada2.qza.qzv
 
-### sampling depth selected sampling_depth.csv
+### dada 2 stats
+This table was constructed from data in the stats-dada2.qzv object
+```{r}
+dadastat = read.csv("dada2_stats.tsv",sep = '\t',strip.white = TRUE)
+#dadastat_t = dadastat %>% kbl() %>% kable_classic(full_width = F)
+dadastat_t
+```
+
+### sampling depth
+This table was constructed from data in sampling_depth.csv
+```{r}
+depth = read.csv("sampling_depth.csv", sep=",")
+depth
+```
 
 ### Alpha diversity core-metrics-results/evenness-group-significance.qzv AND faith-pd-group-significance.qzv
+```{r}
 
+```
 ### Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv 
+```{r}
 
+
+```

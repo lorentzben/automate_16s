@@ -182,7 +182,7 @@ def call_denoise(cutoff, seq_format):
     logger.info(result.stdout)
     logger.error(result.stderr)
 
-    command = "qiime metadata tabulate --m-input-file stats-dada2.qza --o-visualization stats-dada2.qza"
+    command = "qiime metadata tabulate --m-input-file stats-dada2.qza --o-visualization stats-dada2.qzv"
 
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
@@ -265,8 +265,6 @@ def diversity_measure(metadata, depth):
     logger.info(result.stdout)
     logger.error(result.stderr)
 
-# TODO pull the data out of the viz and put that info in a logging line
-
 
 def alpha_div_calc(metadata):
     logger.debug('calculating alpha diversity')
@@ -299,16 +297,44 @@ def beta_div_calc(metadata, item_of_interest):
         exit(1)
 
 def generate_result_file():
-    # this might be better handled as a pdf, but I'm not certain    
+    # dada 2 stats extracted from stats-dada2.qzv
+    command = "unzip -d "+folder+" stats-dada2.qzv"
+    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
 
-    # dada 2 stats extracted from stats-dada2.qza.qzv
+    logger.info(result.stdout)
+    logger.error(result.stderr)
 
-    # sampling depth selected sampling_depth.csv
+    command = ('cp ./'+folder+'/*/data/metadata.tsv dada2_stats.tsv')
+    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
+
+    logger.info(result.stdout)
+    logger.error(result.stderr)
 
     # Alpha diversity core-metrics-results/evenness-group-significance.qzv AND faith-pd-group-significance.qzv
+    # First have to copy the file to current dir
+    command = "cp core-metrics-results/evenness-group-significance.qzv ."
+    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+    #what do we want from the alpha diversity measurment, value and P val.
+    #We may need to parse from stdout to get the UUID for the full path since its going to be metadata.tsv again.
+    command = "unzip -d "+folder+" evenness-group-significance.qzv"
+    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+    command = ('cp ./'+folder+'/*/data/metadata.tsv  dada2_stats.tsv')
+    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    command = "cp core-metrics-results/faith-pd-group-significance.qzv ."
+    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
 
     # Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv 
-    filename='report.Rmd'
+
+    # Sequence to render the rnotebook into a html object
     command = 'Rscript -e "rmarkdown::render(\'report.Rmd\', clean=TRUE)"'
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
