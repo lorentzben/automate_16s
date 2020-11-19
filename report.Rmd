@@ -4,7 +4,9 @@ output: html_notebook
 ---
 ```{r include=FALSE}
 install.packages("kableExtra")
+install.packages("ggplot2")
 library(kableExtra)
+library(ggplot2)
 ```
 This is a report generated to summarize the major results from the analysis. It is not intended to be a full picture, rather a jumping off point. This report will reference the files displayed in case you would like to examine them further.
 
@@ -58,6 +60,22 @@ faith_stats = read.csv("./faith/kruskal-wallis-pairwise-time.csv")
 faith_stats %>% kbl() %>% kable_styling(bootstrap_options = c("condensed","responsive"))
 ```
 This diversity measurement is focused on highlighting _ in the dataset
+
+## Alpha Diversity Plot 
+
+```{r}
+dims = dim(evenness_vals)
+evenness_vals <- data.frame(evenness_vals[2:dims[1],])
+evenness_vals$time <- as.factor(evenness_vals$time)
+evenness_vals$pielou_evenness <- as.numeric(as.character(evenness_vals$pielou_evenness))
+boxplot(evenness_vals$pielou_evenness~evenness_vals$time, data=evenness_vals)
+
+p <- ggplot(evenness_vals, aes(x=time, y=pielou_evenness)) + geom_violin()+ geom_boxplot(width=0.1)
+p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
+p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
+p <- p+geom_jitter(shape=16, position=position_jitter(0.2))
+p
+```
 
 ### Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv 
 ```{r}
