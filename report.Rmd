@@ -13,28 +13,52 @@ This table comes from cutoffs.csv
 ```{r}
 cutoffs = read.csv("cutoffs.csv",sep = ',',strip.white = TRUE)
 #cutoffs = knitr::kable(cutoffs)
-cutoffs
+cutoffs %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
 ```
 
-### dada 2 stats
+### Dada 2 Stats
 This table was constructed from data in the stats-dada2.qzv object
 ```{r}
 dadastat = read.csv("dada2_stats.tsv",sep = '\t',strip.white = TRUE)
 #dadastat_t = dadastat %>% kbl() %>% kable_classic(full_width = F)
-dadastat_t
+dadastat %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive")) 
 ```
 
-### sampling depth
+### Sampling Depth
 This table was constructed from data in sampling_depth.csv
 ```{r}
 depth = read.csv("sampling_depth.csv", sep=",")
-depth
+depth %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
 ```
 
-### Alpha diversity core-metrics-results/evenness-group-significance.qzv AND faith-pd-group-significance.qzv
+### Alpha Diversity
+
+## Eveneness
+This data comes from the file evenness-group-significance.qzv
 ```{r}
-
+evenness_vals = read.csv("./evenness/metadata.tsv", sep='\t')
+evenness_vals %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
 ```
+
+```{r}
+evenness_stats = read.csv("./evenness/kruskal-wallis-pairwise-time.csv")
+
+evenness_stats %>% kbl() %>% kable_styling(bootstrap_options = c("condensed","responsive"))
+```
+This diversity measurement is focused on highlighting _ in the dataset
+
+## Faith
+This data comes from the file faith-pd-group-significance.qzv.
+```{r}
+faith_vals = read.csv("./faith/metadata.tsv", sep='\t')
+faith_vals %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
+```
+```{r}
+faith_stats = read.csv("./faith/kruskal-wallis-pairwise-time.csv")
+faith_stats %>% kbl() %>% kable_styling(bootstrap_options = c("condensed","responsive"))
+```
+This diversity measurement is focused on highlighting _ in the dataset
+
 ### Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv 
 ```{r}
 

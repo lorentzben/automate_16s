@@ -38,6 +38,12 @@ folder = "inflate_" + str(datetime.datetime.now().date()) + \
     '_'+str(datetime.datetime.now().time()).replace(':', '.')
 
 
+def unique_folder_name(stub):
+    u_folder = stub + "_" + str(datetime.datetime.now().date()) + \
+        '_'+str(datetime.datetime.now().time()).replace(':', '.')
+    return u_folder
+
+
 def single_or_paired_read(manifest):
     logger.debug("determining paired or single end design")
     try:
@@ -296,6 +302,7 @@ def beta_div_calc(metadata, item_of_interest):
             "the variable provided does not appear to be a column of the metadata file, please review")
         exit(1)
 
+
 def generate_result_file():
     # dada 2 stats extracted from stats-dada2.qzv
     command = "unzip -d "+folder+" stats-dada2.qzv"
@@ -316,23 +323,24 @@ def generate_result_file():
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
-    #what do we want from the alpha diversity measurment, value and P val.
-    #We may need to parse from stdout to get the UUID for the full path since its going to be metadata.tsv again.
-    command = "unzip -d "+folder+" evenness-group-significance.qzv"
+    # what do we want from the alpha diversity measurment, value and P val.
+    
+    command = "unzip -d evenness -j -n evenness-group-significance.qzv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
-    command = ('cp ./'+folder+'/*/data/metadata.tsv  dada2_stats.tsv')
-    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-
+   
     command = "cp core-metrics-results/faith-pd-group-significance.qzv ."
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
 
-    # Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv 
+    command = "unzip -d faith -j -n faith-pd-group-significance.qzv"
+    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    # Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv
 
     # Sequence to render the rnotebook into a html object
     command = 'Rscript -e "rmarkdown::render(\'report.Rmd\', clean=TRUE)"'
@@ -343,7 +351,7 @@ def generate_result_file():
         logger.critical(
             "there was an issue generating the report for this analysis")
         exit(1)
-    
+
 
 def main(arg):
 
