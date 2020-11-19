@@ -78,7 +78,11 @@ p
 ```
 
 ### Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv 
+Jaccard
 ```{r}
-
-
+jaccard = read.csv("./jaccard/distance-matrix.tsv", sep='\t')
+jaccard <- data.frame(jaccard)
+jaccard2 <- jaccard[,-1]
+rownames(jaccard2) <- jaccard[,1]
+jaccard2
 ```

@@ -318,18 +318,18 @@ def generate_result_file():
     logger.error(result.stderr)
 
     # Alpha diversity core-metrics-results/evenness-group-significance.qzv AND faith-pd-group-significance.qzv
-    # First have to copy the file to current dir
+    # evenness diversity measurement
     command = "cp core-metrics-results/evenness-group-significance.qzv ."
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
-    # what do we want from the alpha diversity measurment, value and P val.
     
     command = "unzip -d evenness -j -n evenness-group-significance.qzv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
-   
+
+    # faith diversity measurement
     command = "cp core-metrics-results/faith-pd-group-significance.qzv ."
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
@@ -341,6 +341,53 @@ def generate_result_file():
     logger.error(result.stderr)
 
     # Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv
+    
+    # bray curtis distance measuremnet
+    command = "cp core-metrics-results/bray_curtis_distance_matrix.qza ."
+    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+    
+    command = "unzip -d bray -j -n bray_curtis_distance_matrix.qza"
+    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    
+    # jaccard distance measuremnt
+    command = "cp core-metrics-results/jaccard_distance_matrix.qza ."
+    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+    
+    command = "unzip -d jaccard -j -n jaccard_distance_matrix.qza"
+    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    
+    # unweighted unifrac distance
+    command = "cp core-metrics-results/unweighted_unifrac_distance_matrix.qza ."
+    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+    
+    command = "unzip -d un-unifrac -j -n unweighted_unifrac_distance_matrix.qza"
+    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    
+    #   weighted unifrac distance
+    command = "cp core-metrics-results/weighted_unifrac_distance_matrix.qza ."
+    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+    
+    command = "unzip -d unifrac -j -n weighted_unifrac_distance_matrix.qza"
+    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
 
     # Sequence to render the rnotebook into a html object
     command = 'Rscript -e "rmarkdown::render(\'report.Rmd\', clean=TRUE)"'
