@@ -64,7 +64,18 @@ faith_stats = read.csv("./faith/kruskal-wallis-pairwise-time.csv")
 faith_stats %>% kbl() %>% kable_styling(bootstrap_options = c("condensed","responsive"))
 ```
 
-
+## Shannon
+```{r}
+library(qiime2R)
+shannon<-read_qza("core-metrics-results/shannon_vector.qza")
+shannon$data
+```
+## Observed Features
+```{r}
+library(qiime2R)
+obs<-read_qza("core-metrics-results/observed_features_vector.qza")
+obs$data
+```
 ## Alpha Diversity Plot 
 
 Evenness 

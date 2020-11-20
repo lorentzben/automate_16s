@@ -51,7 +51,13 @@ $ python3
 ```
 
 ## Output
-TODO generate results for alpha diversity of a sample dataset
+report.nb.html (can be downloaded from cluster to local machine using winscp or scp to examine)
+setup_YYYY_MM_DD_HH_MM_SSSSSS.log
+automate_YY_MM_DD_HH_MM_SSSSSS.log
+---
+#### Useful files
+core-metrics-results/
+table.qza
 
 ## Version
 * Version 1.0
