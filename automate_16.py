@@ -303,7 +303,7 @@ def beta_div_calc(metadata, item_of_interest):
         exit(1)
 
 
-def generate_result_file():
+def generate_result_file(metadata):
     # dada 2 stats extracted from stats-dada2.qzv
     command = "unzip -d "+folder+" stats-dada2.qzv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
@@ -341,7 +341,7 @@ def generate_result_file():
     logger.error(result.stderr)
 
     # Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv
-    
+    '''
     # bray curtis distance measuremnet
     command = "cp core-metrics-results/bray_curtis_distance_matrix.qza ."
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
@@ -385,6 +385,11 @@ def generate_result_file():
     logger.error(result.stderr)
     
     command = "unzip -d unifrac -j -n weighted_unifrac_distance_matrix.qza"
+    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+    '''
+    command = "cp "+metadata+" metadata.tsv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
@@ -438,6 +443,8 @@ def main(arg):
 
     if arg.interest:
         beta_div_calc(arg.metadata, arg.interest)
+
+    generate_result_file(arg.metadata)
 
     logger.info('done')
 

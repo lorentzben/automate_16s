@@ -5,8 +5,13 @@ output: html_notebook
 ```{r include=FALSE}
 install.packages("kableExtra")
 install.packages("ggplot2")
+install.packages("tidyverse")
+install.packages("gplots")
+if (!requireNamespace("devtools", quietly = TRUE)){install.packages("devtools")}
+devtools::install_github("jbisanz/qiime2R") # current version is 0.99.20
 library(kableExtra)
 library(ggplot2)
+library(qiime2R)
 ```
 This is a report generated to summarize the major results from the analysis. It is not intended to be a full picture, rather a jumping off point. This report will reference the files displayed in case you would like to examine them further.
 
@@ -78,11 +83,103 @@ p
 ```
 
 ### Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv 
-Jaccard
+note: time will need to be replaced with probably treatment or other feature of interest
+
+Bray curtis ordination
+
 ```{r}
-jaccard = read.csv("./jaccard/distance-matrix.tsv", sep='\t')
-jaccard <- data.frame(jaccard)
-jaccard2 <- jaccard[,-1]
-rownames(jaccard2) <- jaccard[,1]
-jaccard2
+library(tidyverse)
+library(qiime2R)
+library(gplots)
+
+metadata<-read_q2metadata("metadata.tsv")
+jaccard <- read_qza("core-metrics-results/bray_curtis_pcoa_results.qza")
+shannon<-read_qza("core-metrics-results/shannon_vector.qza")
+shannon <- shannon$data %>% rownames_to_column("SampleID")
+
+
+jaccard$data$Vectors %>%
+  select(SampleID, PC1, PC2) %>%
+  left_join(metadata) %>%
+  left_join(shannon) %>%
+  ggplot(aes(x=PC1, y=PC2, color=time, size=shannon_entropy))+
+  geom_point(alpha=0.5) +
+  theme_q2r() +
+  scale_size_continuous(name="Shannon Diversity") +
+  scale_color_discrete(name="Time")
+
+```
+
+Jaccard ordination
+
+```{r}
+library(tidyverse)
+library(qiime2R)
+library(gplots)
+
+metadata<-read_q2metadata("metadata.tsv")
+jaccard <- read_qza("core-metrics-results/jaccard_pcoa_results.qza")
+shannon<-read_qza("core-metrics-results/shannon_vector.qza")
+shannon <- shannon$data %>% rownames_to_column("SampleID")
+
+
+jaccard$data$Vectors %>%
+  select(SampleID, PC1, PC2) %>%
+  left_join(metadata) %>%
+  left_join(shannon) %>%
+  ggplot(aes(x=PC1, y=PC2, color=time, size=shannon_entropy))+
+  geom_point(alpha=0.5) +
+  theme_q2r() +
+  scale_size_continuous(name="Shannon Diversity") +
+  scale_color_discrete(name="Time")
+
+```
+
+unweighted unifrac ordination
+
+```{r}
+library(tidyverse)
+library(qiime2R)
+library(gplots)
+
+metadata<-read_q2metadata("metadata.tsv")
+jaccard <- read_qza("core-metrics-results/unweighted_unifrac_pcoa_results.qza")
+shannon<-read_qza("core-metrics-results/shannon_vector.qza")
+shannon <- shannon$data %>% rownames_to_column("SampleID")
+
+
+jaccard$data$Vectors %>%
+  select(SampleID, PC1, PC2) %>%
+  left_join(metadata) %>%
+  left_join(shannon) %>%
+  ggplot(aes(x=PC1, y=PC2, color=time, size=shannon_entropy))+
+  geom_point(alpha=0.5) +
+  theme_q2r() +
+  scale_size_continuous(name="Shannon Diversity") +
+  scale_color_discrete(name="Time")
+
+```
+weighted unifrac ordination
+
+```{r}
+library(tidyverse)
+library(qiime2R)
+library(gplots)
+
+metadata<-read_q2metadata("metadata.tsv")
+jaccard <- read_qza("core-metrics-results/weighted_unifrac_pcoa_results.qza")
+shannon<-read_qza("core-metrics-results/shannon_vector.qza")
+shannon <- shannon$data %>% rownames_to_column("SampleID")
+
+
+jaccard$data$Vectors %>%
+  select(SampleID, PC1, PC2) %>%
+  left_join(metadata) %>%
+  left_join(shannon) %>%
+  ggplot(aes(x=PC1, y=PC2, color=time, size=shannon_entropy))+
+  geom_point(alpha=0.5) +
+  theme_q2r() +
+  scale_size_continuous(name="Shannon Diversity") +
+  scale_color_discrete(name="Time")
+
 ```
