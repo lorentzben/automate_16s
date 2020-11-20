@@ -113,7 +113,7 @@ def find_cutoffs(dataframe):
 def find_rev_cutoffs(dataframe):
     mean_qual = dataframe[4:5]
 
-    average_qual = np.round(mean_qual.mean(axis=1), 0)+5
+    average_qual = np.round(mean_qual.mean(axis=1), 0)+2
     mean_qual_vals = np.array(mean_qual)[0]
 
     if int(average_qual) < 30:
