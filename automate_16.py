@@ -113,7 +113,7 @@ def find_cutoffs(dataframe):
 def find_rev_cutoffs(dataframe):
     mean_qual = dataframe[4:5]
 
-    average_qual = np.round(mean_qual.mean(axis=1), 0)+5
+    average_qual = np.round(mean_qual.mean(axis=1), 0)+2
     mean_qual_vals = np.array(mean_qual)[0]
 
     if int(average_qual) < 30:
@@ -126,10 +126,14 @@ def find_rev_cutoffs(dataframe):
             left_cutoff = i+1
             break
         else:
-            left_cutoff = 69
+            left_cutoff = 0
+            break
     for i in range(0, len(mean_qual_vals)):
         if mean_qual_vals[len(mean_qual_vals)-1-i] >= int(average_qual):
             right_cutoff = len(mean_qual_vals)-i
+            break
+        else:
+            right_cutoff=(len(mean_qual_vals)-1)
             break
     return(left_cutoff, right_cutoff)
 
