@@ -110,6 +110,26 @@ def find_cutoffs(dataframe):
             break
     return(left_cutoff, right_cutoff)
 
+def find_rev_cutoffs(dataframe):
+    mean_qual = dataframe[4:5]
+
+    average_qual = np.round(mean_qual.mean(axis=1), 0)
+    mean_qual_vals = np.array(mean_qual)[0]+2
+
+    if int(average_qual) < 30:
+        print(
+            "The Average Quality of these sequences may be a concern would you like to continue?")
+        exit(0)
+
+    for i in range(0, len(mean_qual_vals)):
+        if mean_qual_vals[i] >= int(average_qual):
+            left_cutoff = i+1
+            break
+    for i in range(0, len(mean_qual_vals)):
+        if mean_qual_vals[len(mean_qual_vals)-1-i] >= int(average_qual):
+            right_cutoff = len(mean_qual_vals)-i
+            break
+    return(left_cutoff, right_cutoff)
 
 def calc_qual_cutoff(seq_format):
     if seq_format == "single":
@@ -148,7 +168,7 @@ def calc_qual_cutoff(seq_format):
             './'+folder+'/*/data/reverse-seven-number-summaries.tsv')
         rev_summary = pd.read_table(reverse_file[0], index_col=0, sep='\t')
 
-        reverse = find_cutoffs(rev_summary)
+        reverse = find_rev_cutoffs(rev_summary)
 
         logger.info("forward cutoffs: "+str(forward))
         logger.info("reverse cutoffs: " + str(reverse))
