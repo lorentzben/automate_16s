@@ -110,6 +110,7 @@ def find_cutoffs(dataframe):
             break
     return(left_cutoff, right_cutoff)
 
+
 def find_rev_cutoffs(dataframe):
     mean_qual = dataframe[4:5]
 
@@ -121,21 +122,21 @@ def find_rev_cutoffs(dataframe):
             "The Average Quality of these sequences may be a concern would you like to continue?")
         exit(0)
 
+    left_cutoff = 0
+    right_cutoff = len(mean_qual_vals)-1
+
     for i in range(0, len(mean_qual_vals)):
         if mean_qual_vals[i] >= int(average_qual):
             left_cutoff = i+1
             break
-        else:
-            left_cutoff = 0
-            break
+
     for i in range(0, len(mean_qual_vals)):
         if mean_qual_vals[len(mean_qual_vals)-1-i] >= int(average_qual):
             right_cutoff = len(mean_qual_vals)-i
             break
-        else:
-            right_cutoff=(len(mean_qual_vals)-1)
-            break
+
     return(left_cutoff, right_cutoff)
+
 
 def calc_qual_cutoff(seq_format):
     if seq_format == "single":
@@ -349,7 +350,7 @@ def generate_result_file(metadata):
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
-    
+
     command = "unzip -d evenness -j -n evenness-group-significance.qzv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
