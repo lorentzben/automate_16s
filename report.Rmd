@@ -3,10 +3,10 @@ title: "Analysis Report"
 output: html_notebook
 ---
 ```{r include=FALSE}
-install.packages("kableExtra")
-install.packages("ggplot2")
-install.packages("tidyverse")
-install.packages("gplots")
+if(!require(kableExtra)) install.packages("kableExtra", repos="http://cran.us.r-project.org")
+if(!require(ggplot2)) install.packages("ggplot2", repos="http://cran.us.r-project.org")
+if(!require(tidyverse)) install.packages("tidyverse", repos="http://cran.us.r-project.org")
+if(!require(gplots)) install.packages("gplots", repos="http://cran.us.r-project.org")
 if (!requireNamespace("devtools", quietly = TRUE)){install.packages("devtools")}
 devtools::install_github("jbisanz/qiime2R") # current version is 0.99.20
 library(kableExtra)
