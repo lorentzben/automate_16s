@@ -52,7 +52,6 @@ evenness_stats = read.csv("./evenness/kruskal-wallis-pairwise-time.csv")
 
 evenness_stats %>% kbl() %>% kable_styling(bootstrap_options = c("condensed","responsive"))
 ```
-This diversity measurement is focused on highlighting _ in the dataset
 
 ## Faith
 This data comes from the file faith-pd-group-significance.qzv.
@@ -64,10 +63,11 @@ faith_vals %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condense
 faith_stats = read.csv("./faith/kruskal-wallis-pairwise-time.csv")
 faith_stats %>% kbl() %>% kable_styling(bootstrap_options = c("condensed","responsive"))
 ```
-This diversity measurement is focused on highlighting _ in the dataset
+
 
 ## Alpha Diversity Plot 
 
+Evenness 
 ```{r}
 dims = dim(evenness_vals)
 evenness_vals <- data.frame(evenness_vals[2:dims[1],])
@@ -81,7 +81,20 @@ p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
 p <- p+geom_jitter(shape=16, position=position_jitter(0.2))
 p
 ```
+Faith
+```{r}
+dims = dim(faith_vals)
+faith_vals <- data.frame(faith_vals[2:dims[1],])
+faith_vals$time <- as.factor(faith_vals$time)
+faith_vals$faith_pd <- as.numeric(as.character(faith_vals$faith_pd))
+boxplot(faith_vals$faith_pd~faith_vals$time, data=faith_vals)
 
+p <- ggplot(faith_vals, aes(x=time, y=faith_pd)) + geom_violin()+ geom_boxplot(width=0.1)
+p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
+p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
+p <- p+geom_jitter(shape=16, position=position_jitter(0.2))
+p
+```
 ### Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv 
 note: time will need to be replaced with probably treatment or other feature of interest
 
