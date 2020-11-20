@@ -30,7 +30,7 @@ to install packages into? (yes/No/cancel) yes
 --- Please select a CRAN mirror for use in this session ---
 Secure CRAN mirrors
 ...
-Selection: 1
+Selection: 1 
 ```
 Once this is done, the script should run correctly, if you would like to change the mirror that r gets packages from the first couple line in report.Rmd can be updated. 
 ## Running 
