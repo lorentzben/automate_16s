@@ -88,6 +88,7 @@ To test installation of the program it can be helpful to complete a diagnostic t
 
 ## Author
 * Ben Lorentz
+* Benjamin.Lorentz@uga.edu
 
 ## Future Plans
 * Offer 'tweaking' of parameters
