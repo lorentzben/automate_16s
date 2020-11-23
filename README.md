@@ -77,6 +77,7 @@ automate_YY_MM_DD_HH_MM_SSSSSS.log
 #### Useful files
 
 core-metrics-results/
+
 table.qza
 
 ## Example Sequences
