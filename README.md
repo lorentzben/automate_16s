@@ -5,7 +5,6 @@ This project's aim is focused on automating processes of 16s rRNA analysis that 
 ## Prerequisities
 * Linux based system
 * qiime 2
-* nextflow v
 * python3 
 
 ## Install
