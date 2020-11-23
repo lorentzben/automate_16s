@@ -67,11 +67,15 @@ $ python3 automate_16s.py -n MANIFEST -m METADATA -i ITEM_OF_INTEREST
 ```
 
 ## Output
+
 report.nb.html (can be downloaded from cluster to local machine using [winscp](https://winscp.net/eng/docs/task_download) or [scp](https://www.garron.me/en/articles/scp.html) to examine)
 setup_YYYY_MM_DD_HH_MM_SSSSSS.log
 automate_YY_MM_DD_HH_MM_SSSSSS.log
+
 ---
+
 #### Useful files
+
 core-metrics-results/
 table.qza
 
