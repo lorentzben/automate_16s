@@ -368,54 +368,7 @@ def generate_result_file(metadata):
     logger.error(result.stderr)
 
     # Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv
-    '''
-    # bray curtis distance measuremnet
-    command = "cp core-metrics-results/bray_curtis_distance_matrix.qza ."
-    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-    
-    command = "unzip -d bray -j -n bray_curtis_distance_matrix.qza"
-    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
 
-    
-    # jaccard distance measuremnt
-    command = "cp core-metrics-results/jaccard_distance_matrix.qza ."
-    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-    
-    command = "unzip -d jaccard -j -n jaccard_distance_matrix.qza"
-    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-
-    
-    # unweighted unifrac distance
-    command = "cp core-metrics-results/unweighted_unifrac_distance_matrix.qza ."
-    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-    
-    command = "unzip -d un-unifrac -j -n unweighted_unifrac_distance_matrix.qza"
-    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-
-    
-    #   weighted unifrac distance
-    command = "cp core-metrics-results/weighted_unifrac_distance_matrix.qza ."
-    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-    
-    command = "unzip -d unifrac -j -n weighted_unifrac_distance_matrix.qza"
-    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-    '''
     command = "cp "+metadata+" metadata.tsv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
