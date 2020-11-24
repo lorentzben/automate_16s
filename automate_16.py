@@ -387,6 +387,14 @@ def generate_result_file(metadata):
 
 def main(arg):
 
+    with open('item_of_interest.csv', 'w', newline='') as csvfile:
+        fieldnames = ['item name']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+        writer.writeheader()
+        writer.writerow({'item name': arg.interest})
+
+
     single_or_pair = single_or_paired_read(arg.manifest_name)
 
     if single_or_pair == "single":
