@@ -53,7 +53,9 @@ evenness_vals %>% kbl() %>% kable_styling(bootstrap_options = c("striped","conde
 ```
 
 ```{r}
-evenness_stats = read.csv("./evenness/kruskal-wallis-pairwise-time.csv")
+
+filename = paste("./evenness/kruskal-wallis-pairwise-",str_trim(ioi),".csv", sep = "")
+evenness_stats = read.csv(filename)
 
 evenness_stats %>% kbl() %>% kable_styling(bootstrap_options = c("condensed","responsive"))
 ```
@@ -65,7 +67,8 @@ faith_vals = read.csv("./faith/metadata.tsv", sep='\t')
 faith_vals %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
 ```
 ```{r}
-faith_stats = read.csv("./faith/kruskal-wallis-pairwise-time.csv")
+filename <- paste("./faith/kruskal-wallis-pairwise-",ioi,".csv",sep="")
+faith_stats = read.csv(filename)
 faith_stats %>% kbl() %>% kable_styling(bootstrap_options = c("condensed","responsive"))
 ```
 
