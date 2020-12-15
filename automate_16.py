@@ -393,7 +393,11 @@ def main(arg):
 
         writer.writeheader()
         writer.writerow({'item name': arg.interest})
-
+    
+    command = "cp " +arg.metadata+" metadata.tsv"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
 
     single_or_pair = single_or_paired_read(arg.manifest_name)
 
