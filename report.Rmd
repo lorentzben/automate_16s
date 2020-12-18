@@ -14,6 +14,7 @@ library(ggplot2)
 library(qiime2R)
 ```
 This is a report generated to summarize the major results from the analysis. It is not intended to be a full picture, rather a jumping off point. This report will reference the files displayed in case you would like to examine them further.
+
 ### Item of interest
 ```{r}
 ioi <- read.csv("item_of_interest.csv")
