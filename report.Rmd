@@ -135,7 +135,7 @@ jaccard$data$Vectors %>%
   select(SampleID, PC1, PC2) %>%
   left_join(metadata) %>%
   left_join(shannon) %>%
-  ggplot(aes(x=PC1, y=PC2, color=metadata[[ioi]], size=shannon_entropy))+
+  ggplot(aes_string(x="PC1", y="PC2", color=ioi, size="shannon_entropy"))+
   geom_point(alpha=0.5) +
   theme_q2r() +
   scale_size_continuous(name="Shannon Diversity") +
@@ -160,7 +160,7 @@ jaccard$data$Vectors %>%
   select(SampleID, PC1, PC2) %>%
   left_join(metadata) %>%
   left_join(shannon) %>%
-  ggplot(aes(x=PC1, y=PC2, color=metadata[[ioi]], size=shannon_entropy))+
+  ggplot(aes_string(x="PC1", y="PC2", color=ioi, size="shannon_entropy"))+
   geom_point(alpha=0.5) +
   theme_q2r() +
   scale_size_continuous(name="Shannon Diversity") +
@@ -185,7 +185,7 @@ jaccard$data$Vectors %>%
   select(SampleID, PC1, PC2) %>%
   left_join(metadata) %>%
   left_join(shannon) %>%
-  ggplot(aes(x=PC1, y=PC2, color=metadata[[ioi]], size=shannon_entropy))+
+  ggplot(aes_string(x="PC1", y="PC2", color=ioi, size="shannon_entropy"))+
   geom_point(alpha=0.5) +
   theme_q2r() +
   scale_size_continuous(name="Shannon Diversity") +
@@ -209,7 +209,7 @@ jaccard$data$Vectors %>%
   select(SampleID, PC1, PC2) %>%
   left_join(metadata) %>%
   left_join(shannon) %>%
-  ggplot(aes(x=PC1, y=PC2, color=metadata[[ioi]], size=shannon_entropy))+
+  ggplot(aes_string(x="PC1", y="PC2", color=ioi, size="shannon_entropy"))+
   geom_point(alpha=0.5) +
   theme_q2r() +
   scale_size_continuous(name="Shannon Diversity") +
