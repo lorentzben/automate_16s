@@ -329,6 +329,31 @@ def beta_div_calc(metadata, item_of_interest):
             "the variable provided does not appear to be a column of the metadata file, please review")
         exit(1)
 
+def assign_taxonomy():
+    classifier = "wget https://data.qiime2.org/2021.2/common/silva-138-99-515-806-nb-classifier.qza -O silva-138-99-515-806-nb-classifier.qza"
+    result = subprocess.run([classifier], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    logger.info("taxonomically classifying sequences using sklearn")
+    assign_tax = "qiime feature-classifier classify-sklearn \
+    --i-classifier 'silva-138-99-515-806-nb-classifier.qza' \
+    --i-reads rep-seqs.qza \
+    --p-confidence 0.6 \
+    --o-classification taxonomy.qza"
+    result = subprocess.run([assign_tax], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+    
+
+    tabulate = "qiime metadata tabulate \
+    --m-input-file taxonomy.qza \
+    --o-visualization taxonomy.qzv"
+    result = subprocess.run([tabulate], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+    
+
 
 def generate_result_file(metadata):
     # dada 2 stats extracted from stats-dada2.qzv
@@ -437,6 +462,8 @@ def main(arg):
         beta_div_calc(arg.metadata, arg.interest)
 
     generate_result_file(arg.metadata)
+
+    assign_taxonomy()
 
     logger.info('done')
 
