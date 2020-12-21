@@ -338,7 +338,7 @@ def assign_taxonomy():
     logger.info("taxonomically classifying sequences using sklearn")
     assign_tax = "qiime feature-classifier classify-sklearn \
     --i-classifier 'silva-138-99-515-806-nb-classifier.qza' \
-    --i-reads rep-seqs.qza \
+    --i-reads rep-seqs-dada2.qza \
     --p-confidence 0.6 \
     --o-classification taxonomy.qza"
     result = subprocess.run([assign_tax], stdout=PIPE, stderr=PIPE, shell=True)
