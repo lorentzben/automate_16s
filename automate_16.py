@@ -455,6 +455,8 @@ def main(arg):
     # in: rooted-tree.qza table-dada2.qza out: core-metrics-results/
     diversity_measure(arg.metadata, depth)
 
+    assign_taxonomy()
+    
     # in: core-metrics-results/faith_pd_vector.qza out: core-metrics-results/faith-pd-group-significance.qzv
     alpha_div_calc(arg.metadata)
 
@@ -463,7 +465,7 @@ def main(arg):
 
     generate_result_file(arg.metadata)
 
-    assign_taxonomy()
+    
 
     logger.info('done')
 
