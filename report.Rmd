@@ -13,7 +13,7 @@ if(!require(phyloseq)) {install.packages("phyloseq")}
 library(kableExtra)
 library(ggplot2)
 library(qiime2R)
-libary(phyloseq)
+library(phyloseq)
 ```
 This is a report generated to summarize the major results from the analysis. It is not intended to be a full picture, rather a jumping off point. This report will reference the files displayed in case you would like to examine them further.
 
