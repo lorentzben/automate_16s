@@ -9,9 +9,11 @@ if(!require(tidyverse)) {install.packages("tidyverse", repos="http://cran.us.r-p
 if(!require(gplots)) {install.packages("gplots", repos="http://cran.us.r-project.org")}
 if (!requireNamespace("devtools", quietly = TRUE)){install.packages("devtools")}
 if(!require(qiime2R)) {devtools::install_github("jbisanz/qiime2R")} # current version is 0.99.20
+if(!require(phyloseq)) {install.packages("phyloseq")}
 library(kableExtra)
 library(ggplot2)
 library(qiime2R)
+libary(phyloseq)
 ```
 This is a report generated to summarize the major results from the analysis. It is not intended to be a full picture, rather a jumping off point. This report will reference the files displayed in case you would like to examine them further.
 
@@ -219,6 +221,8 @@ jaccard$data$Vectors %>%
 
 ```{r}
 library(qiime2R)
+library(phloseq)
+
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
 
 plot_bar(cycle_1, x=ioi, fill="Phylum")
