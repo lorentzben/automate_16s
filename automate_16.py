@@ -326,7 +326,7 @@ def beta_div_calc(metadata, item_of_interest):
     logger.error(result.stderr)
     if result.returncode == 1:
         logger.critical(
-            "the variable provided does not appear to be a column of the metadata file, please review")
+            "the variable provided does not appear to be a column of the metadata file, or is not a categorical item, please review")
         exit(1)
 
 def assign_taxonomy():
