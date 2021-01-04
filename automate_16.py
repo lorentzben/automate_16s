@@ -37,6 +37,9 @@ logger.addHandler(console_logger)
 folder = "inflate_" + str(datetime.datetime.now().date()) + \
     '_'+str(datetime.datetime.now().time()).replace(':', '.')
 
+report_filename = "report_" + str(datetime.datetime.now().date()) + \
+    '_'+str(datetime.datetime.now().time()).replace(':', '.')+".html"
+
 
 def unique_folder_name(stub):
     u_folder = stub + "_" + str(datetime.datetime.now().date()) + \
@@ -400,7 +403,7 @@ def generate_result_file(metadata):
     logger.error(result.stderr)
 
     # Sequence to render the rnotebook into a html object
-    command = 'Rscript -e "rmarkdown::render(\'report.Rmd\', clean=TRUE)"'
+    command = 'Rscript -e "rmarkdown::render(\'report.Rmd\', output_file='report_filename', clean=TRUE)"'
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
