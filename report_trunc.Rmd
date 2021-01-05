@@ -10,6 +10,8 @@ if(!require(gplots)) {install.packages("gplots", repos="http://cran.us.r-project
 if (!requireNamespace("devtools", quietly = TRUE)){install.packages("devtools")}
 if(!require(qiime2R)) {devtools::install_github("jbisanz/qiime2R")} # current version is 0.99.20
 if(!require(phyloseq)) {install.packages("phyloseq")}
+if(!require(gtools)) {install.packages("gtools")}
+library(gtools)
 library(kableExtra)
 library(ggplot2)
 library(qiime2R)
