@@ -93,10 +93,9 @@ Evenness
 ```{r}
 dims = dim(evenness_vals)
 evenness_vals <- data.frame(evenness_vals[2:dims[1],])
-evenness_vals[[ioi]] <- reorder(as.factor(evenness_vals[[ioi]]))
+evenness_vals[[ioi]] <- as.factor(evenness_vals[[ioi]])
 evenness_vals$pielou_evenness <- as.numeric(as.character(evenness_vals$pielou_evenness))
 boxplot(evenness_vals$pielou_evenness~evenness_vals[[ioi]], data=evenness_vals, xlab = ioi)
-
 
 p <- ggplot(evenness_vals, aes(x=evenness_vals[[ioi]], y=pielou_evenness)) + geom_violin()+ geom_boxplot(width=0.1)
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
@@ -108,7 +107,7 @@ Faith
 ```{r}
 dims = dim(faith_vals)
 faith_vals <- data.frame(faith_vals[2:dims[1],])
-faith_vals[[ioi]] <- reorder(as.factor(faith_vals[[ioi]]))
+faith_vals[[ioi]] <- as.factor(faith_vals[[ioi]])
 faith_vals$faith_pd <- as.numeric(as.character(faith_vals$faith_pd))
 boxplot(faith_vals$faith_pd~faith_vals[[ioi]], data=faith_vals)
 
@@ -129,7 +128,6 @@ library(qiime2R)
 library(gplots)
 
 metadata<-read_q2metadata("metadata.tsv")
-metadata[[ioi]] <- reorder(metadata[[ioi]])
 jaccard <- read_qza("core-metrics-results/bray_curtis_pcoa_results.qza")
 shannon<-read_qza("core-metrics-results/shannon_vector.qza")
 shannon <- shannon$data %>% rownames_to_column("SampleID")
@@ -159,7 +157,6 @@ jaccard <- read_qza("core-metrics-results/jaccard_pcoa_results.qza")
 shannon<-read_qza("core-metrics-results/shannon_vector.qza")
 shannon <- shannon$data %>% rownames_to_column("SampleID")
 
-metadata[[ioi]] <- reorder(metadata[[ioi]])
 
 jaccard$data$Vectors %>%
   select(SampleID, PC1, PC2) %>%
@@ -181,7 +178,6 @@ library(qiime2R)
 library(gplots)
 
 metadata<-read_q2metadata("metadata.tsv")
-metadata[[ioi]] <- reorder(metadata[[ioi]])
 jaccard <- read_qza("core-metrics-results/unweighted_unifrac_pcoa_results.qza")
 shannon<-read_qza("core-metrics-results/shannon_vector.qza")
 shannon <- shannon$data %>% rownames_to_column("SampleID")
@@ -206,7 +202,6 @@ library(qiime2R)
 library(gplots)
 
 metadata<-read_q2metadata("metadata.tsv")
-metadata[[ioi]] <- reorder(metadata[[ioi]])
 jaccard <- read_qza("core-metrics-results/weighted_unifrac_pcoa_results.qza")
 shannon<-read_qza("core-metrics-results/shannon_vector.qza")
 shannon <- shannon$data %>% rownames_to_column("SampleID")
