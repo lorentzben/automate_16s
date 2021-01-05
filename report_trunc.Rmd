@@ -41,7 +41,6 @@ depth = read.csv("sampling_depth.csv", sep=",")
 depth %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
 ```
 
-### Alpha Diversity
 
 ```{r include=FALSE}
 evenness_vals = read.csv("./evenness/metadata.tsv", sep='\t')
@@ -82,7 +81,7 @@ obs$data
 ## Alpha Diversity Plot 
 
 Evenness 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 dims = dim(evenness_vals)
 evenness_vals <- data.frame(evenness_vals[2:dims[1],])
 evenness_vals[[ioi]] <- reorder(as.factor(evenness_vals[[ioi]]))
@@ -97,7 +96,7 @@ p <- p+geom_jitter(shape=16, position=position_jitter(0.2))
 p
 ```
 Faith
-```{r echo=FALSE}
+```{r echo=FALSE,message=FALSE, warning=FALSE}
 dims = dim(faith_vals)
 faith_vals <- data.frame(faith_vals[2:dims[1],])
 faith_vals[[ioi]] <- reorder(as.factor(faith_vals[[ioi]]))
@@ -115,7 +114,7 @@ p
 
 Bray curtis ordination
 
-```{r echo=FALSE}
+```{r echo=FALSE,message=FALSE, warning=FALSE}
 library(tidyverse)
 library(qiime2R)
 library(gplots)
@@ -141,7 +140,7 @@ jaccard$data$Vectors %>%
 
 Jaccard ordination
 
-```{r echo=FALSE}
+```{r echo=FALSE,message=FALSE, warning=FALSE}
 library(tidyverse)
 library(qiime2R)
 library(gplots)
@@ -167,7 +166,7 @@ jaccard$data$Vectors %>%
 
 unweighted unifrac ordination
 
-```{r echo=FALSE}
+```{r echo=FALSE,message=FALSE, warning=FALSE}
 library(tidyverse)
 library(qiime2R)
 library(gplots)
@@ -192,7 +191,7 @@ jaccard$data$Vectors %>%
 ```
 weighted unifrac ordination
 
-```{r echo=FALSE}
+```{r echo=FALSE,message=FALSE, warning=FALSE}
 library(tidyverse)
 library(qiime2R)
 library(gplots)
@@ -216,13 +215,19 @@ jaccard$data$Vectors %>%
 
 ```
 
-```{r}
+```{r echo=FALSE,message=FALSE, warning=FALSE}
 library(qiime2R)
 library(phyloseq)
+library(gtools)
 
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
 
-plot_bar(cycle_1, x=ioi, fill="Phylum")
-plot_bar(cycle_1, x=ioi , fill="Class")
+phy <- plot_bar(cycle_1, x=ioi, fill="Phylum")
+phy$data[[ioi]] <- factor(x = phy$data[[ioi]], levels= mixedsort(unique(as.character(phy$data[[ioi]]))))
+phy
+
+class <- plot_bar(cycle_1, x=ioi , fill="Class")
+class$data[[ioi]] <- factor(x = class$data[[ioi]], levels= mixedsort(unique(as.character(class$data[[ioi]]))))
+class
 
 ```

@@ -225,7 +225,11 @@ library(phyloseq)
 
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
 
-plot_bar(cycle_1, x=ioi, fill="Phylum")
-plot_bar(cycle_1, x=ioi , fill="Class")
+phy <- plot_bar(cycle_1, x=ioi, fill="Phylum")
+phy$data[[ioi]] <- factor(x = phy$data[[ioi]], levels= mixedsort(unique(as.character(phy$data[[ioi]]))))
+phy
 
+class <- plot_bar(cycle_1, x=ioi , fill="Class")
+class$data[[ioi]] <- factor(x = class$data[[ioi]], levels= mixedsort(unique(as.character(class$data[[ioi]]))))
+class
 ```
