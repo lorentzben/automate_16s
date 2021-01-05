@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 # Logging handler which catches EVERYTHING
 logfile_name = "automate_"+str(datetime.datetime.now().date()) + \
-    '_'+str(datetime.datetime.now().time()).replace(':', '.')+'.log'
+    '_'+str(datetime.datetime.now().time()).replace(':', '')+'.log'
 file_logger = logging.FileHandler(logfile_name)
 file_logger.setLevel(logging.DEBUG)
 # Logging handler which logs less
@@ -403,7 +403,7 @@ def generate_result_file(metadata):
     logger.error(result.stderr)
 
     # Sequence to render the rnotebook into a html object
-    command = 'Rscript -e "rmarkdown::render(\'report.Rmd\', output_file=long_' +report_filename.strip()+ ', clean=TRUE)"'
+    command = 'Rscript -e "rmarkdown::render(\'report.Rmd\', output_file=\'long_' +report_filename.strip()+ '\', clean=TRUE)"'
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
@@ -413,7 +413,7 @@ def generate_result_file(metadata):
         exit(1)
 
     # Sequence to render the rnotebook into a html object
-    command = 'Rscript -e "rmarkdown::render(\'report_trunc.Rmd\', output_file=' +report_filename.strip()+ ', clean=TRUE)"'
+    command = 'Rscript -e "rmarkdown::render(\'report_trunc.Rmd\', output_file=\'report_filename.strip()\', clean=TRUE)"'
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
