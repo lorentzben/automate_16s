@@ -20,6 +20,7 @@ library(phyloseq)
 This is a report generated to summarize the major results from the analysis. It is not intended to be a full picture, rather a jumping off point. This report will reference the files displayed in case you would like to examine them further.
 
 ### Item of interest
+
 ```{r}
 ioi <- read.csv("item_of_interest.csv")
 ioi<-as.character(ioi)
@@ -27,6 +28,7 @@ ioi<-as.character(ioi)
 
 ### Cutoffs Calculated 
 This table comes from cutoffs.csv
+
 ```{r}
 cutoffs = read.csv("cutoffs.csv",sep = ',',strip.white = TRUE)
 #cutoffs = knitr::kable(cutoffs)
@@ -35,6 +37,7 @@ cutoffs %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed",
 
 ### Dada 2 Stats
 This table was constructed from data in the stats-dada2.qzv object
+
 ```{r}
 dadastat = read.csv("dada2_stats.tsv",sep = '\t',strip.white = TRUE)
 #dadastat_t = dadastat %>% kbl() %>% kable_classic(full_width = F)
@@ -43,15 +46,17 @@ dadastat %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed"
 
 ### Sampling Depth
 This table was constructed from data in sampling_depth.csv
+
 ```{r}
 depth = read.csv("sampling_depth.csv", sep=",")
 depth %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
 ```
 
-### Alpha Diversity
+## Alpha Diversity
 
-## Eveneness
+###Eveneness
 This data comes from the file evenness-group-significance.qzv
+
 ```{r}
 evenness_vals = read.csv("./evenness/metadata.tsv", sep='\t')
 evenness_vals %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
@@ -65,8 +70,9 @@ evenness_stats = read.csv(filename)
 evenness_stats %>% kbl() %>% kable_styling(bootstrap_options = c("condensed","responsive"))
 ```
 
-## Faith
+###Faith
 This data comes from the file faith-pd-group-significance.qzv.
+
 ```{r}
 faith_vals = read.csv("./faith/metadata.tsv", sep='\t')
 faith_vals %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
@@ -78,20 +84,25 @@ faith_stats %>% kbl() %>% kable_styling(bootstrap_options = c("condensed","respo
 ```
 
 ## Shannon
+
 ```{r}
 library(qiime2R)
 shannon<-read_qza("core-metrics-results/shannon_vector.qza")
 shannon$data
 ```
+
 ## Observed Features
+
 ```{r}
 library(qiime2R)
 obs<-read_qza("core-metrics-results/observed_features_vector.qza")
 obs$data
 ```
+
 ## Alpha Diversity Plot 
 
-Evenness 
+###Evenness 
+
 ```{r}
 dims = dim(evenness_vals)
 evenness_vals <- data.frame(evenness_vals[2:dims[1],])
@@ -105,7 +116,9 @@ p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
 p <- p+geom_jitter(shape=16, position=position_jitter(0.2))
 p
 ```
-Faith
+
+###Faith
+
 ```{r}
 dims = dim(faith_vals)
 faith_vals <- data.frame(faith_vals[2:dims[1],])
@@ -119,10 +132,9 @@ p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
 p <- p+geom_jitter(shape=16, position=position_jitter(0.2))
 p
 ```
-### Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv 
-note: time will need to be replaced with probably treatment or other feature of interest
+## Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv 
 
-Bray curtis ordination
+###Bray curtis ordination
 
 ```{r}
 library(tidyverse)
@@ -147,7 +159,7 @@ jaccard$data$Vectors %>%
 
 ```
 
-Jaccard ordination
+###Jaccard ordination
 
 ```{r}
 library(tidyverse)
@@ -172,7 +184,7 @@ jaccard$data$Vectors %>%
 
 ```
 
-unweighted unifrac ordination
+###unweighted unifrac ordination
 
 ```{r}
 library(tidyverse)
@@ -196,7 +208,8 @@ jaccard$data$Vectors %>%
   scale_color_discrete(name=ioi)
 
 ```
-weighted unifrac ordination
+
+###weighted unifrac ordination
 
 ```{r}
 library(tidyverse)
@@ -221,17 +234,52 @@ jaccard$data$Vectors %>%
 
 ```
 
-```{r}
+###OTU Plot
+
+```{r echo=FALSE,message=FALSE, warning=FALSE}
 library(qiime2R)
 library(phyloseq)
+library(gtools)
 
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
 
 phy <- plot_bar(cycle_1, x=ioi, fill="Phylum")
 phy$data[[ioi]] <- factor(x = phy$data[[ioi]], levels= mixedsort(unique(as.character(phy$data[[ioi]]))))
-phy
+phy<- phy + ggtitle("OTUs at the Phylum level")
+phy 
 
 class <- plot_bar(cycle_1, x=ioi , fill="Class")
 class$data[[ioi]] <- factor(x = class$data[[ioi]], levels= mixedsort(unique(as.character(class$data[[ioi]]))))
+class <- class + ggtitle("OTUs at the Class level")
 class
+
+```
+
+###Top 20 Most abundant OTUs
+
+```{r echo=FALSE,message=FALSE, warning=FALSE}
+library(qiime2R)
+library(phyloseq)
+library(gtools)
+
+cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
+
+topN <- 20
+most_abundant_taxa <- sort(taxa_sums(cycle_1), TRUE)[1:topN]
+
+cycle_20 <- prune_taxa(names(most_abundant_taxa), cycle_1)
+
+phyglom <- tax_glom(cycle_20, "Phylum")
+phy <- plot_bar(phyglom, x=ioi, fill="Phylum")
+phy$data[[ioi]] <- factor(x = phy$data[[ioi]], levels= mixedsort(unique(as.character(phy$data[[ioi]]))))
+phy<- phy + ggtitle("Top 20 most abundant OTUs at Phylum Level")
+phy
+
+
+classglom <- tax_glom(cycle_20, "Class")
+class <- plot_bar(classglom, x=ioi , fill="Class")
+class$data[[ioi]] <- factor(x = class$data[[ioi]], levels= mixedsort(unique(as.character(class$data[[ioi]]))))
+class <- class + ggtitle("Top 20 most abundant OTUs at Class level")
+class
+
 ```
