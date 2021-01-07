@@ -82,7 +82,8 @@ obs$data
 ```
 ## Alpha Diversity Plot 
 
-Evenness 
+###Evenness 
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 dims = dim(evenness_vals)
 evenness_vals <- data.frame(evenness_vals[2:dims[1],])
@@ -97,7 +98,9 @@ p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
 p <- p+geom_jitter(shape=16, position=position_jitter(0.2))
 p
 ```
-Faith
+
+###Faith
+
 ```{r echo=FALSE,message=FALSE, warning=FALSE}
 dims = dim(faith_vals)
 faith_vals <- data.frame(faith_vals[2:dims[1],])
@@ -111,10 +114,10 @@ p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
 p <- p+geom_jitter(shape=16, position=position_jitter(0.2))
 p
 ```
-### Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv 
+## Beta diversity 
 
 
-Bray curtis ordination
+###Bray curtis ordination
 
 ```{r echo=FALSE,message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -140,7 +143,7 @@ jaccard$data$Vectors %>%
 
 ```
 
-Jaccard ordination
+###Jaccard ordination
 
 ```{r echo=FALSE,message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -166,7 +169,7 @@ jaccard$data$Vectors %>%
 
 ```
 
-unweighted unifrac ordination
+###unweighted unifrac ordination
 
 ```{r echo=FALSE,message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -191,7 +194,8 @@ jaccard$data$Vectors %>%
   scale_color_discrete(name=ioi)
 
 ```
-weighted unifrac ordination
+
+###weighted unifrac ordination
 
 ```{r echo=FALSE,message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -217,6 +221,8 @@ jaccard$data$Vectors %>%
 
 ```
 
+###OTU Plot
+
 ```{r echo=FALSE,message=FALSE, warning=FALSE}
 library(qiime2R)
 library(phyloseq)
@@ -235,7 +241,9 @@ class <- class + ggtitle("OTUs at the Class level")
 class
 
 ```
-Top 20 Most abundant OTUs
+
+###Top 20 Most abundant OTUs
+
 ```{r echo=FALSE,message=FALSE, warning=FALSE}
 library(qiime2R)
 library(phyloseq)
@@ -248,13 +256,15 @@ most_abundant_taxa <- sort(taxa_sums(cycle_1), TRUE)[1:topN]
 
 cycle_20 <- prune_taxa(names(most_abundant_taxa), cycle_1)
 
-phy <- plot_bar(cycle_20, x=ioi, fill="Phylum")
+phyglom <- tax_glom(cycle_20, "Phylum")
+phy <- plot_bar(phyglom, x=ioi, fill="Phylum")
 phy$data[[ioi]] <- factor(x = phy$data[[ioi]], levels= mixedsort(unique(as.character(phy$data[[ioi]]))))
 phy<- phy + ggtitle("Top 20 most abundant OTUs at Phylum Level")
 phy
 
 
-class <- plot_bar(cycle_20, x=ioi , fill="Class")
+classglom <- tax_glom(cycle_20, "Class")
+class <- plot_bar(classglom, x=ioi , fill="Class")
 class$data[[ioi]] <- factor(x = class$data[[ioi]], levels= mixedsort(unique(as.character(class$data[[ioi]]))))
 class <- class + ggtitle("Top 20 most abundant OTUs at Class level")
 class
