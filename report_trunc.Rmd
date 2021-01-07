@@ -226,10 +226,37 @@ cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","m
 
 phy <- plot_bar(cycle_1, x=ioi, fill="Phylum")
 phy$data[[ioi]] <- factor(x = phy$data[[ioi]], levels= mixedsort(unique(as.character(phy$data[[ioi]]))))
-phy
+phy<- phy + ggtitle("OTUs at the Phylum level")
+phy 
 
 class <- plot_bar(cycle_1, x=ioi , fill="Class")
 class$data[[ioi]] <- factor(x = class$data[[ioi]], levels= mixedsort(unique(as.character(class$data[[ioi]]))))
+class <- class + ggtitle("OTUs at the Class level")
+class
+
+```
+Top 20 Most abundant OTUs
+```{r echo=FALSE,message=FALSE, warning=FALSE}
+library(qiime2R)
+library(phyloseq)
+library(gtools)
+
+cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
+
+topN <- 20
+most_abundant_taxa <- sort(taxa_sums(cycle_1), TRUE)[1:topN]
+
+cycle_20 <- prune_taxa(names(most_abundant_taxa), cycle_1)
+
+phy <- plot_bar(cycle_20, x=ioi, fill="Phylum")
+phy$data[[ioi]] <- factor(x = phy$data[[ioi]], levels= mixedsort(unique(as.character(phy$data[[ioi]]))))
+phy<- phy + ggtitle("Top 20 most abundant OTUs at Phylum Level")
+phy
+
+
+class <- plot_bar(cycle_20, x=ioi , fill="Class")
+class$data[[ioi]] <- factor(x = class$data[[ioi]], levels= mixedsort(unique(as.character(class$data[[ioi]]))))
+class <- class + ggtitle("Top 20 most abundant OTUs at Class level")
 class
 
 ```
