@@ -1,6 +1,8 @@
 ---
 title: "Analysis Report"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 ```{r include=FALSE}
 if(!require(kableExtra)) {install.packages("kableExtra", repos="http://cran.us.r-project.org")}
@@ -13,6 +15,7 @@ if(!require(phyloseq)) {install.packages("phyloseq")}
 if(!require(gtools)) {install.packages("gtools")}
 if(!require(reshape2)) {install.packages("reshape2")}
 if(!require(forcats)) {install.packages("forcats")}
+if(!require(gridExtra)) {install.packages("gridExtra")}
 library(gtools)
 library(kableExtra)
 library(ggplot2)
@@ -20,6 +23,7 @@ library(qiime2R)
 library(phyloseq)
 library(reshape2)
 library(forcats)
+library(gridExtra)
 ```
 This is a report generated to summarize the major results from the analysis. It is not intended to be a full picture, rather a jumping off point. This report will reference the files displayed in case you would like to examine them further.
 
@@ -31,243 +35,83 @@ ioi<-as.character(ioi)
 
 ## Species Distribution
 
-### Relative Abundance of Top 10 taxa At Phylum Level 
+
+### Relative Abundance of Top 10 taxa At Phylum, Genus, and Species
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+plot_bars <- function(level) {
+
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
 
-cycle_1_glom <- tax_glom(cycle_1, taxrank = "Phylum")
+cycle_1_glom <- tax_glom(cycle_1, taxrank = level)
 
 topN <- 10
 most_abundant_taxa <- sort(taxa_sums(cycle_1_glom), TRUE)[1:topN]
+rest_taxa <- sort(taxa_sums(cycle_1_glom), TRUE)[topN+1:length(taxa_sums(cycle_1_glom))]
 
 cycle_10 <- prune_taxa(names(most_abundant_taxa), cycle_1_glom)
+cycle_other <- prune_taxa(names(rest_taxa), cycle_1_glom)
 
-cycle_1_phylum <- cycle_10 %>%
-  tax_glom(taxrank = "Phylum") %>%
+temp <- merge_taxa(cycle_other, taxa_names(cycle_other))
+
+taxvec <- c("Other","Other","Other","Other","Other", "Other","Other")
+taxlist <- list(OTU1=parse_taxonomy_default(taxvec))
+tax_tab <- build_tax_table(taxlist)
+colnames(tax_tab) <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
+rownames(tax_tab) <- rownames(temp@tax_table@.Data)
+temp@tax_table <- tax_tab
+
+merge_tax <- merge_phyloseq(cycle_10@tax_table, temp@tax_table)
+merge_otu <- merge_phyloseq(cycle_10@otu_table, temp@otu_table)
+merge_samp <- merge_phyloseq(cycle_10@sam_data, temp@sam_data)
+
+um <- merge_phyloseq(merge_tax, merge_otu, merge_samp)
+
+
+cycle_1_genus <- um %>%
+  tax_glom(taxrank = level) %>%
   transform_sample_counts(function(x) {x/sum(x)}) %>%
   psmelt() %>%
-  filter(Abundance > 0.02) %>%
-  arrange(Abundance)
-
-cycle_1_other <- cycle_10 %>%
-  tax_glom(taxrank = "Phylum") %>%
-  transform_sample_counts(function(x) {x/sum(x)}) %>%
-  psmelt() %>%
-  filter(Abundance < 0.02) %>%
-  arrange(Abundance)
-
-other <- aggregate(cycle_1_other$Abundance, by=list(Category=cycle_1_other$Sample), FUN=sum)
-other <- cbind(other, rep("Other", dim(other)[1]))
-colnames(other) <- c("Sample","Abundance","Phylum")
-
-cycle_1_phylum <- cycle_1_phylum %>% 
-  add_row(other) %>%
   arrange(Abundance)
 
 
-ggplot(cycle_1_phylum, aes(x=Sample, y=Abundance, fill=fct_reorder(Phylum, Abundance))) + 
+
+by_sample <- ggplot(cycle_1_genus, aes(x=Sample, y=Abundance, fill=fct_relevel(fct_reorder(cycle_1_genus[[level]], Abundance),"Other"))) + 
   geom_bar(stat= "identity") +
   xlab("Sample ID") +
-  guides(fill=guide_legend(title="Phylum"))
+  guides(fill=guide_legend(title=level))
 
 
-cy_phylum <- cycle_10 %>%
-  tax_glom(taxrank = "Phylum") %>%
+
+
+cy_genus <- um %>%
+  tax_glom(taxrank = level) %>%
   merge_samples(ioi,fun=sum) %>%
   transform_sample_counts(function(x) {x/sum(x)}) %>%
   psmelt() %>%
-  filter(Abundance > 0.02) %>%
-  arrange(Abundance)
-
-cy_1_other <- cycle_10 %>%
-  tax_glom(taxrank = "Phylum") %>%
-  merge_samples(ioi,fun=sum) %>%
-  transform_sample_counts(function(x) {x/sum(x)}) %>%
-  psmelt() %>%
-  filter(Abundance < 0.02) %>%
   arrange(Abundance)
 
 
-other <- aggregate(cy_1_other$Abundance, by=list(Category=cy_1_other$Sample), FUN=sum)
-other <- cbind(other, rep("Other", dim(other)[1]))
-colnames(other) <- c("Sample","Abundance","Phylum")
-
-cy_phylum <- cy_phylum %>% 
-  add_row(other) %>%
-  arrange(Abundance)
-
-
-ggplot(cy_phylum, aes(x=Sample, y=Abundance, fill=fct_reorder(Phylum,Abundance))) + 
+by_treatment <- ggplot(cy_genus, aes(x=Sample, y=Abundance, fill=fct_relevel(fct_reorder(cy_genus[[level]],Abundance),"Other"))) + 
   geom_bar(stat="identity") +
-  guides(fill=guide_legend(title="Phylum")) + 
+  guides(fill=guide_legend(title=level)) + 
   xlab(label = ioi)
 
+
+
+grid.arrange(by_sample,by_treatment, nrow=1)
+}
+
+
+
+
+my_levs <- c("Phylum", "Genus", "Species")
+
+for (item in my_levs){
+  plot_bars(item)
+}
 ```
-### Relative Abundance of Top 10 taxa At Genus Level 
-
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
-
-cycle_1_glom <- tax_glom(cycle_1, taxrank = "Genus")
-
-topN <- 10
-most_abundant_taxa <- sort(taxa_sums(cycle_1_glom), TRUE)[1:topN]
-
-cycle_10 <- prune_taxa(names(most_abundant_taxa), cycle_1_glom)
-
-
-cycle_1_genus <- cycle_10 %>%
-  tax_glom(taxrank = "Genus") %>%
-  transform_sample_counts(function(x) {x/sum(x)}) %>%
-  psmelt() %>%
-  filter(Abundance > 0.02) %>%
-  arrange(Abundance)
-
-cycle_1_other <- cycle_10 %>%
-  tax_glom(taxrank = "Genus") %>%
-  transform_sample_counts(function(x) {x/sum(x)}) %>%
-  psmelt() %>%
-  filter(Abundance < 0.02) %>%
-  arrange(Abundance)
-
-other <- aggregate(cycle_1_other$Abundance, by=list(Category=cycle_1_other$Sample), FUN=sum)
-other <- cbind(other, rep("Other", dim(other)[1]))
-colnames(other) <- c("Sample","Abundance","Genus")
-
-cycle_1_genus <- cycle_1_genus %>% 
-  add_row(other) %>%
-  arrange(Abundance)
-
-
-ggplot(cycle_1_genus, aes(x=Sample, y=Abundance, fill=fct_reorder(Genus, Abundance))) + 
-  geom_bar(stat= "identity") +
-  xlab("Sample ID") +
-  guides(fill=guide_legend(title="Genus"))
-
-
-
-
-cy_genus <- cycle_10 %>%
-  tax_glom(taxrank = "Genus") %>%
-  merge_samples(ioi,fun=sum) %>%
-  transform_sample_counts(function(x) {x/sum(x)}) %>%
-  psmelt() %>%
-  filter(Abundance > 0.02)
-  arrange(Abundance)
-
-cy_1_other <- cycle_10 %>%
-  tax_glom(taxrank = "Genus") %>%
-  merge_samples(ioi,fun=sum) %>%
-  transform_sample_counts(function(x) {x/sum(x)}) %>%
-  psmelt() %>%
-  filter(Abundance < 0.02) %>%
-  arrange(Abundance)
-
-other <- aggregate(cy_1_other$Abundance, by=list(Category=cy_1_other$Sample), FUN=sum)
-other <- cbind(other, rep("Other", dim(other)[1]))
-colnames(other) <- c("Sample","Abundance","Genus")
-
-cy_genus <- cy_genus %>% 
-  add_row(other) %>%
-  arrange(Abundance)
-
-
-
-
-ggplot(cy_genus, aes(x=Sample, y=Abundance, fill=fct_reorder(Genus,Abundance))) + 
-  geom_bar(stat="identity") +
-  guides(fill=guide_legend(title="Genus")) + 
-  xlab(label = ioi)
-
-```
-
-### Relative Abundance At Species Level 
-
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
-
-cycle_1_glom <- tax_glom(cycle_1, taxrank = "Species")
-
-topN <- 10
-most_abundant_taxa <- sort(taxa_sums(cycle_1_glom), TRUE)[1:topN]
-
-cycle_10 <- prune_taxa(names(most_abundant_taxa), cycle_1_glom)
-
-cycle_1_species <- cycle_10 %>%
-  tax_glom(taxrank = "Species") %>%
-  transform_sample_counts(function(x) {x/sum(x)}) %>%
-  psmelt() %>%
-  filter(Abundance > 0.02) %>%
-  arrange(Abundance)
-
-cycle_1_other <- cycle_10 %>%
-  tax_glom(taxrank = "Species") %>%
-  transform_sample_counts(function(x) {x/sum(x)}) %>%
-  psmelt() %>%
-  filter(Abundance < 0.02) %>%
-  arrange(Abundance)
-
-other <- aggregate(cycle_1_other$Abundance, by=list(Category=cycle_1_other$Sample), FUN=sum)
-other <- cbind(other, rep("Other", dim(other)[1]))
-colnames(other) <- c("Sample","Abundance","Species")
-
-cycle_1_species <- cycle_1_species %>% 
-  add_row(other) %>%
-  arrange(Abundance)
-
-
-ggplot(cycle_1_species, aes(x=Sample, y=Abundance, fill=fct_reorder(Species, Abundance))) + 
-  geom_bar(stat= "identity") +
-  xlab("Sample ID") +
-  guides(fill=guide_legend(title="Species"))
-
-
-
-
-cy_species <- cycle_10 %>%
-  tax_glom(taxrank = "Species") %>%
-  merge_samples(ioi,fun=sum) %>%
-  transform_sample_counts(function(x) {x/sum(x)}) %>%
-  psmelt() %>%
-  filter(Abundance > 0.02) %>%
-  arrange(Abundance)
-
-cy_1_other <- cycle_10 %>%
-  tax_glom(taxrank = "Species") %>%
-  merge_samples(ioi,fun=sum) %>%
-  transform_sample_counts(function(x) {x/sum(x)}) %>%
-  psmelt() %>%
-  filter(Abundance < 0.02) %>%
-  arrange(Abundance)
-
-other <- aggregate(cy_1_other$Abundance, by=list(Category=cy_1_other$Sample), FUN=sum)
-other <- cbind(other, rep("Other", dim(other)[1]))
-colnames(other) <- c("Sample","Abundance","Species")
-
-cy_species <- cy_species %>% 
-  add_row(other) %>%
-  arrange(Abundance)
-
-
-
-
-
-ggplot(cy_species, aes(x=Sample, y=Abundance, fill=fct_reorder(Species,Abundance))) + 
-  geom_bar(stat="identity") +
-  guides(fill=guide_legend(title="Species")) + 
-  xlab(label = ioi)
-
-```
-
-```{r}
-data("GlobalPatterns")
-gpt <- subset_taxa(GlobalPatterns, Kingdom=="Bacteria")
-gpt <- prune_taxa(names(sort(taxa_sums(gpt),TRUE)[1:300]), gpt)
-plot_heatmap(gpt, sample.label="SampleType")
-heatmap(otu_table(cycle_1), scale="row")
-```
-
 
 ```{r include=FALSE}
 cutoffs = read.csv("cutoffs.csv",sep = ',',strip.white = TRUE)
@@ -306,6 +150,7 @@ evenness_stats %>% kbl() %>% kable_styling(bootstrap_options = c("condensed","re
 faith_vals = read.csv("./faith/metadata.tsv", sep='\t')
 faith_vals %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
 ```
+
 ```{r include=FALSE}
 filename <- paste("./faith/kruskal-wallis-pairwise-",ioi,".csv",sep="")
 faith_stats = read.csv(filename)
@@ -324,6 +169,7 @@ library(qiime2R)
 obs<-read_qza("core-metrics-results/observed_features_vector.qza")
 obs$data
 ```
+
 ## Alpha Diversity Plot 
 
 ###Evenness 
