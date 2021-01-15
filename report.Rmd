@@ -80,7 +80,9 @@ cycle_1_genus <- um %>%
 by_sample <- ggplot(cycle_1_genus, aes(x=Sample, y=Abundance, fill=fct_relevel(fct_reorder(cycle_1_genus[[level]], Abundance),"Other"))) + 
   geom_bar(stat= "identity") +
   xlab("Sample ID") +
-  guides(fill=guide_legend(title=level))
+  guides(fill=guide_legend(title=level))+
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90,vjust=0.5, hjust=1)) 
 
 
 
@@ -96,11 +98,13 @@ cy_genus <- um %>%
 by_treatment <- ggplot(cy_genus, aes(x=Sample, y=Abundance, fill=fct_relevel(fct_reorder(cy_genus[[level]],Abundance),"Other"))) + 
   geom_bar(stat="identity") +
   guides(fill=guide_legend(title=level)) + 
-  xlab(label = ioi)
+  xlab(label = ioi) +
+  theme_minimal()
 
 
 
-grid.arrange(by_sample,by_treatment, nrow=1)
+print(by_sample)
+print(by_treatment)
 }
 
 
@@ -112,6 +116,34 @@ for (item in my_levs){
   plot_bars(item)
 }
 ```
+
+## Species Abundance Heatmap
+
+```{r}
+BiocManager::install("microbiome")
+BiocManager::install("microbiomeutilities")
+install.packages("devtools")
+devtools::install_github("microsud/microbiomeutilities")
+library(microbiome)
+library(microbiomeutilities)
+
+
+
+cycle_1_glom <- cycle_1 %>%
+  tax_glom(taxrank = "Genus") 
+top_35_genera <- sort(taxa_sums(cycle_1_glom), TRUE)[1:35]
+
+top_35 <- prune_taxa(names(top_35_genera), cycle_1_glom)
+  
+plot_heatmap(top_35, taxa.label = "Genus")
+
+as.data.frame(top_35@otu_table@.Data) %>%
+  left_join(as.data.frame(top_35@tax_table@.Data))
+
+
+
+```
+
 
 ```{r include=FALSE}
 cutoffs = read.csv("cutoffs.csv",sep = ',',strip.white = TRUE)
