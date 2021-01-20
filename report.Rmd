@@ -16,6 +16,9 @@ if(!require(gtools)) {install.packages("gtools")}
 if(!require(reshape2)) {install.packages("reshape2")}
 if(!require(forcats)) {install.packages("forcats")}
 if(!require(gridExtra)) {install.packages("gridExtra")}
+if(!require(microbiome)){devtools::install_github("microbiome/microbiome")}
+if(!require(microbiomeutilities)){devtools::install_github("microsud/microbiomeutilities")}
+if(!require(NMF)){install.packages("NMF")}
 library(gtools)
 library(kableExtra)
 library(ggplot2)
@@ -24,6 +27,8 @@ library(phyloseq)
 library(reshape2)
 library(forcats)
 library(gridExtra)
+library(microbiome)
+library(microbiomeutilities)
 ```
 This is a report generated to summarize the major results from the analysis. It is not intended to be a full picture, rather a jumping off point. This report will reference the files displayed in case you would like to examine them further.
 
@@ -36,40 +41,46 @@ ioi<-as.character(ioi)
 ## Species Distribution
 
 
-### Relative Abundance of Top 10 taxa At Phylum, Genus, and Species
+### Relative Abundance of Top 10 Phyal
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r stacked bar chart at Phylum level, message=FALSE, warning=FALSE, echo=FALSE}
+level = "Phylum"
 
-plot_bars <- function(level) {
-
+#Create phyloseq object from qiime objects
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
 
-cycle_1_glom <- tax_glom(cycle_1, taxrank = level)
-
+#Select number of taxa at phylum level to plot
 topN <- 10
-most_abundant_taxa <- sort(taxa_sums(cycle_1_glom), TRUE)[1:topN]
-rest_taxa <- sort(taxa_sums(cycle_1_glom), TRUE)[topN+1:length(taxa_sums(cycle_1_glom))]
 
-cycle_10 <- prune_taxa(names(most_abundant_taxa), cycle_1_glom)
-cycle_other <- prune_taxa(names(rest_taxa), cycle_1_glom)
+#selects top n taxa and creates phyloseq object
+cycle_n_names <- sort(tapply(taxa_sums(cycle_1), tax_table(cycle_1)[,as.character(level)], sum), TRUE) [1:topN]
+cycle_n <- subset_taxa(cycle_1, get(level) %in% names(cycle_n_names))
+cycle_n_glom <- tax_glom(cycle_n, taxrank = level)
 
-temp <- merge_taxa(cycle_other, taxa_names(cycle_other))
+#selects top n + 1 to the end of table
+rest_tax <- sort(tapply(taxa_sums(cycle_1), tax_table(cycle_1)[,as.character(level)], sum), TRUE) [topN+1:length(tax_table(cycle_1))]
+rest <- subset_taxa(cycle_1, get(level) %in% names(rest_tax))
+rest_glom <- tax_glom(rest, taxrank = level)
 
+#collapse all phyla not in top 10 into one taxon
+rest_merge <- merge_taxa(rest, taxa_names(rest))
+
+#create dummy taxonomy classificaiton for collapsed taxa
 taxvec <- c("Other","Other","Other","Other","Other", "Other","Other")
 taxlist <- list(OTU1=parse_taxonomy_default(taxvec))
 tax_tab <- build_tax_table(taxlist)
 colnames(tax_tab) <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
-rownames(tax_tab) <- rownames(temp@tax_table@.Data)
-temp@tax_table <- tax_tab
+rownames(tax_tab) <- rownames(tax_table(rest_merge))
+tax_table(rest_merge) <- tax_tab
 
-merge_tax <- merge_phyloseq(cycle_10@tax_table, temp@tax_table)
-merge_otu <- merge_phyloseq(cycle_10@otu_table, temp@otu_table)
-merge_samp <- merge_phyloseq(cycle_10@sam_data, temp@sam_data)
+#attaches top n phyloseq object with the other phyloseq object
+merge_tax <- merge_phyloseq(tax_table(cycle_n), tax_table(rest_merge))
+merge_otu <- merge_phyloseq(otu_table(cycle_n), otu_table(rest_merge))
+merge_samp <- merge_phyloseq(sample_data(cycle_n), sample_data(rest_merge))
 
-um <- merge_phyloseq(merge_tax, merge_otu, merge_samp)
+merged <- merge_phyloseq(merge_tax, merge_otu, merge_samp)
 
-
-cycle_1_genus <- um %>%
+cycle_1_genus <- merged %>%
   tax_glom(taxrank = level) %>%
   transform_sample_counts(function(x) {x/sum(x)}) %>%
   psmelt() %>%
@@ -87,7 +98,7 @@ by_sample <- ggplot(cycle_1_genus, aes(x=Sample, y=Abundance, fill=fct_relevel(f
 
 
 
-cy_genus <- um %>%
+cy_genus <- merged %>%
   tax_glom(taxrank = level) %>%
   merge_samples(ioi,fun=sum) %>%
   transform_sample_counts(function(x) {x/sum(x)}) %>%
@@ -105,41 +116,190 @@ by_treatment <- ggplot(cy_genus, aes(x=Sample, y=Abundance, fill=fct_relevel(fct
 
 print(by_sample)
 print(by_treatment)
-}
+
+```
+
+### Relative Abundance of Top 10 Genera
+
+```{r stacked bar chart at Genus level, message=FALSE, warning=FALSE, echo=FALSE}
+level = "Genus"
+
+#Create phyloseq object from qiime objects
+cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
+
+#Select number of taxa at genus level to plot
+topN <- 10
+
+#selects top n taxa and creates phyloseq object
+cycle_n_names <- sort(tapply(taxa_sums(cycle_1), tax_table(cycle_1)[,as.character(level)], sum), TRUE) [1:topN]
+cycle_n <- subset_taxa(cycle_1, get(level) %in% names(cycle_n_names))
+cycle_n_glom <- tax_glom(cycle_n, taxrank = level)
+
+#selects top n + 1 to the end of table
+rest_tax <- sort(tapply(taxa_sums(cycle_1), tax_table(cycle_1)[,as.character(level)], sum), TRUE) [topN+1:length(tax_table(cycle_1))]
+rest <- subset_taxa(cycle_1, get(level) %in% names(rest_tax))
+rest_glom <- tax_glom(rest, taxrank = level)
+
+#collapse all genera not in top 10 into one taxon
+rest_merge <- merge_taxa(rest, taxa_names(rest))
+
+#create dummy taxonomy classificaiton for collapsed taxa
+taxvec <- c("Other","Other","Other","Other","Other", "Other","Other")
+taxlist <- list(OTU1=parse_taxonomy_default(taxvec))
+tax_tab <- build_tax_table(taxlist)
+colnames(tax_tab) <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
+rownames(tax_tab) <- rownames(tax_table(rest_merge))
+tax_table(rest_merge) <- tax_tab
+
+#attaches top n phyloseq object with the other phyloseq object
+merge_tax <- merge_phyloseq(tax_table(cycle_n), tax_table(rest_merge))
+merge_otu <- merge_phyloseq(otu_table(cycle_n), otu_table(rest_merge))
+merge_samp <- merge_phyloseq(sample_data(cycle_n), sample_data(rest_merge))
+
+merged <- merge_phyloseq(merge_tax, merge_otu, merge_samp)
+
+cycle_1_genus <- merged %>%
+  tax_glom(taxrank = level) %>%
+  transform_sample_counts(function(x) {x/sum(x)}) %>%
+  psmelt() %>%
+  arrange(Abundance)
+
+
+
+by_sample <- ggplot(cycle_1_genus, aes(x=Sample, y=Abundance, fill=fct_relevel(fct_reorder(cycle_1_genus[[level]], Abundance),"Other"))) + 
+  geom_bar(stat= "identity") +
+  xlab("Sample ID") +
+  guides(fill=guide_legend(title=level))+
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90,vjust=0.5, hjust=1)) 
 
 
 
 
-my_levs <- c("Phylum", "Genus", "Species")
+cy_genus <- merged %>%
+  tax_glom(taxrank = level) %>%
+  merge_samples(ioi,fun=sum) %>%
+  transform_sample_counts(function(x) {x/sum(x)}) %>%
+  psmelt() %>%
+  arrange(Abundance)
 
-for (item in my_levs){
-  plot_bars(item)
-}
+
+by_treatment <- ggplot(cy_genus, aes(x=Sample, y=Abundance, fill=fct_relevel(fct_reorder(cy_genus[[level]],Abundance),"Other"))) + 
+  geom_bar(stat="identity") +
+  guides(fill=guide_legend(title=level)) + 
+  xlab(label = ioi) +
+  theme_minimal()
+
+
+
+print(by_sample)
+print(by_treatment)
+
+```
+
+### Relative Abundance of Top 10 Species
+
+```{r stacked bar chart at Species level, message=FALSE, warning=FALSE, echo=FALSE}
+level = "Species"
+
+#Create phyloseq object from qiime objects
+cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
+
+#Select number of taxa at species level to plot
+topN <- 10
+
+#selects top n taxa and creates phyloseq object
+cycle_n_names <- sort(tapply(taxa_sums(cycle_1), tax_table(cycle_1)[,as.character(level)], sum), TRUE) [1:topN]
+cycle_n <- subset_taxa(cycle_1, get(level) %in% names(cycle_n_names))
+cycle_n_glom <- tax_glom(cycle_n, taxrank = level)
+
+#selects top n + 1 to the end of table
+rest_tax <- sort(tapply(taxa_sums(cycle_1), tax_table(cycle_1)[,as.character(level)], sum), TRUE) [topN+1:length(tax_table(cycle_1))]
+rest <- subset_taxa(cycle_1, get(level) %in% names(rest_tax))
+rest_glom <- tax_glom(rest, taxrank = level)
+
+#collapse all species not in top 10 into one taxon
+rest_merge <- merge_taxa(rest, taxa_names(rest))
+
+#create dummy taxonomy classificaiton for collapsed taxa
+taxvec <- c("Other","Other","Other","Other","Other", "Other","Other")
+taxlist <- list(OTU1=parse_taxonomy_default(taxvec))
+tax_tab <- build_tax_table(taxlist)
+colnames(tax_tab) <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
+rownames(tax_tab) <- rownames(tax_table(rest_merge))
+tax_table(rest_merge) <- tax_tab
+
+#attaches top n phyloseq object with the other phyloseq object
+merge_tax <- merge_phyloseq(tax_table(cycle_n), tax_table(rest_merge))
+merge_otu <- merge_phyloseq(otu_table(cycle_n), otu_table(rest_merge))
+merge_samp <- merge_phyloseq(sample_data(cycle_n), sample_data(rest_merge))
+
+merged <- merge_phyloseq(merge_tax, merge_otu, merge_samp)
+
+cycle_1_genus <- merged %>%
+  tax_glom(taxrank = level) %>%
+  transform_sample_counts(function(x) {x/sum(x)}) %>%
+  psmelt() %>%
+  arrange(Abundance)
+
+
+
+by_sample <- ggplot(cycle_1_genus, aes(x=Sample, y=Abundance, fill=fct_relevel(fct_reorder(cycle_1_genus[[level]], Abundance),"Other"))) + 
+  geom_bar(stat= "identity") +
+  xlab("Sample ID") +
+  guides(fill=guide_legend(title=level))+
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90,vjust=0.5, hjust=1)) 
+
+
+
+
+cy_genus <- merged %>%
+  tax_glom(taxrank = level) %>%
+  merge_samples(ioi,fun=sum) %>%
+  transform_sample_counts(function(x) {x/sum(x)}) %>%
+  psmelt() %>%
+  arrange(Abundance)
+
+
+by_treatment <- ggplot(cy_genus, aes(x=Sample, y=Abundance, fill=fct_relevel(fct_reorder(cy_genus[[level]],Abundance),"Other"))) + 
+  geom_bar(stat="identity") +
+  guides(fill=guide_legend(title=level)) + 
+  xlab(label = ioi) +
+  theme_minimal()
+
+
+
+print(by_sample)
+print(by_treatment)
+
 ```
 
 ## Species Abundance Heatmap
 
-```{r}
-BiocManager::install("microbiome")
-BiocManager::install("microbiomeutilities")
-install.packages("devtools")
-devtools::install_github("microsud/microbiomeutilities")
-library(microbiome)
-library(microbiomeutilities)
+```{r heatmap at the Genus level annotatted with item of interest, echo=FALSE, warning=FALSE, message=FALSE}
+library(NMF)
+level = "Genus"
+
+#Create phyloseq object from qiime objects
+cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
+
+#Select number of taxa at species level to plot
+topN <- 35
+
+# z transform whole dataset
+cycle_z <- microbiome::transform(cycle_1, "Z")
+
+cycle_z_names <- sort(tapply(taxa_sums(cycle_z), tax_table(cycle_z)[,as.character(level)], sum), TRUE) [1:topN]
+cycle_z_taxa <- subset_taxa(cycle_1, get(level) %in% names(cycle_z_names))
+
+cycle_z_prune_names <- sort(taxa_sums(tax_glom(cycle_z_taxa, taxrank = level)), TRUE)[1:topN]
+cycle_z_prune <- prune_taxa(names(cycle_z_prune_names), cycle_1)
 
 
+heatmap <- pheatmap::pheatmap(otu_table(cycle_z_prune), labels_row=tax_table(cycle_z_prune)[,"Genus"], annotation_row = data.frame(tax_table(cycle_z_prune)[,"Phylum"]), annotation_col = data.frame(sample_data(cycle_z_prune)[,ioi]), width = 10, height = 10, fontsize = 14, scale = "column")
 
-cycle_1_glom <- cycle_1 %>%
-  tax_glom(taxrank = "Genus") 
-top_35_genera <- sort(taxa_sums(cycle_1_glom), TRUE)[1:35]
-
-top_35 <- prune_taxa(names(top_35_genera), cycle_1_glom)
-  
-plot_heatmap(top_35, taxa.label = "Genus")
-
-as.data.frame(top_35@otu_table@.Data) %>%
-  left_join(as.data.frame(top_35@tax_table@.Data))
-
+ggsave("heatmap.png", heatmap, width = 20, height = 10, units = "in" )
 
 
 ```
@@ -204,7 +364,7 @@ obs$data
 
 ## Alpha Diversity Plot 
 
-###Evenness 
+### Evenness 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 dims = dim(evenness_vals)
@@ -221,7 +381,7 @@ p <- p+geom_jitter(shape=16, position=position_jitter(0.2))
 p
 ```
 
-###Faith
+### Faith
 
 ```{r echo=FALSE,message=FALSE, warning=FALSE}
 dims = dim(faith_vals)
@@ -236,10 +396,10 @@ p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
 p <- p+geom_jitter(shape=16, position=position_jitter(0.2))
 p
 ```
+
 ## Beta diversity 
 
-
-###Bray curtis ordination
+### Bray curtis ordination
 
 ```{r echo=FALSE,message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -265,7 +425,7 @@ jaccard$data$Vectors %>%
 
 ```
 
-###Jaccard ordination
+### Jaccard ordination
 
 ```{r echo=FALSE,message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -291,7 +451,7 @@ jaccard$data$Vectors %>%
 
 ```
 
-###unweighted unifrac ordination
+### unweighted unifrac ordination
 
 ```{r echo=FALSE,message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -317,7 +477,7 @@ jaccard$data$Vectors %>%
 
 ```
 
-###weighted unifrac ordination
+### weighted unifrac ordination
 
 ```{r echo=FALSE,message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -342,55 +502,4 @@ jaccard$data$Vectors %>%
   scale_color_discrete(name=ioi)
 
 ```
-
-###OTU Plot
-
-```{r echo=FALSE,message=FALSE, warning=FALSE}
-library(qiime2R)
-library(phyloseq)
-library(gtools)
-
-cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
-
-phy <- plot_bar(cycle_1, x=ioi, fill="Phylum")
-phy$data[[ioi]] <- factor(x = phy$data[[ioi]], levels= mixedsort(unique(as.character(phy$data[[ioi]]))))
-phy<- phy + ggtitle("OTUs at the Phylum level")
-phy 
-
-class <- plot_bar(cycle_1, x=ioi , fill="Class")
-class$data[[ioi]] <- factor(x = class$data[[ioi]], levels= mixedsort(unique(as.character(class$data[[ioi]]))))
-class <- class + ggtitle("OTUs at the Class level")
-class
-
-```
-
-###Top 20 Most abundant OTUs
-
-```{r echo=FALSE,message=FALSE, warning=FALSE}
-library(qiime2R)
-library(phyloseq)
-library(gtools)
-
-cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
-
-topN <- 20
-most_abundant_taxa <- sort(taxa_sums(cycle_1), TRUE)[1:topN]
-
-cycle_20 <- prune_taxa(names(most_abundant_taxa), cycle_1)
-
-phyglom <- tax_glom(cycle_20, "Phylum")
-phy <- plot_bar(phyglom, x=ioi, fill="Phylum")
-phy$data[[ioi]] <- factor(x = phy$data[[ioi]], levels= mixedsort(unique(as.character(phy$data[[ioi]]))))
-phy<- phy + ggtitle("Top 20 most abundant OTUs at Phylum Level")
-phy
-
-
-classglom <- tax_glom(cycle_20, "Class")
-class <- plot_bar(classglom, x=ioi , fill="Class")
-class$data[[ioi]] <- factor(x = class$data[[ioi]], levels= mixedsort(unique(as.character(class$data[[ioi]]))))
-class <- class + ggtitle("Top 20 most abundant OTUs at Class level")
-class
-
-```
-
 
