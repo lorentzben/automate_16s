@@ -54,6 +54,7 @@ outdir <- paste0("./",outdir_name)
 ### Relative Abundance of Top 10 Phyal
 
 ```{r stacked bar chart at Phylum level, message=FALSE, warning=FALSE, echo=FALSE}
+options(bitmapType='cairo')
 level = "Phylum"
 
 #Create phyloseq object from qiime objects
@@ -104,7 +105,10 @@ by_sample <- ggplot(cycle_1_phylum, aes(x=Sample, y=Abundance, fill=fct_relevel(
   xlab("Sample ID") +
   guides(fill=guide_legend(title=level))+
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 90,vjust=0.5, hjust=1)) 
+  theme(axis.text.x = element_text(angle = 90,vjust=0.5, hjust=1))
+
+print(by_sample)
+ggsave("stacked_bar_phylum_by_sample.png", plot=by_sample, path=outdir)
 
 #calculates relative abundance based on item of interest provided in original bash script
 cy_phylum <- merged %>%
@@ -123,11 +127,11 @@ by_treatment <- ggplot(cy_phylum, aes(x=Sample, y=Abundance, fill=fct_relevel(fc
 
 
 #prints charts to rnotebook
-print(by_sample)
+
 print(by_treatment)
 
 #saves charts to directory
-ggsave("stacked_bar_phylum_by_sample.png", plot=by_sample, path=outdir)
+
 ggsave("stacked_bar_phylum_by_treatment.png", plot=by_treatment, path=outdir)
 
 ```
@@ -186,6 +190,9 @@ by_sample <- ggplot(cycle_1_genus, aes(x=Sample, y=Abundance, fill=fct_relevel(f
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90,vjust=0.5, hjust=1)) 
 
+print(by_sample)
+ggsave("stacked_bar_genus_by_sample.png", plot=by_sample, path=outdir)
+
 #calculate relative abundance based on treatment 
 cy_genus <- merged %>%
   tax_glom(taxrank = level) %>%
@@ -202,11 +209,11 @@ by_treatment <- ggplot(cy_genus, aes(x=Sample, y=Abundance, fill=fct_relevel(fct
   theme_minimal()
 
 #prints charts for rnotebook
-print(by_sample)
+
 print(by_treatment)
 
 #saves copies of figures to outdir
-ggsave("stacked_bar_genus_by_sample.png", plot=by_sample, path = outdir)
+
 ggsave("stacked_bar_genus_by_treatment.png", plot = by_treatment, path=outdir)
 
 ```
@@ -265,6 +272,9 @@ by_sample <- ggplot(cycle_1_species, aes(x=Sample, y=Abundance, fill=fct_relevel
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90,vjust=0.5, hjust=1)) 
 
+print(by_sample)
+ggsave("stacked_bar_species_by_sample.png", plot=by_sample, path=outdir)
+
 
 #calculates relative abundance based on treatment
 cy_species <- merged %>%
@@ -282,11 +292,11 @@ by_treatment <- ggplot(cy_species, aes(x=Sample, y=Abundance, fill=fct_relevel(f
   theme_minimal()
 
 #prints figures to rnotebook
-print(by_sample)
+
 print(by_treatment)
 
 #saves copies of figures to directory
-ggsave("stacked_bar_species_by_sample.png", plot=by_sample, path=outdir)
+
 ggsave("stacked_bar_species_by_treatment.png", plot=by_treatment, path=outdir)
 
 ```
