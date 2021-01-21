@@ -16,9 +16,10 @@ if(!require(gtools)) {install.packages("gtools")}
 if(!require(reshape2)) {install.packages("reshape2")}
 if(!require(forcats)) {install.packages("forcats")}
 if(!require(gridExtra)) {install.packages("gridExtra")}
-if(!require(microbiome)){devtools::install_github("microbiome/microbiome")}
-if(!require(microbiomeutilities)){devtools::install_github("microsud/microbiomeutilities")}
+if(!requireNamespace("BiocManager")){install.packages("BiocManager")}
+if(!require(microbiome)){BiocManager::install("microbiome")}
 if(!require(NMF)){install.packages("NMF")}
+if(!require(pheatmap)){install.packages("pheatmap")}
 library(gtools)
 library(kableExtra)
 library(ggplot2)
@@ -28,7 +29,9 @@ library(reshape2)
 library(forcats)
 library(gridExtra)
 library(microbiome)
-library(microbiomeutilities)
+library(NMF)
+library(pheatmap)
+
 ```
 This is a report generated to summarize the major results from the analysis. It is not intended to be a full picture, rather a jumping off point. This report will reference the files displayed in case you would like to examine them further.
 
@@ -278,7 +281,7 @@ print(by_treatment)
 ## Species Abundance Heatmap
 
 ```{r heatmap at the Genus level annotatted with item of interest, echo=FALSE, warning=FALSE, message=FALSE}
-library(NMF)
+
 level = "Genus"
 
 #Create phyloseq object from qiime objects
