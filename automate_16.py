@@ -412,15 +412,6 @@ def generate_result_file(metadata):
             "there was an issue generating the report for this analysis")
         exit(1)
 
-    # Sequence to render the rnotebook into a html object
-    command = 'Rscript -e "rmarkdown::render(\'report_trunc.Rmd\', output_file=\''+report_filename.strip()+'\', clean=TRUE)"'
-    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-    if result.returncode == 1:
-        logger.critical(
-            "there was an issue generating the report for this analysis")
-        exit(1)
 
 
 def main(arg):
