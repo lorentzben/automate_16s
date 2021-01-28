@@ -47,6 +47,23 @@ def check_dependencies():
         logger.info(
             "It appears qiime2 is possibly not installed or loaded, but this error appears when everything works ok too")
         # exit(1)
+
+    try:
+        command = subprocess.run(
+            ["./check_conda.sh"], stdout=PIPE, stderr=PIPE, shell=True)
+        logger.info(command.stdout)
+        if command.returncode != 0:
+            logger.error(command.stderr)
+            logger.critical(
+                "a conda environment named \'python2\' does not exist; execute \'conda create -n python2 python=2.7.17\'")
+    try:
+        command = subprocess.run(
+            ["./conda_env_depends.sh"], stdout=PIPE, stderr=PIPE, shell=True)
+        logger.info(command.stdout)
+        if command.returncode != 0:
+            logger.error(command.stederr)
+            logger.critical("Error installing packages in conda environment")
+
     logger.info('all software installed and ready to go')
 
 # TODO determine a way to verify the dir provided is the same as the manifest
