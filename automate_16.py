@@ -356,6 +356,70 @@ def assign_taxonomy():
     logger.info(result.stdout)
     logger.error(result.stderr)
     
+def generate_phylogenetic_trees(metadata, item_interest):
+    #pull in metadata file to extract the categories for the item of interest
+    metadata_table = pd.read_table(metadata, sep='\t')
+
+    metadata_table = metadata_table.drop([0,1])
+
+    ioi_set = set(metadata_table[item_interest])
+    #iterates over the items of interest to produce a circular phylogenetic tree per category e.g. CONTROL TREATMENT
+    for item in ioi_set:
+
+        #filters/splits the feature table based on the current ioi
+        filter_command = "qiime feature-table filter-samples --i-table table-dada2.qza --m-metadata-file metadata.tsv --p-where " +ioi+ "=" +item+ " --o-filtered-table "+item+"-filtered-table.qza"
+        result = subprocess.run([filter_command], shell=True, stdout=PIPE, stderr=PIPE)
+        logger.info(result.stdout)
+        logger.error(result.stderr)
+
+        #adds taxonomic info needed for plotting
+        collapse_command = "qiime taxa collapse --i-table "+item+"-filtered-table.qza --o-collapsed-table collapse-"+item+"-table.qza --p-level 7 --i-taxonomy taxonomy.qza"
+        result = subprocess.run([collapse_command], shell=True, stdout=PIPE, stderr=PIPE)
+        logger.info(result.stdout)
+        logger.error(result.stderr)
+
+        #exports artifact so that the next step can collect it
+        export_command = "qiime tools export --input-path collapse-"+item+"-table.qza --output-path collapse-"+item+"-frequency/"
+        result = subprocess.run([export_command], shell=True, stdout=PIPE, stderr=PIPE)
+        logger.info(result.stdout)
+        logger.error(result.stderr)
+
+        #turns feature table into a human-reable format
+        biom_command = "biom convert -i collapse-"+item+"-frequency/feature-table.biom -o otu-"+item+"-table.tsv --to-tsv --header-key taxonomy"
+        result = subprocess.run([biom_command], shell=True, stdout=PIPE, stderr=PIPE)
+        logger.info(result.stdout)
+        logger.error(result.stderr)
+
+        #formatting the table so that it is in the correct order
+        table = pd.read_table("otu-"+item+"-table.tsv" , sep='\t', header=1)
+        table = table.drop(columns=['taxonomy'])
+        table = table.rename(columns={"#OTU ID":"taxonomy"})
+        table.to_csv("otu-"+item+"-mod-table.tsv", sep='\t', index=False)
+
+        #human readable table into compressed computer-readble format
+        biom_format_command = "biom convert -i otu-"+item+"-mod-table.tsv -o otu-table-mod.biom --to-hdf5 --table-type='OTU table' --process-obs-metadata taxonomy"
+        result = subprocess.run([biom_format_command], shell=True, stdout=PIPE, stderr=PIPE)
+        logger.info(result.stdout)
+        logger.error(result.stderr)
+
+        #bash script call to handle the steps within a conda python 2.7.17 envionment
+        generate_image_command = "./graph.sh"
+        result = subprocess.run([generate_image_command], shell=True, stdout=PIPE, stderr=PIPE)
+        logger.info(result.stdout)
+        logger.error(result.stderr)
+
+        #renaming otu tables so they have meaning
+        rename_table = "cp otu-table-mod.biom otu-table-"+item+"-mod.biom"
+        result = subprocess.run([rename_table], shell=True, stdout=PIPE, stderr=PIPE)
+        logger.info(result.stdout)
+        logger.error(result.stderr)
+        
+        #renaming the output of the graping bash script so that it has meaning 
+        rename_image = "cp image_graph.png image_"+item+"_graph.png"
+        result = subprocess.run([rename_image], shell=True, stdout=PIPE, stderr=PIPE)
+        logger.info(result.stdout)
+        logger.error(result.stderr)
+
 
 
 def generate_result_file(metadata):
@@ -466,6 +530,8 @@ def main(arg):
 
     if arg.interest:
         beta_div_calc(arg.metadata, arg.interest)
+
+    generate_phylogenetic_trees(arg.metadata, arg.interest)
 
     generate_result_file(arg.metadata)
 
