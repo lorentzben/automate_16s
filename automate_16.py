@@ -301,6 +301,51 @@ def diversity_measure(metadata, depth):
     logger.info(result.stdout)
     logger.error(result.stderr)
 
+    logger.debug("calculating shannon alpha diversity")
+    command = "qiime diversity alpha \
+    --i-table table-dada2.qza \
+    --p-metric shannon \
+    --o-alpha-diversity shannon.qza"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    logger.debug("calculating simpson alpha diversity")
+    command = "qiime diversity alpha \
+    --i-table table-dada2.qza \
+    --p-metric simpson \
+    --o-alpha-diversity simpson.qza"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    logger.debug("calculating chao1 alpha diversity")
+    command = "qiime diversity alpha \
+    --i-table table-dada2.qza \
+    --p-metric chao1 \
+    --o-alpha-diversity chao1.qza"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    logger.debug("calculating ACE alpha diversity")
+    command = "qiime diversity alpha \
+    --i-table table-dada2.qza \
+    --p-metric ace \
+    --o-alpha-diversity ace.qza"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    logger.debug("calculating good's coverage alpha diversity")
+    command = "qiime diversity alpha \
+    --i-table table-dada2.qza \
+    --p-metric goods_coverage \
+    --o-alpha-diversity goods_coverage.qza"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
 
 def alpha_div_calc(metadata):
     logger.debug('calculating alpha diversity')
@@ -315,6 +360,8 @@ def alpha_div_calc(metadata):
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
+
+
 
 
 def beta_div_calc(metadata, item_of_interest):
