@@ -21,6 +21,7 @@ if(!requireNamespace("BiocManager")){install.packages("BiocManager")}
 if(!require(microbiome)){BiocManager::install("microbiome")}
 if(!require(NMF)){install.packages("NMF")}
 if(!require(pheatmap)){install.packages("pheatmap")}
+if(!require(rstatix)){installl.packages("rstatix")}
 library(gtools)
 library(kableExtra)
 library(ggplot2)
@@ -32,6 +33,7 @@ library(gridExtra)
 library(microbiome)
 library(NMF)
 library(pheatmap)
+library(rstatix)
 
 ```
 This is a report generated to summarize the major results from the analysis. It is not intended to be a full picture, rather a jumping off point. This report will reference the files displayed in case you would like to examine them further.
@@ -391,32 +393,68 @@ obs<-read_qza("core-metrics-results/observed_features_vector.qza")
 obs$data
 ```
 
+## Alpha Diversity Table
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+obs <- read.table("obs/metadata.tsv", header = TRUE)
+shannon <- read.table("shannon/metadata.tsv", header = TRUE)
+simpson <- read.table("simpson/metadata.tsv", header=TRUE)
+chao1 <- read.table("chao1/metadata.tsv", header=TRUE)
+ace <- read.table("ace/metadata.tsv", header=TRUE)
+faith_pd <- read.table("faith_pd/metadata.tsv", header=TRUE)
+
+obs <- data.frame(obs[c('id','observed_features')])
+shannon <- data.frame(shannon[c('id','shannon_entropy')])
+simpson <- data.frame(simpson[c('id','simpson')])
+chao1 <- data.frame(chao1[c('id','chao1')])
+ace <- data.frame(ace[c("id","ace")])
+faith_pd <- data.frame(faith_pd[c("id","faith_pd")])
+
+alpha_summary <- Reduce(function(...) merge(..., by='id', all.x=TRUE), list(obs,shannon,simpson,chao1,ace,faith_pd))
+print(alpha_summary)
+```
+
 ## Alpha Diversity Plot 
 
-### Evenness 
+### Observed Features 
 
-```{r alpha diversity plot of eveness, echo=FALSE, message=FALSE, warning=FALSE}
-#subsets and plots evenness values in a boxplot format
+```{r alpha diversity plot of obs, echo=FALSE, message=FALSE, warning=FALSE}
+#subsets and plots observed features in a boxplot format
 ioi <- read.csv("item_of_interest.csv")
 ioi<-as.character(ioi)
-evenness_vals = read.csv("./evenness/metadata.tsv", sep='\t')
-dims = dim(evenness_vals)
-evenness_vals <- data.frame(evenness_vals[2:dims[1],])
-evenness_vals[[ioi]] <- reorder(as.factor(evenness_vals[[ioi]]))
-evenness_vals$pielou_evenness <- as.numeric(as.character(evenness_vals$pielou_evenness))
-evenness_boxplot <- ggplot(evenness_vals, aes_string(x=ioi,y = evenness_vals$pielou_evenness)) + geom_boxplot() + ylab("Evenness") +theme_bw()
-evenness_boxplot 
+obs_vals = read.csv("./obs/metadata.tsv", sep='\t')
+dims = dim(obs_vals)
+obs_vals <- data.frame(obs_vals[2:dims[1],])
+obs_vals[[ioi]] <- reorder(as.factor(obs_vals[[ioi]]))
+obs_vals$observed_features <- as.numeric(as.character(obs_vals$observed_features))
+obs_boxplot <- ggplot(obs_vals, aes_string(x=ioi,y = obs_vals$observed_features)) + geom_boxplot() + ylab("Observed Features") +theme_bw()
+obs_boxplot 
 
-ggsave("evenness_boxplot.png", plot=evenness_boxplot, path=outdir)
+ggsave("obs_boxplot.png", plot=obs_boxplot, path=outdir)
 
-#plots evenness values in a violin plot format 
-p <- ggplot(evenness_vals, aes(x=evenness_vals[[ioi]], y=pielou_evenness)) + geom_violin()+ geom_boxplot(width=0.1)
+#plots obs values in a violin plot format 
+p <- ggplot(obs_vals, aes(x=obs_vals[[ioi]], y=observed_features)) + geom_violin()+ geom_boxplot(width=0.1)
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
 p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
-p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("Evenness") + theme_bw()
+p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("Observed Features") + theme_bw()
 p
 
-ggsave("evenness_violin_plot.png", plot=p, path=outdir)
+ggsave("obs_violin_plot.png", plot=p, path=outdir)
+```
+```{r}
+obs <- read.table("obs/metadata.tsv", header = TRUE)
+obs_stat <- data.frame(obs[c('id','observed_features')])
+
+obs[[ioi]] <- as.factor(as.character(obs[[ioi]]))
+
+rstatix::kruskal_test(data = obs, formula = observed_features ~ id)
+kruskal.test(obs, observed_features ~ id)
+
+obs %>% group_by(Day)
+
+temp <- rstatix::dunn_test(data = obs, formula = Day ~ id )
+temp
+
 ```
 
 ### Faith
