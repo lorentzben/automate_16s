@@ -337,11 +337,21 @@ def diversity_measure(metadata, depth):
     logger.info(result.stdout)
     logger.error(result.stderr)
 
-    logger.debug("calculating good's coverage alpha diversity")
+    logger.debug("calculating obs alpha diversity")
     command = "qiime diversity alpha \
     --i-table table-dada2.qza \
-    --p-metric goods_coverage \
-    --o-alpha-diversity goods_coverage.qza"
+    --p-metric obsered_features \
+    --o-alpha-diversity obs.qza"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    logger.debug("calculating phylogenetic diversity")
+    command = "qiime diversity alpha-phylogenetic \
+    --i-table table-dada2.qza \
+    --i-phylogeny rooted-tree.qza \
+    --p-metric=faith_pd\
+    --o-alpha-diversity faith_pd.qza"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
@@ -395,12 +405,21 @@ def alpha_div_calc(metadata):
     logger.error(result.stderr)
 
     command = "qiime diversity alpha-group-significance \
-    --i-alpha-diversity goods_coverage.qza \
+    --i-alpha-diversity obs.qza \
     --m-metadata-file " + metadata + " \
-    --o-visualization goods_coverage.qzv"
+    --o-visualization obs.qzv"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
+
+    command = "qiime diversity alpha-group-significance \
+    --i-alpha-diversity faith_pd.qza \
+    --m-metadata-file " +metadata+" \
+    --o-visualization faith_pd.qzv"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
 
     logger.info("unzipping features into separate dirs")
     command = "qiime tools export \
@@ -432,8 +451,15 @@ def alpha_div_calc(metadata):
     logger.error(result.stderr)
 
     command = "qiime tools export \
-    --input-path goods_coverage.qzv \
-    --output-path goods_coverage"
+    --input-path obs.qzv \
+    --output-path obs"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    command = "qiime tools export \
+    --input-path faith_pd.qzv \
+    --output-path faith_pd"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
