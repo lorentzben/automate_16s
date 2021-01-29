@@ -361,7 +361,82 @@ def alpha_div_calc(metadata):
     logger.info(result.stdout)
     logger.error(result.stderr)
 
+    logger.info("calculating significant features ")
+    command = "qiime diversity alpha-group-significance \
+    --i-alpha-diversity shannon.qza \
+    --m-metadata-file " + metadata + " \
+    --o-visualization shannon.qzv"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
 
+    command = "qiime diversity alpha-group-significance \
+    --i-alpha-diversity simpson.qza \
+    --m-metadata-file " + metadata + " \
+    --o-visualization simpson.qzv"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    command = "qiime diversity alpha-group-significance \
+    --i-alpha-diversity chao1.qza \
+    --m-metadata-file " + metadata + " \
+    --o-visualization chao1.qzv"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    command = "qiime diversity alpha-group-significance \
+    --i-alpha-diversity ace.qza \
+    --m-metadata-file " + metadata + " \
+    --o-visualization ace.qzv"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    command = "qiime diversity alpha-group-significance \
+    --i-alpha-diversity goods_coverage.qza \
+    --m-metadata-file " + metadata + " \
+    --o-visualization goods_coverage.qzv"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    logger.info("unzipping features into separate dirs")
+    command = "qiime tools export \
+    --input-path shannon.qzv \
+    --output-path shannon"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    command = "qiime tools export \
+    --input-path simpson.qzv \
+    --output-path simpson"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    command = "qiime tools export \
+    --input-path chao1.qzv \
+    --output-path chao1"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    command = "qiime tools export \
+    --input-path ace.qzv \
+    --output-path ace"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    command = "qiime tools export \
+    --input-path goods_coverage.qzv \
+    --output-path goods_coverage"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
 
 
 def beta_div_calc(metadata, item_of_interest):
@@ -379,6 +454,7 @@ def beta_div_calc(metadata, item_of_interest):
             "the variable provided does not appear to be a column of the metadata file, or is not a categorical item, please review")
         exit(1)
 
+
 def assign_taxonomy():
     classifier = "wget https://data.qiime2.org/2021.2/common/silva-138-99-515-806-nb-classifier.qza -O silva-138-99-515-806-nb-classifier.qza"
     result = subprocess.run([classifier], stdout=PIPE, stderr=PIPE, shell=True)
@@ -394,7 +470,6 @@ def assign_taxonomy():
     result = subprocess.run([assign_tax], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
-    
 
     tabulate = "qiime metadata tabulate \
     --m-input-file taxonomy.qza \
@@ -402,71 +477,86 @@ def assign_taxonomy():
     result = subprocess.run([tabulate], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
-    
+
+
 def generate_phylogenetic_trees(metadata, item_interest):
-    #pull in metadata file to extract the categories for the item of interest
+    # pull in metadata file to extract the categories for the item of interest
     metadata_table = pd.read_table(metadata, sep='\t')
 
-    metadata_table = metadata_table.drop([0,1])
+    metadata_table = metadata_table.drop([0, 1])
 
     ioi_set = set(metadata_table[item_interest])
-    #iterates over the items of interest to produce a circular phylogenetic tree per category e.g. CONTROL TREATMENT
+    # iterates over the items of interest to produce a circular phylogenetic tree per category e.g. CONTROL TREATMENT
     for item in ioi_set:
 
-        #filters/splits the feature table based on the current ioi
-        filter_command = "qiime feature-table filter-samples --i-table table-dada2.qza --m-metadata-file metadata.tsv --p-where " +ioi+ "=" +item+ " --o-filtered-table "+item+"-filtered-table.qza"
-        result = subprocess.run([filter_command], shell=True, stdout=PIPE, stderr=PIPE)
+        # filters/splits the feature table based on the current ioi
+        filter_command = "qiime feature-table filter-samples --i-table table-dada2.qza --m-metadata-file metadata.tsv --p-where " + \
+            ioi + "=" + item + " --o-filtered-table "+item+"-filtered-table.qza"
+        result = subprocess.run(
+            [filter_command], shell=True, stdout=PIPE, stderr=PIPE)
         logger.info(result.stdout)
         logger.error(result.stderr)
 
-        #adds taxonomic info needed for plotting
-        collapse_command = "qiime taxa collapse --i-table "+item+"-filtered-table.qza --o-collapsed-table collapse-"+item+"-table.qza --p-level 7 --i-taxonomy taxonomy.qza"
-        result = subprocess.run([collapse_command], shell=True, stdout=PIPE, stderr=PIPE)
+        # adds taxonomic info needed for plotting
+        collapse_command = "qiime taxa collapse --i-table "+item + \
+            "-filtered-table.qza --o-collapsed-table collapse-" + \
+            item+"-table.qza --p-level 7 --i-taxonomy taxonomy.qza"
+        result = subprocess.run(
+            [collapse_command], shell=True, stdout=PIPE, stderr=PIPE)
         logger.info(result.stdout)
         logger.error(result.stderr)
 
-        #exports artifact so that the next step can collect it
-        export_command = "qiime tools export --input-path collapse-"+item+"-table.qza --output-path collapse-"+item+"-frequency/"
-        result = subprocess.run([export_command], shell=True, stdout=PIPE, stderr=PIPE)
+        # exports artifact so that the next step can collect it
+        export_command = "qiime tools export --input-path collapse-" + \
+            item+"-table.qza --output-path collapse-"+item+"-frequency/"
+        result = subprocess.run(
+            [export_command], shell=True, stdout=PIPE, stderr=PIPE)
         logger.info(result.stdout)
         logger.error(result.stderr)
 
-        #turns feature table into a human-reable format
-        biom_command = "biom convert -i collapse-"+item+"-frequency/feature-table.biom -o otu-"+item+"-table.tsv --to-tsv --header-key taxonomy"
-        result = subprocess.run([biom_command], shell=True, stdout=PIPE, stderr=PIPE)
+        # turns feature table into a human-reable format
+        biom_command = "biom convert -i collapse-"+item + \
+            "-frequency/feature-table.biom -o otu-"+item + \
+            "-table.tsv --to-tsv --header-key taxonomy"
+        result = subprocess.run(
+            [biom_command], shell=True, stdout=PIPE, stderr=PIPE)
         logger.info(result.stdout)
         logger.error(result.stderr)
 
-        #formatting the table so that it is in the correct order
-        table = pd.read_table("otu-"+item+"-table.tsv" , sep='\t', header=1)
+        # formatting the table so that it is in the correct order
+        table = pd.read_table("otu-"+item+"-table.tsv", sep='\t', header=1)
         table = table.drop(columns=['taxonomy'])
-        table = table.rename(columns={"#OTU ID":"taxonomy"})
+        table = table.rename(columns={"#OTU ID": "taxonomy"})
         table.to_csv("otu-"+item+"-mod-table.tsv", sep='\t', index=False)
 
-        #human readable table into compressed computer-readble format
-        biom_format_command = "biom convert -i otu-"+item+"-mod-table.tsv -o otu-table-mod.biom --to-hdf5 --table-type='OTU table' --process-obs-metadata taxonomy"
-        result = subprocess.run([biom_format_command], shell=True, stdout=PIPE, stderr=PIPE)
+        # human readable table into compressed computer-readble format
+        biom_format_command = "biom convert -i otu-"+item + \
+            "-mod-table.tsv -o otu-table-mod.biom --to-hdf5 --table-type='OTU table' --process-obs-metadata taxonomy"
+        result = subprocess.run([biom_format_command],
+                                shell=True, stdout=PIPE, stderr=PIPE)
         logger.info(result.stdout)
         logger.error(result.stderr)
 
-        #bash script call to handle the steps within a conda python 2.7.17 envionment
+        # bash script call to handle the steps within a conda python 2.7.17 envionment
         generate_image_command = "./graph.sh"
-        result = subprocess.run([generate_image_command], shell=True, stdout=PIPE, stderr=PIPE)
+        result = subprocess.run(
+            [generate_image_command], shell=True, stdout=PIPE, stderr=PIPE)
         logger.info(result.stdout)
         logger.error(result.stderr)
 
-        #renaming otu tables so they have meaning
+        # renaming otu tables so they have meaning
         rename_table = "cp otu-table-mod.biom otu-table-"+item+"-mod.biom"
-        result = subprocess.run([rename_table], shell=True, stdout=PIPE, stderr=PIPE)
-        logger.info(result.stdout)
-        logger.error(result.stderr)
-        
-        #renaming the output of the graping bash script so that it has meaning 
-        rename_image = "cp image_graph.png image_"+item+"_graph.png"
-        result = subprocess.run([rename_image], shell=True, stdout=PIPE, stderr=PIPE)
+        result = subprocess.run(
+            [rename_table], shell=True, stdout=PIPE, stderr=PIPE)
         logger.info(result.stdout)
         logger.error(result.stderr)
 
+        # renaming the output of the graping bash script so that it has meaning
+        rename_image = "cp image_graph.png image_"+item+"_graph.png"
+        result = subprocess.run(
+            [rename_image], shell=True, stdout=PIPE, stderr=PIPE)
+        logger.info(result.stdout)
+        logger.error(result.stderr)
 
 
 def generate_result_file(metadata):
@@ -514,7 +604,8 @@ def generate_result_file(metadata):
     logger.error(result.stderr)
 
     # Sequence to render the rnotebook into a html object
-    command = 'Rscript -e "rmarkdown::render(\'report.Rmd\', output_file=\'long_' +report_filename.strip()+ '\', clean=TRUE)"'
+    command = 'Rscript -e "rmarkdown::render(\'report.Rmd\', output_file=\'long_' + \
+        report_filename.strip() + '\', clean=TRUE)"'
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
@@ -522,7 +613,6 @@ def generate_result_file(metadata):
         logger.critical(
             "there was an issue generating the report for this analysis")
         exit(1)
-
 
 
 def main(arg):
@@ -533,8 +623,8 @@ def main(arg):
 
         writer.writeheader()
         writer.writerow({'item name': arg.interest})
-    
-    command = "cp " +arg.metadata+" metadata.tsv"
+
+    command = "cp " + arg.metadata+" metadata.tsv"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
@@ -571,7 +661,7 @@ def main(arg):
     diversity_measure(arg.metadata, depth)
 
     assign_taxonomy()
-    
+
     # in: core-metrics-results/faith_pd_vector.qza out: core-metrics-results/faith-pd-group-significance.qzv
     alpha_div_calc(arg.metadata)
 
@@ -581,8 +671,6 @@ def main(arg):
     generate_phylogenetic_trees(arg.metadata, arg.interest)
 
     generate_result_file(arg.metadata)
-
-    
 
     logger.info('done')
 
