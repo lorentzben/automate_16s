@@ -302,6 +302,21 @@ print(by_treatment)
 ggsave("stacked_bar_species_by_treatment.png", plot=by_treatment, path=outdir)
 
 ```
+## Phylogentic Trees
+
+```{r phylo-tree"}
+library(knitr)
+
+tree_filenames <- list.files(pattern="image_.*_graph.png")
+
+include_graphics(tree_filenames)
+
+
+```
+
+
+
+
 
 ## Species Abundance Heatmap
 
@@ -411,7 +426,7 @@ ace <- data.frame(ace[c("id","ace")])
 faith_pd <- data.frame(faith_pd[c("id","faith_pd")])
 
 alpha_summary <- Reduce(function(...) merge(..., by='id', all.x=TRUE), list(obs,shannon,simpson,chao1,ace,faith_pd))
-print(alpha_summary)
+alpha_summary
 ```
 
 ## Alpha Diversity Plot 
@@ -441,41 +456,205 @@ p
 
 ggsave("obs_violin_plot.png", plot=p, path=outdir)
 ```
-```{r}
+```{r Kruskal-Wallace test for signifiance observed feat, echo=FALSE, message=FALSE, warning=FALSE}
 obs <- read.table("obs/metadata.tsv", header = TRUE)
-obs_stat <- data.frame(obs[c('id','observed_features')])
+obs_stat <- data.frame(obs[c('id',ioi,'observed_features')])
 
-obs[[ioi]] <- as.factor(as.character(obs[[ioi]]))
 
-rstatix::kruskal_test(data = obs, formula = observed_features ~ id)
-kruskal.test(obs, observed_features ~ id)
+form <- as.formula(paste("observed_features ~ ", ioi))
+kruskal_table <- rstatix::kruskal_test(data = obs_stat, formula = form)
+kruskal_table
 
-obs %>% group_by(Day)
+form = as.formula(paste("observed_features ~", ioi))
 
-temp <- rstatix::dunn_test(data = obs, formula = Day ~ id )
-temp
+dunn_table <- rstatix::dunn_test(data = obs_stat, formula = form, p.adjust.method = "holm")
+dunn_table
 
 ```
 
-### Faith
+### Shannon
 
-```{r alpha diversity plot of faith, echo=FALSE,message=FALSE, warning=FALSE}
-dims = dim(faith_vals)
-faith_vals <- data.frame(faith_vals[2:dims[1],])
-faith_vals[[ioi]] <- reorder(as.factor(faith_vals[[ioi]]))
-faith_vals$faith_pd <- as.numeric(as.character(faith_vals$faith_pd))
-faith_boxplot <- ggplot(faith_vals, aes(x=faith_vals[[ioi]], y=faith_vals$faith_pd)) + geom_boxplot() + ylab("Faith") + theme_bw() + xlab(ioi)
-faith_boxplot
+```{r alpha diversity plot of shannon diversity, echo=FALSE,message=FALSE, warning=FALSE}
+shannon_vals <- read.table("./shannon/metadata.tsv",sep = '\t', header = TRUE)
+dims = dim(shannon_vals)
+shannon_vals <- data.frame(shannon_vals[2:dims[1],])
+shannon_vals[[ioi]] <- reorder(as.factor(shannon_vals[[ioi]]))
+shannon_vals$shannon_entropy <- as.numeric(as.character(shannon_vals$shannon_entropy))
+shannon_boxplot <- ggplot(shannon_vals, aes(x=shannon_vals[[ioi]], y=shannon_vals$shannon_entropy)) + geom_boxplot() + ylab("Shannon") + theme_bw() + xlab(ioi)
+shannon_boxplot
 
-ggsave("faith_boxplot.png", plot=faith_boxplot, path=outdir)
+ggsave("shannon_boxplot.png", plot=shannon_boxplot, path=outdir)
 
-p <- ggplot(faith_vals, aes(x=faith_vals[[ioi]], y=faith_pd)) + geom_violin()+ geom_boxplot(width=0.1)
+p <- ggplot(shannon_vals, aes(x=shannon_vals[[ioi]], y=shannon_entropy)) + geom_violin()+ geom_boxplot(width=0.1)
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
 p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
-p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("Faith") + theme_bw()
+p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("Shannon") + theme_bw()
 p
 
-ggsave("faith_violin_plot.png", plot=p, path=outdir)
+ggsave("shannon_violin_plot.png", plot=p, path=outdir)
+```
+
+```{r Kuskal-Wallace test for significance shannon,  echo=FALSE, message=FALSE, warning=FALSE}
+shannon <- read.table("shannon/metadata.tsv", header = TRUE, sep='\t')
+shannon_stat <- data.frame(shannon[c('id',ioi,'shannon_entropy')])
+
+form <- as.formula(paste("shannon_entropy ~ ", ioi))
+kruskal_table <- rstatix::kruskal_test(data = shannon_stat, formula =form)
+kruskal_table
+
+form = as.formula(paste("shannon_entropy ~", ioi))
+
+dunn_table <- rstatix::dunn_test(data = shannon_stat, formula = form, p.adjust.method = "holm")
+dunn_table
+
+
+```
+
+
+### Simpson
+
+```{r alpha diversity plot of simpson diversity, echo=FALSE,message=FALSE, warning=FALSE}
+simpson_vals <- read.table("./simpson/metadata.tsv",sep = '\t', header = TRUE)
+dims = dim(simpson_vals)
+simpson_vals <- data.frame(simpson_vals[2:dims[1],])
+simpson_vals[[ioi]] <- reorder(as.factor(simpson_vals[[ioi]]))
+simpson_vals$simpson <- as.numeric(as.character(simpson_vals$simpson))
+simpson_boxplot <- ggplot(simpson_vals, aes(x=simpson_vals[[ioi]], y=simpson_vals$simpson)) + geom_boxplot() + ylab("Simpson") + theme_bw() + xlab(ioi)
+simpson_boxplot
+
+ggsave("simpson_boxplot.png", plot=simpson_boxplot, path=outdir)
+
+p <- ggplot(simpson_vals, aes(x=simpson_vals[[ioi]], y=simpson)) + geom_violin()+ geom_boxplot(width=0.1)
+p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
+p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
+p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("Simpson") + theme_bw()
+p
+
+ggsave("simpson_violin_plot.png", plot=p, path=outdir)
+```
+
+```{r Kuskal-Wallace test for significance simpson,  echo=FALSE, message=FALSE, warning=FALSE}
+simpson <- read.table("simpson/metadata.tsv", header = TRUE, sep='\t')
+simpson_stat <- data.frame(simpson[c('id',ioi,'simpson')])
+
+form <- as.formula(paste("simpson ~ ", ioi))
+kruskal_table <- rstatix::kruskal_test(data = simpson_stat, formula = form)
+kruskal_table
+
+form = as.formula(paste("simpson ~", ioi))
+
+dunn_table <- rstatix::dunn_test(data = simpson_stat, formula = form, p.adjust.method = "holm")
+dunn_table
+```
+
+### Chao 1
+
+```{r alpha diversity plot of Chao 1 diversity, echo=FALSE,message=FALSE, warning=FALSE}
+chao1_vals <- read.table("./chao1/metadata.tsv",sep = '\t', header = TRUE)
+dims = dim(chao1_vals)
+chao1_vals <- data.frame(chao1_vals[2:dims[1],])
+chao1_vals[[ioi]] <- reorder(as.factor(chao1_vals[[ioi]]))
+chao1_vals$chao1 <- as.numeric(as.character(chao1_vals$chao1))
+chao1_boxplot <- ggplot(chao1_vals, aes(x=chao1_vals[[ioi]], y=chao1_vals$chao1)) + geom_boxplot() + ylab("Chao 1") + theme_bw() + xlab(ioi)
+chao1_boxplot
+
+ggsave("chao1_boxplot.png", plot=chao1_boxplot, path=outdir)
+
+p <- ggplot(chao1_vals, aes(x=chao1_vals[[ioi]], y=chao1)) + geom_violin()+ geom_boxplot(width=0.1)
+p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
+p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
+p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("Chao 1") + theme_bw()
+p
+
+ggsave("chao1_violin_plot.png", plot=p, path=outdir)
+```
+
+```{r Kuskal-Wallace test for significance chao1,  echo=FALSE, message=FALSE, warning=FALSE}
+chao1 <- read.table("chao1/metadata.tsv", header = TRUE, sep='\t')
+chao1_stat <- data.frame(chao1[c('id',ioi,'chao1')])
+
+form <- as.formula(paste("chao1 ~ ", ioi))
+kruskal_table <- rstatix::kruskal_test(data = chao1_stat , formula = form)
+kruskal_table
+
+form = as.formula(paste("chao1 ~", ioi))
+
+dunn_table <- rstatix::dunn_test(data = chao1_stat, formula = form, p.adjust.method = "holm")
+dunn_table
+```
+
+
+### ACE
+
+```{r alpha diversity plot of ACE diversity, echo=FALSE,message=FALSE, warning=FALSE}
+ace_vals <- read.table("./ace/metadata.tsv",sep = '\t', header = TRUE)
+dims = dim(ace_vals)
+ace_vals <- data.frame(ace_vals[2:dims[1],])
+ace_vals[[ioi]] <- reorder(as.factor(ace_vals[[ioi]]))
+ace_vals$ace <- as.numeric(as.character(ace_vals$ace))
+ace_boxplot <- ggplot(ace_vals, aes(x=ace_vals[[ioi]], y=ace_vals$ace)) + geom_boxplot() + ylab("ACE") + theme_bw() + xlab(ioi)
+ace_boxplot
+
+ggsave("ace_boxplot.png", plot=ace_boxplot, path=outdir)
+
+p <- ggplot(ace_vals, aes(x=ace_vals[[ioi]], y=ace)) + geom_violin()+ geom_boxplot(width=0.1)
+p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
+p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
+p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("ACE") + theme_bw()
+p
+
+ggsave("ace_violin_plot.png", plot=p, path=outdir)
+```
+
+```{r Kuskal-Wallace test for significance ace,  echo=FALSE, message=FALSE, warning=FALSE}
+ace <- read.table("ace/metadata.tsv", header = TRUE, sep='\t')
+ace_stat <- data.frame(ace[c('id',ioi,'ace')])
+
+form <- as.formula(paste("ace ~ ", ioi))
+kruskal_table <- rstatix::kruskal_test(data = ace_stat, formula = form)
+kruskal_table
+
+form = as.formula(paste("ace ~", ioi))
+
+dunn_table <- rstatix::dunn_test(data = ace_stat, formula = form, p.adjust.method = "holm")
+dunn_table
+```
+
+
+### Phylogenetic Distance Over The whole Tree
+
+```{r alpha diversity plot of PD_whole_tree, echo=FALSE,message=FALSE, warning=FALSE}
+faith_pd_vals <- read.table("./faith_pd/metadata.tsv",sep = '\t', header = TRUE)
+dims = dim(faith_pd_vals)
+faith_pd_vals <- data.frame(faith_pd_vals[2:dims[1],])
+faith_pd_vals[[ioi]] <- reorder(as.factor(faith_pd_vals[[ioi]]))
+faith_pd_vals$faith_pd <- as.numeric(as.character(faith_pd_vals$faith_pd))
+faith_pd_boxplot <- ggplot(faith_pd_vals, aes(x=faith_pd_vals[[ioi]], y=faith_pd_vals$faith_pd)) + geom_boxplot() + ylab("Faith PD") + theme_bw() + xlab(ioi)
+faith_pd_boxplot
+
+ggsave("faith_pd_boxplot.png", plot=faith_pd_boxplot, path=outdir)
+
+p <- ggplot(faith_pd_vals, aes(x=faith_pd_vals[[ioi]], y=faith_pd)) + geom_violin()+ geom_boxplot(width=0.1)
+p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
+p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
+p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("Faith PD") + theme_bw()
+p
+
+ggsave("faith_pd_violin_plot.png", plot=p, path=outdir)
+```
+
+```{r Kuskal-Wallace test for significance faith pd,  echo=FALSE, message=FALSE, warning=FALSE}
+faith_pd <- read.table("faith_pd/metadata.tsv", header = TRUE, sep='\t')
+faith_pd_stat <- data.frame(faith_pd[c('id',ioi,'faith_pd')])
+
+form <- as.formula(paste("faith_pd ~ ", ioi))
+kruskal_table <- rstatix::kruskal_test(data = faith_pd_stat, formula = form)
+kruskal_table
+
+form = as.formula(paste("faith_pd ~", ioi))
+
+dunn_table <- rstatix::dunn_test(data = faith_pd_stat, formula = form, p.adjust.method = "holm")
+dunn_table
 ```
 
 ## Beta diversity 

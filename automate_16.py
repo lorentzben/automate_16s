@@ -563,6 +563,10 @@ def generate_phylogenetic_trees(metadata, item_interest):
         logger.info(result.stdout)
         logger.error(result.stderr)
 
+        #Outputs the current ioi so that it can be annotatted in the graphlan image
+        with open("current.txt", "w") as file: 
+            file.write(item)
+
         # bash script call to handle the steps within a conda python 2.7.17 envionment
         generate_image_command = "./graph.sh"
         result = subprocess.run(
