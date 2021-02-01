@@ -22,6 +22,7 @@ if(!require(microbiome)){BiocManager::install("microbiome")}
 if(!require(NMF)){install.packages("NMF")}
 if(!require(pheatmap)){install.packages("pheatmap")}
 if(!require(rstatix)){installl.packages("rstatix")}
+if(!require(knitr)){install.packages("knitr")}
 library(gtools)
 library(kableExtra)
 library(ggplot2)
@@ -34,6 +35,8 @@ library(microbiome)
 library(NMF)
 library(pheatmap)
 library(rstatix)
+library(knitr)
+
 
 ```
 This is a report generated to summarize the major results from the analysis. It is not intended to be a full picture, rather a jumping off point. This report will reference the files displayed in case you would like to examine them further.
@@ -53,9 +56,9 @@ outdir <- paste0("./",outdir_name)
 
 ## Species Distribution
 
-### Relative Abundance of Top 10 Phyal
+### Relative Abundance of Top 10 Phyla
 
-```{r stacked bar chart at Phylum level, message=FALSE, warning=FALSE, echo=FALSE}
+```{r stacked bar chart at Phylum level, message=FALSE, warning=FALSE, echo=FALSE,  fig.width=18, fig.height=12}
 options(bitmapType='cairo')
 level = "Phylum"
 
@@ -107,7 +110,8 @@ by_sample <- ggplot(cycle_1_phylum, aes(x=Sample, y=Abundance, fill=fct_relevel(
   xlab("Sample ID") +
   guides(fill=guide_legend(title=level))+
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 90,vjust=0.5, hjust=1))
+  theme(axis.text.x = element_text(angle = 90,vjust=0.5, hjust=1))+
+  theme(text=element_text(size = 20))
 
 print(by_sample)
 ggsave("stacked_bar_phylum_by_sample.png", plot=by_sample, path=outdir)
@@ -125,7 +129,8 @@ by_treatment <- ggplot(cy_phylum, aes(x=Sample, y=Abundance, fill=fct_relevel(fc
   geom_bar(stat="identity") +
   guides(fill=guide_legend(title=level)) + 
   xlab(label = ioi) +
-  theme_minimal()
+  theme_minimal()+
+  theme(text=element_text(size = 20))
 
 
 #prints charts to rnotebook
@@ -140,7 +145,7 @@ ggsave("stacked_bar_phylum_by_treatment.png", plot=by_treatment, path=outdir)
 
 ### Relative Abundance of Top 10 Genera
 
-```{r stacked bar chart at Genus level, message=FALSE, warning=FALSE, echo=FALSE}
+```{r stacked bar chart at Genus level, message=FALSE, warning=FALSE, echo=FALSE,  fig.width=18, fig.height=12}
 level = "Genus"
 
 #Create phyloseq object from qiime objects
@@ -190,7 +195,8 @@ by_sample <- ggplot(cycle_1_genus, aes(x=Sample, y=Abundance, fill=fct_relevel(f
   xlab("Sample ID") +
   guides(fill=guide_legend(title=level))+
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 90,vjust=0.5, hjust=1)) 
+  theme(axis.text.x = element_text(angle = 90,vjust=0.5, hjust=1)) +
+  theme(text=element_text(size = 20))
 
 print(by_sample)
 ggsave("stacked_bar_genus_by_sample.png", plot=by_sample, path=outdir)
@@ -208,7 +214,8 @@ by_treatment <- ggplot(cy_genus, aes(x=Sample, y=Abundance, fill=fct_relevel(fct
   geom_bar(stat="identity") +
   guides(fill=guide_legend(title=level)) + 
   xlab(label = ioi) +
-  theme_minimal()
+  theme_minimal()+
+  theme(text=element_text(size = 20))
 
 #prints charts for rnotebook
 
@@ -222,7 +229,7 @@ ggsave("stacked_bar_genus_by_treatment.png", plot = by_treatment, path=outdir)
 
 ### Relative Abundance of Top 10 Species
 
-```{r stacked bar chart at Species level, message=FALSE, warning=FALSE, echo=FALSE}
+```{r stacked bar chart at Species level, message=FALSE, warning=FALSE, echo=FALSE,  fig.width=18, fig.height=12}
 level = "Species"
 
 #Create phyloseq object from qiime objects
@@ -272,7 +279,8 @@ by_sample <- ggplot(cycle_1_species, aes(x=Sample, y=Abundance, fill=fct_relevel
   xlab("Sample ID") +
   guides(fill=guide_legend(title=level))+
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 90,vjust=0.5, hjust=1)) 
+  theme(axis.text.x = element_text(angle = 90,vjust=0.5, hjust=1)) +
+  theme(text=element_text(size = 20))
 
 print(by_sample)
 ggsave("stacked_bar_species_by_sample.png", plot=by_sample, path=outdir)
@@ -291,7 +299,8 @@ by_treatment <- ggplot(cy_species, aes(x=Sample, y=Abundance, fill=fct_relevel(f
   geom_bar(stat="identity") +
   guides(fill=guide_legend(title=level)) + 
   xlab(label = ioi) +
-  theme_minimal()
+  theme_minimal()+
+  theme(text=element_text(size = 20))
 
 #prints figures to rnotebook
 
@@ -304,8 +313,7 @@ ggsave("stacked_bar_species_by_treatment.png", plot=by_treatment, path=outdir)
 ```
 ## Phylogentic Trees
 
-```{r phylo-tree"}
-library(knitr)
+```{r phylo-tree", echo=FALSE, message=FALSE, warning=FALSE}
 
 tree_filenames <- list.files(pattern="image_.*_graph.png")
 
@@ -320,7 +328,7 @@ include_graphics(tree_filenames)
 
 ## Species Abundance Heatmap
 
-```{r heatmap at the Genus level annotatted with item of interest, echo=FALSE, warning=FALSE, message=FALSE}
+```{r heatmap at the Genus level annotatted with item of interest, fig.width=18, fig.height=12, echo=FALSE, warning=FALSE, message=FALSE}
 
 level = "Genus"
 
