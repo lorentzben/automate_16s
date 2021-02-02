@@ -5,7 +5,7 @@ output:
   html_document:
     df_print: paged
 ---
-```{r install/load libraries, include=FALSE}
+```{r install/load libraries, echo=FALSE, message=FALSE, warning=FALSE}
 if(!require(kableExtra)) {install.packages("kableExtra", repos="http://cran.us.r-project.org")}
 if(!require(ggplot2)) {install.packages("ggplot2", repos="http://cran.us.r-project.org")}
 if(!require(tidyverse)) {install.packages("tidyverse", repos="http://cran.us.r-project.org")}
@@ -23,6 +23,8 @@ if(!require(NMF)){install.packages("NMF")}
 if(!require(pheatmap)){install.packages("pheatmap")}
 if(!require(rstatix)){installl.packages("rstatix")}
 if(!require(knitr)){install.packages("knitr")}
+if(!require(tidyverse)){install.packages("tidyverse")}
+if(!require(reshape2)){install.packages("reshape2")}
 library(gtools)
 library(kableExtra)
 library(ggplot2)
@@ -36,13 +38,15 @@ library(NMF)
 library(pheatmap)
 library(rstatix)
 library(knitr)
+library(tidyverse)
+library(reshape2)
 
 
 ```
 This is a report generated to summarize the major results from the analysis. It is not intended to be a full picture, rather a jumping off point. This report will reference the files displayed in case you would like to examine them further.
 
 
-```{r parse item of interest and make outdir for figures, include=FALSE}
+```{r parse item of interest and make outdir for figures, echo=FALSE, message=FALSE, warning=FALSE}
 #item of interest, comes from bash and python script that orchestrates everything
 ioi <- read.csv("item_of_interest.csv")
 ioi<-as.character(ioi)
@@ -58,7 +62,7 @@ outdir <- paste0("./",outdir_name)
 
 ### Relative Abundance of Top 10 Phyla
 
-```{r stacked bar chart at Phylum level, message=FALSE, warning=FALSE, echo=FALSE,  fig.width=18, fig.height=12}
+```{r stacked bar chart at Phylum level, echo=FALSE, fig.height=12, fig.width=18, message=FALSE, warning=FALSE}
 options(bitmapType='cairo')
 level = "Phylum"
 
@@ -145,7 +149,7 @@ ggsave("stacked_bar_phylum_by_treatment.png", plot=by_treatment, path=outdir)
 
 ### Relative Abundance of Top 10 Genera
 
-```{r stacked bar chart at Genus level, message=FALSE, warning=FALSE, echo=FALSE,  fig.width=18, fig.height=12}
+```{r stacked bar chart at Genus level, echo=FALSE, fig.height=12, fig.width=18, message=FALSE, warning=FALSE}
 level = "Genus"
 
 #Create phyloseq object from qiime objects
@@ -229,7 +233,7 @@ ggsave("stacked_bar_genus_by_treatment.png", plot = by_treatment, path=outdir)
 
 ### Relative Abundance of Top 10 Species
 
-```{r stacked bar chart at Species level, message=FALSE, warning=FALSE, echo=FALSE,  fig.width=18, fig.height=12}
+```{r stacked bar chart at Species level, echo=FALSE, fig.height=12, fig.width=18, message=FALSE, warning=FALSE}
 level = "Species"
 
 #Create phyloseq object from qiime objects
@@ -328,7 +332,7 @@ include_graphics(tree_filenames)
 
 ## Species Abundance Heatmap
 
-```{r heatmap at the Genus level annotatted with item of interest, fig.width=18, fig.height=12, echo=FALSE, warning=FALSE, message=FALSE}
+```{r heatmap at the Genus level annotatted with item of interest, echo=FALSE, fig.height=12, fig.width=18, message=FALSE, warning=FALSE}
 
 level = "Genus"
 
@@ -359,31 +363,31 @@ ggsave("heatmap.png", plot=heatmap, width = 20, height = 10, units = "in", path=
 ```
 
 
-```{r read in cutoffs used by qiime, include=FALSE}
+```{r read in cutoffs used by qiime, message=FALSE, warning=FALSE, include=FALSE}
 cutoffs = read.csv("cutoffs.csv",sep = ',',strip.white = TRUE)
 #cutoffs = knitr::kable(cutoffs)
 cutoffs %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
 ```
 
 
-```{r make data table for dada2 stats from qiime, include=FALSE}
+```{r make data table for dada2 stats from qiime, message=FALSE, warning=FALSE, include=FALSE}
 dadastat = read.csv("dada2_stats.tsv",sep = '\t',strip.white = TRUE)
 #dadastat_t = dadastat %>% kbl() %>% kable_classic(full_width = F)
 dadastat %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive")) 
 ```
 
-```{r table for sampling depth in qiime, include=FALSE}
+```{r table for sampling depth in qiime, message=FALSE, warning=FALSE, include=FALSE}
 depth = read.csv("sampling_depth.csv", sep=",")
 depth %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
 ```
 
 
-```{r table for evenness measurement of alpha div,include=FALSE}
+```{r table for evenness measurement of alpha div, message=FALSE, warning=FALSE, include=FALSE}
 evenness_vals = read.csv("./evenness/metadata.tsv", sep='\t')
 evenness_vals %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
 ```
 
-```{r stats for evenness measurement of alpha div, include=FALSE}
+```{r stats for evenness measurement of alpha div, message=FALSE, warning=FALSE, include=FALSE}
 
 filename = paste("./evenness/kruskal-wallis-pairwise-",str_trim(ioi),".csv", sep = "")
 evenness_stats = read.csv(filename)
@@ -392,12 +396,12 @@ evenness_stats %>% kbl() %>% kable_styling(bootstrap_options = c("condensed","re
 ```
 
 
-```{r table for faith measurement of alpha div, include=FALSE}
+```{r table for faith measurement of alpha div, message=FALSE, warning=FALSE, include=FALSE}
 faith_vals = read.csv("./faith/metadata.tsv", sep='\t')
 faith_vals %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
 ```
 
-```{r stats for faith measurement of alpha div, include=FALSE}
+```{r stats for faith measurement of alpha div, message=FALSE, warning=FALSE, include=FALSE}
 filename <- paste("./faith/kruskal-wallis-pairwise-",ioi,".csv",sep="")
 faith_stats = read.csv(filename)
 faith_stats %>% kbl() %>% kable_styling(bootstrap_options = c("condensed","responsive"))
@@ -410,7 +414,7 @@ shannon<-read_qza("core-metrics-results/shannon_vector.qza")
 shannon$data
 ```
 
-```{r table of observed species measurement of richness alpha div, include=FALSE}
+```{r table of observed species measurement of richness alpha div, message=FALSE, warning=FALSE, include=FALSE}
 library(qiime2R)
 obs<-read_qza("core-metrics-results/observed_features_vector.qza")
 obs$data
@@ -491,7 +495,7 @@ p
 
 ### Shannon
 
-```{r alpha diversity plot of shannon diversity, echo=FALSE,message=FALSE, warning=FALSE}
+```{r alpha diversity plot of shannon diversity, echo=FALSE, message=FALSE, warning=FALSE}
 shannon_vals <- read.table("./shannon/metadata.tsv",sep = '\t', header = TRUE)
 dims = dim(shannon_vals)
 shannon_vals <- data.frame(shannon_vals[2:dims[1],])
@@ -511,7 +515,7 @@ p
 ggsave("shannon_violin_plot.png", plot=p, path=outdir)
 ```
 
-```{r Kuskal-Wallace test for significance shannon,  echo=FALSE, message=FALSE, warning=FALSE}
+```{r Kuskal-Wallace test for significance shannon, echo=FALSE, message=FALSE, warning=FALSE}
 shannon <- read.table("shannon/metadata.tsv", header = TRUE, sep='\t')
 shannon_stat <- data.frame(shannon[c('id',ioi,'shannon_entropy')])
 
@@ -535,7 +539,7 @@ p
 
 ### Simpson
 
-```{r alpha diversity plot of simpson diversity, echo=FALSE,message=FALSE, warning=FALSE}
+```{r alpha diversity plot of simpson diversity, echo=FALSE, message=FALSE, warning=FALSE}
 simpson_vals <- read.table("./simpson/metadata.tsv",sep = '\t', header = TRUE)
 dims = dim(simpson_vals)
 simpson_vals <- data.frame(simpson_vals[2:dims[1],])
@@ -555,7 +559,7 @@ p
 ggsave("simpson_violin_plot.png", plot=p, path=outdir)
 ```
 
-```{r Kuskal-Wallace test for significance simpson,  echo=FALSE, message=FALSE, warning=FALSE}
+```{r Kuskal-Wallace test for significance simpson, echo=FALSE, message=FALSE, warning=FALSE}
 simpson <- read.table("simpson/metadata.tsv", header = TRUE, sep='\t')
 simpson_stat <- data.frame(simpson[c('id',ioi,'simpson')])
 
@@ -578,7 +582,7 @@ p
 
 ### Chao 1
 
-```{r alpha diversity plot of Chao 1 diversity, echo=FALSE,message=FALSE, warning=FALSE}
+```{r alpha diversity plot of Chao 1 diversity, echo=FALSE, message=FALSE, warning=FALSE}
 chao1_vals <- read.table("./chao1/metadata.tsv",sep = '\t', header = TRUE)
 dims = dim(chao1_vals)
 chao1_vals <- data.frame(chao1_vals[2:dims[1],])
@@ -598,7 +602,7 @@ p
 ggsave("chao1_violin_plot.png", plot=p, path=outdir)
 ```
 
-```{r Kuskal-Wallace test for significance chao1,  echo=FALSE, message=FALSE, warning=FALSE}
+```{r Kuskal-Wallace test for significance chao1, echo=FALSE, message=FALSE, warning=FALSE}
 chao1 <- read.table("chao1/metadata.tsv", header = TRUE, sep='\t')
 chao1_stat <- data.frame(chao1[c('id',ioi,'chao1')])
 
@@ -622,7 +626,7 @@ p
 
 ### ACE
 
-```{r alpha diversity plot of ACE diversity, echo=FALSE,message=FALSE, warning=FALSE}
+```{r alpha diversity plot of ACE diversity, echo=FALSE, message=FALSE, warning=FALSE}
 ace_vals <- read.table("./ace/metadata.tsv",sep = '\t', header = TRUE)
 dims = dim(ace_vals)
 ace_vals <- data.frame(ace_vals[2:dims[1],])
@@ -642,7 +646,7 @@ p
 ggsave("ace_violin_plot.png", plot=p, path=outdir)
 ```
 
-```{r Kuskal-Wallace test for significance ace,  echo=FALSE, message=FALSE, warning=FALSE}
+```{r Kuskal-Wallace test for significance ace, echo=FALSE, message=FALSE, warning=FALSE}
 ace <- read.table("ace/metadata.tsv", header = TRUE, sep='\t')
 ace_stat <- data.frame(ace[c('id',ioi,'ace')])
 
@@ -666,7 +670,7 @@ p
 
 ### Phylogenetic Distance Over The whole Tree
 
-```{r alpha diversity plot of PD_whole_tree, echo=FALSE,message=FALSE, warning=FALSE}
+```{r alpha diversity plot of PD_whole_tree, echo=FALSE, message=FALSE, warning=FALSE}
 faith_pd_vals <- read.table("./faith_pd/metadata.tsv",sep = '\t', header = TRUE)
 dims = dim(faith_pd_vals)
 faith_pd_vals <- data.frame(faith_pd_vals[2:dims[1],])
@@ -686,7 +690,7 @@ p
 ggsave("faith_pd_violin_plot.png", plot=p, path=outdir)
 ```
 
-```{r Kuskal-Wallace test for significance faith pd,  echo=FALSE, message=FALSE, warning=FALSE}
+```{r Kuskal-Wallace test for significance faith pd, echo=FALSE, message=FALSE, warning=FALSE}
 faith_pd <- read.table("faith_pd/metadata.tsv", header = TRUE, sep='\t')
 faith_pd_stat <- data.frame(faith_pd[c('id',ioi,'faith_pd')])
 
@@ -711,7 +715,7 @@ p
 
 ### Bray curtis ordination
 
-```{r beta diversity plot of bray curtis measurement, echo=FALSE,message=FALSE, warning=FALSE}
+```{r beta diversity plot of bray curtis measurement, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(qiime2R)
 library(gplots)
@@ -740,7 +744,7 @@ ggsave("bray_curtis_pcoa_ordination.png", plot=bray_curtis, path=outdir)
 
 ### Jaccard ordination
 
-```{r pcoa using Jaccard distance, echo=FALSE,message=FALSE, warning=FALSE}
+```{r pcoa using Jaccard distance, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(qiime2R)
 library(gplots)
@@ -769,7 +773,7 @@ ggsave("jaccard_pcoa_ordination.png", plot=jaccard_pcoa, path=outdir)
 
 ### unweighted unifrac ordination
 
-```{r unweighted unifrac pcoa ordination, echo=FALSE,message=FALSE, warning=FALSE}
+```{r unweighted unifrac pcoa ordination, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(qiime2R)
 library(gplots)
@@ -799,7 +803,7 @@ ggsave("unweighted_unifrac_pcoa_ordination.png", plot=unweight_unifrac_pcoa, pat
 
 ### weighted unifrac ordination
 
-```{r echo=FALSE,message=FALSE, warning=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(qiime2R)
 library(gplots)
@@ -826,4 +830,363 @@ weighted_unifrac_pcoa
 ggsave("weighted_unifrac_pcoa_ordination.png", plot=weighted_unifrac_pcoa, path=outdir)
 
 ```
+
+
+```{r rarefaction curves, echo=FALSE, fig.height=10, fig.width=16, message=FALSE, warning=FALSE}
+
+
+numextract <- function(string){
+  str_extract(string, "\\-*\\d+\\.*\\d*")
+}
+
+obs_rarefy <- read.csv("alpha-rare/observed_otus.csv")
+samples <- obs_rarefy[1]
+one <- obs_rarefy[2:11]
+two <- obs_rarefy[12:21]
+three <- obs_rarefy[22:31]
+four <- obs_rarefy[32:41]
+five <- obs_rarefy[42:51]
+six <- obs_rarefy[52:61]
+seven <- obs_rarefy[62:71]
+eight <- obs_rarefy[72:81]
+nine <- obs_rarefy[82:91]
+ten <- obs_rarefy[92:101]
+obs_item_of_interest <- obs_rarefy[[ioi]]
+
+
+
+one_d <- numextract(colnames(obs_rarefy[2:11])[1])
+two_d <- numextract(colnames(obs_rarefy[12:21])[1])
+three_d <- numextract(colnames(obs_rarefy[22:31])[1])
+four_d <- numextract(colnames(obs_rarefy[32:41])[1])
+five_d <- numextract(colnames(obs_rarefy[42:51])[1])
+six_d <- numextract(colnames(obs_rarefy[52:61])[1])
+seven_d <- numextract(colnames(obs_rarefy[62:71])[1])
+eight_d <- numextract(colnames(obs_rarefy[72:81])[1])
+nine_d <- numextract(colnames(obs_rarefy[82:91])[1])
+ten_d <- numextract(colnames(obs_rarefy[92:101])[1])
+
+
+one["sample"] <- samples
+one_flat <- melt(one) %>%
+  rename(depth = variable)
+one_flat["depth"] <- rep(one_d, dim(one_flat)[1])
+
+one_flat_mean <- one_flat %>%
+  group_by(sample) %>%
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+one_flat_mean["depth"] <- rep(one_d, dim(one_flat_mean)[1])
+
+two["sample"] <- samples
+two_flat <- melt(two) %>%
+  rename(depth = variable)
+two_flat["depth"] <- rep(two_d, dim(two_flat)[1])
+
+two_flat_mean <- two_flat %>%
+  group_by(sample) %>%
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+two_flat_mean["depth"] <- rep(two_d, dim(two_flat_mean)[1])
+
+three["sample"] <- samples
+three_flat <- melt(three) %>% 
+  rename(depth = variable)
+three_flat["depth"] <- rep(three_d, dim(three_flat)[1])
+
+three_flat_mean <- three_flat %>%
+  group_by(sample) %>%
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+three_flat_mean["depth"] <- rep(three_d, dim(three_flat_mean)[1])
+
+four["sample"] <- samples
+four_flat <- melt(four) %>%
+  rename(depth = variable)
+four_flat["depth"] <- rep(four_d, dim(four_flat)[1])
+
+four_flat_mean <- four_flat %>%
+  group_by(sample) %>% 
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+four_flat_mean["depth"] <- rep(four_d, dim(four_flat_mean)[1])
+
+five["sample"] <- samples
+five_flat <- melt(five) %>%
+  rename(depth=variable)
+five_flat["depth"] <- rep(five_d, dim(five_flat)[1])
+
+five_flat_mean <- five_flat %>%
+  group_by(sample) %>%
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+five_flat_mean["depth"] <- rep(five_d, dim(five_flat_mean)[1])
+
+six["sample"]<-samples
+six_flat <- melt(six)%>%
+  rename(depth=variable)
+six_flat["depth"]<- rep(six_d, dim(six_flat)[1])
+
+six_flat_mean <- six_flat %>%
+  group_by(sample) %>%
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+six_flat_mean["depth"] <- rep(six_d, dim(six_flat_mean)[1])
+
+seven["sample"] <- samples
+seven_flat <- melt(seven) %>%
+  rename(depth=variable)
+seven_flat["depth"]<-rep(seven_d, dim(seven_flat)[1])
+
+seven_flat_mean <- seven_flat %>%
+  group_by(sample) %>%
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+seven_flat_mean["depth"] <- rep(seven_d, dim(seven_flat_mean)[1])
+
+eight["sample"] <- samples
+eight_flat <- melt(eight) %>%
+  rename(depth=variable)
+eight_flat["depth"] <- rep(eight_d, dim(eight_flat)[1])
+
+eight_flat_mean <- eight_flat %>%
+  group_by(sample) %>%
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+eight_flat_mean["depth"] <- rep(eight_d, dim(eight_flat_mean)[1])
+
+nine["sample"] <- samples
+nine_flat <- melt(nine) %>%
+  rename(depth=variable)
+nine_flat["depth"] <- rep(nine_d, dim(nine_flat)[1])
+
+nine_flat_mean <- nine_flat %>%
+  group_by(sample) %>%
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+nine_flat_mean["depth"] <- rep(nine_d, dim(nine_flat_mean)[1])
+
+ten["sample"] <- samples
+ten_flat <- melt(ten) %>%
+  rename(depth=variable)
+ten_flat["depth"] <- rep(ten_d, dim(ten_flat)[1])
+
+ten_flat_mean <- ten_flat %>%
+  group_by(sample) %>%
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+ten_flat_mean["depth"] <- rep(ten_d, dim(ten_flat_mean)[1])
+
+
+bound <- rbind(one_flat,two_flat, three_flat, four_flat, five_flat, six_flat, seven_flat, eight_flat, nine_flat, ten_flat)
+bound_mean <- rbind(one_flat_mean, two_flat_mean, three_flat_mean, four_flat_mean, five_flat_mean, six_flat_mean, seven_flat_mean, eight_flat_mean, nine_flat_mean, ten_flat_mean)
+
+
+
+bound$depth <- as.numeric(as.character(bound$depth))
+
+bound <- bound[order(bound$depth),]
+
+ggplot(bound, aes(x=depth, y=value, fill=sample, color=sample))+
+  geom_point(data=bound_mean, mapping=aes(x=as.numeric(depth), y=as.numeric(average)),size=3) + 
+  geom_line(data=bound_mean, mapping= aes(x=as.numeric(depth), y=as.numeric(average), group=sample), size=1) + 
+  scale_x_binned("Sampling Depth",n.breaks = 12, nice.breaks = TRUE) + theme_bw() +
+  scale_y_continuous("Observed Species") + 
+  theme(text=element_text(size = 20))
+
+samples <- obs_rarefy[1]
+one <- obs_rarefy[2:11]
+two <- obs_rarefy[12:21]
+three <- obs_rarefy[22:31]
+four <- obs_rarefy[32:41]
+five <- obs_rarefy[42:51]
+six <- obs_rarefy[52:61]
+seven <- obs_rarefy[62:71]
+eight <- obs_rarefy[72:81]
+nine <- obs_rarefy[82:91]
+ten <- obs_rarefy[92:101]
+obs_item_of_interest <- obs_rarefy[[ioi]]
+
+
+
+one_d <- numextract(colnames(obs_rarefy[2:11])[1])
+two_d <- numextract(colnames(obs_rarefy[12:21])[1])
+three_d <- numextract(colnames(obs_rarefy[22:31])[1])
+four_d <- numextract(colnames(obs_rarefy[32:41])[1])
+five_d <- numextract(colnames(obs_rarefy[42:51])[1])
+six_d <- numextract(colnames(obs_rarefy[52:61])[1])
+seven_d <- numextract(colnames(obs_rarefy[62:71])[1])
+eight_d <- numextract(colnames(obs_rarefy[72:81])[1])
+nine_d <- numextract(colnames(obs_rarefy[82:91])[1])
+ten_d <- numextract(colnames(obs_rarefy[92:101])[1])
+
+fct_ioi <- as.factor(obs_item_of_interest)
+one <- cbind(one,fct_ioi)
+one_flat <- melt(one,id.vars = "fct_ioi") %>%
+  rename(depth = variable) %>%
+  rename(ioi = fct_ioi)
+one_flat["depth"] <- rep(one_d, dim(one_flat)[1])
+
+one_flat_mean <- one_flat %>%
+  group_by(ioi) %>%
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+one_flat_mean["depth"] <- rep(one_d, dim(one_flat_mean)[1])
+
+two <- cbind(two, fct_ioi)
+two_flat <- melt(two, id.vars = "fct_ioi") %>%
+  rename(depth = variable) %>%
+  rename(ioi = fct_ioi)
+two_flat["depth"] <- rep(two_d, dim(two_flat)[1])
+
+two_flat_mean <- two_flat %>%
+  group_by(ioi) %>%
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+two_flat_mean["depth"] <- rep(two_d, dim(two_flat_mean)[1])
+
+three <- cbind(three, fct_ioi)
+three_flat <- melt(three, id.vars = "fct_ioi") %>% 
+  rename(depth = variable) %>%
+  rename(ioi = fct_ioi)
+three_flat["depth"] <- rep(three_d, dim(three_flat)[1])
+
+three_flat_mean <- three_flat %>%
+  group_by(ioi) %>%
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+three_flat_mean["depth"] <- rep(three_d, dim(three_flat_mean)[1])
+
+four<- cbind(four, fct_ioi)
+four_flat <- melt(four, id.vars = "fct_ioi") %>%
+  rename(depth = variable) %>%
+  rename(ioi = fct_ioi)
+four_flat["depth"] <- rep(four_d, dim(four_flat)[1])
+
+four_flat_mean <- four_flat %>%
+  group_by(ioi) %>% 
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+four_flat_mean["depth"] <- rep(four_d, dim(four_flat_mean)[1])
+
+five <- cbind(five, fct_ioi)
+five_flat <- melt(five, id.vars = "fct_ioi") %>%
+  rename(depth=variable) %>%
+  rename(ioi= fct_ioi)
+five_flat["depth"] <- rep(five_d, dim(five_flat)[1])
+
+five_flat_mean <- five_flat %>%
+  group_by(ioi) %>%
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+five_flat_mean["depth"] <- rep(five_d, dim(five_flat_mean)[1])
+
+six<-cbind(six, fct_ioi)
+six_flat <- melt(six, id.vars = "fct_ioi")%>%
+  rename(depth=variable) %>%
+  rename(ioi = fct_ioi)
+six_flat["depth"]<- rep(six_d, dim(six_flat)[1])
+
+six_flat_mean <- six_flat %>%
+  group_by(ioi) %>%
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+six_flat_mean["depth"] <- rep(six_d, dim(six_flat_mean)[1])
+
+seven<- cbind(seven, fct_ioi)
+seven_flat <- melt(seven,id.vars = "fct_ioi") %>%
+  rename(depth=variable) %>%
+  rename(ioi = fct_ioi)
+seven_flat["depth"]<-rep(seven_d, dim(seven_flat)[1])
+
+seven_flat_mean <- seven_flat %>%
+  group_by(ioi) %>%
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+seven_flat_mean["depth"] <- rep(seven_d, dim(seven_flat_mean)[1])
+
+eight<- cbind(eight, fct_ioi)
+eight_flat <- melt(eight,id.vars = "fct_ioi") %>%
+  rename(depth=variable) %>%
+  rename(ioi = fct_ioi)
+eight_flat["depth"] <- rep(eight_d, dim(eight_flat)[1])
+
+eight_flat_mean <- eight_flat %>%
+  group_by(ioi) %>%
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+eight_flat_mean["depth"] <- rep(eight_d, dim(eight_flat_mean)[1])
+
+nine <- cbind(nine, fct_ioi)
+nine_flat <- melt(nine,id.vars = "fct_ioi") %>%
+  rename(depth=variable) %>%
+  rename(ioi = fct_ioi)
+nine_flat["depth"] <- rep(nine_d, dim(nine_flat)[1])
+
+nine_flat_mean <- nine_flat %>%
+  group_by(ioi) %>%
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+nine_flat_mean["depth"] <- rep(nine_d, dim(nine_flat_mean)[1])
+
+ten <- cbind(ten,fct_ioi)
+ten_flat <- melt(ten, id.vars = "fct_ioi") %>%
+  rename(depth=variable) %>%
+  rename(ioi = fct_ioi)
+ten_flat["depth"] <- rep(ten_d, dim(ten_flat)[1])
+
+ten_flat_mean <- ten_flat %>%
+  group_by(ioi) %>%
+  summarise(average=mean(value,na.rm = TRUE)) %>%
+  ungroup()
+
+ten_flat_mean["depth"] <- rep(ten_d, dim(ten_flat_mean)[1])
+
+
+bound <- rbind(one_flat,two_flat, three_flat, four_flat, five_flat, six_flat, seven_flat, eight_flat, nine_flat, ten_flat)
+bound_mean <- rbind(one_flat_mean, two_flat_mean, three_flat_mean, four_flat_mean, five_flat_mean, six_flat_mean, seven_flat_mean, eight_flat_mean, nine_flat_mean, ten_flat_mean)
+
+bound$depth <- as.numeric(as.character(bound$depth))
+
+bound <- bound[order(bound$depth),]
+
+
+ggplot(bound, aes(x=depth, y=value, color=fct_relevel(fct_reorder(ioi, as.numeric(ioi)))))+
+  geom_point(data=bound_mean, mapping=aes(x=as.numeric(depth), y=as.numeric(average)),size=3) + 
+  geom_line(data=bound_mean, mapping= aes(x=as.numeric(depth), y=as.numeric(average), group=ioi), size=1) + 
+  scale_x_binned("Sampling Depth",n.breaks = 12, nice.breaks = TRUE) + theme_bw() +
+  scale_y_continuous("Observed Species") + 
+  theme(text=element_text(size = 20)) + 
+  scale_color_discrete(name = ioi)
+```
+
+
+
+
+
+
+
+
+
+
+
 
