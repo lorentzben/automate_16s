@@ -285,7 +285,7 @@ def determine_depth():
     export_table_vis_command = "qiime tools export \
         --input-path table.qzv \
         --output-path table_viz"
-    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
+    result = subprocess.run([export_table_vis_command], stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
 
