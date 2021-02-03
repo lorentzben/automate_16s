@@ -43,6 +43,32 @@ library(reshape2)
 
 
 ```
+<!-- input files required:  -->
+<!-- item_of_interest.csv -->
+<!-- table-dada2.qza -->
+<!-- rooted-tree.qza -->
+<!-- taxonomy.qza -->
+<!-- metadata.tsv -->
+<!-- image_.*_graph.png[any number of files that match that pattern for phylo trees] -->
+<!-- *cutoffs.csv -->
+<!-- *dada2_stats.tsv -->
+<!-- *sampling_depth.csv -->
+<!-- obs/metadata.tsv -->
+<!-- shannon/metadata.tsv -->
+<!-- simpson/metadata.tsv -->
+<!-- chao1/metadata.tsv -->
+<!-- ace/metadata.tsv -->
+<!-- faith_pd/metadata.tsv -->
+<!-- core-metrics-results/bray_curtis_pcoa_results.qza -->
+<!-- core-metrics-results/shannon_vector.qza -->
+<!-- core-metrics-results/jaccard_pcoa_results.qza -->
+<!-- core-metrics-results/unweighted_unifrac_pcoa_results.qza -->
+<!-- core-metrics-results/weighted_unifrac_pcoa_results.qza -->
+<!-- alpha-rare/observed_otus.csv -->
+
+
+
+
 This is a report generated to summarize the major results from the analysis. It is not intended to be a full picture, rather a jumping off point. This report will reference the files displayed in case you would like to examine them further.
 
 
@@ -315,6 +341,7 @@ print(by_treatment)
 ggsave("stacked_bar_species_by_treatment.png", plot=by_treatment, path=outdir)
 
 ```
+
 ## Phylogentic Trees
 
 ```{r phylo-tree", echo=FALSE, message=FALSE, warning=FALSE}
@@ -325,10 +352,6 @@ include_graphics(tree_filenames)
 
 
 ```
-
-
-
-
 
 ## Species Abundance Heatmap
 
@@ -379,45 +402,6 @@ dadastat %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed"
 ```{r table for sampling depth in qiime, message=FALSE, warning=FALSE, include=FALSE}
 depth = read.csv("sampling_depth.csv", sep=",")
 depth %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
-```
-
-
-```{r table for evenness measurement of alpha div, message=FALSE, warning=FALSE, include=FALSE}
-evenness_vals = read.csv("./evenness/metadata.tsv", sep='\t')
-evenness_vals %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
-```
-
-```{r stats for evenness measurement of alpha div, message=FALSE, warning=FALSE, include=FALSE}
-
-filename = paste("./evenness/kruskal-wallis-pairwise-",str_trim(ioi),".csv", sep = "")
-evenness_stats = read.csv(filename)
-
-evenness_stats %>% kbl() %>% kable_styling(bootstrap_options = c("condensed","responsive"))
-```
-
-
-```{r table for faith measurement of alpha div, message=FALSE, warning=FALSE, include=FALSE}
-faith_vals = read.csv("./faith/metadata.tsv", sep='\t')
-faith_vals %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
-```
-
-```{r stats for faith measurement of alpha div, message=FALSE, warning=FALSE, include=FALSE}
-filename <- paste("./faith/kruskal-wallis-pairwise-",ioi,".csv",sep="")
-faith_stats = read.csv(filename)
-faith_stats %>% kbl() %>% kable_styling(bootstrap_options = c("condensed","responsive"))
-```
-
-
-```{r table of shannon alpha diversity, include=FALSE}
-library(qiime2R)
-shannon<-read_qza("core-metrics-results/shannon_vector.qza")
-shannon$data
-```
-
-```{r table of observed species measurement of richness alpha div, message=FALSE, warning=FALSE, include=FALSE}
-library(qiime2R)
-obs<-read_qza("core-metrics-results/observed_features_vector.qza")
-obs$data
 ```
 
 ## Alpha Diversity Table
@@ -771,7 +755,7 @@ jaccard_pcoa
 ggsave("jaccard_pcoa_ordination.png", plot=jaccard_pcoa, path=outdir)
 ```
 
-### unweighted unifrac ordination
+### Unweighted unifrac ordination
 
 ```{r unweighted unifrac pcoa ordination, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -801,7 +785,7 @@ ggsave("unweighted_unifrac_pcoa_ordination.png", plot=unweight_unifrac_pcoa, pat
 
 ```
 
-### weighted unifrac ordination
+### Weighted unifrac ordination
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -997,12 +981,15 @@ bound$depth <- as.numeric(as.character(bound$depth))
 
 bound <- bound[order(bound$depth),]
 
-ggplot(bound, aes(x=depth, y=value, fill=sample, color=sample))+
+rarefy_curve_by_sample <- ggplot(bound, aes(x=depth, y=value, fill=sample, color=sample))+
   geom_point(data=bound_mean, mapping=aes(x=as.numeric(depth), y=as.numeric(average)),size=3) + 
   geom_line(data=bound_mean, mapping= aes(x=as.numeric(depth), y=as.numeric(average), group=sample), size=1) + 
   scale_x_binned("Sampling Depth",n.breaks = 12, nice.breaks = TRUE) + theme_bw() +
   scale_y_continuous("Observed Species") + 
   theme(text=element_text(size = 20))
+rarefy_curve_by_sample
+
+ggsave("rarefaction_curve_by_sample.png", plot=rarefy_curve_by_sample, path=outdir)
 
 samples <- obs_rarefy[1]
 one <- obs_rarefy[2:11]
@@ -1170,13 +1157,16 @@ bound$depth <- as.numeric(as.character(bound$depth))
 bound <- bound[order(bound$depth),]
 
 
-ggplot(bound, aes(x=depth, y=value, color=fct_relevel(fct_reorder(ioi, as.numeric(ioi)))))+
+rarefy_curve_by_treatment <- ggplot(bound, aes(x=depth, y=value, color=fct_relevel(fct_reorder(ioi, as.numeric(ioi)))))+
   geom_point(data=bound_mean, mapping=aes(x=as.numeric(depth), y=as.numeric(average)),size=3) + 
   geom_line(data=bound_mean, mapping= aes(x=as.numeric(depth), y=as.numeric(average), group=ioi), size=1) + 
   scale_x_binned("Sampling Depth",n.breaks = 12, nice.breaks = TRUE) + theme_bw() +
   scale_y_continuous("Observed Species") + 
   theme(text=element_text(size = 20)) + 
   scale_color_discrete(name = ioi)
+
+rarefy_curve_by_treatment
+ggsave("rarefaction_curve_by_treatment.png", plot=rarefy_curve_by_treatment, path=outdir)
 ```
 
 
