@@ -403,15 +403,10 @@ def calc_rare_depth():
     return depth
 
 
-def rarefy_curve_calc(depth, meta):
+def rarefy_curve_calc(depth, metadata):
 
     logger.debug("performing alpha rarefying")
-    alpha_rare_command = "qiime diversity alpha-rarefaction \
-        --i-table table-dada2.qza \
-        --i-phylogeny rooted-tree.qza \
-        --p-max-depth "+depth" \
-        --m-metadata-file "+str(meta)+" \
-        --o-visualization alpha-rarefaction.qzv"
+    alpha_rare_command = "qiime diversity alpha-rarefaction --i-table table-dada2.qza --i-phylogeny rooted-tree.qza --p-max-depth "+depth" --m-metadata-file "+metadata+" --o-visualization alpha-rarefaction.qzv"
     result = subprocess.run([alpha_rare_command],
                             stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)

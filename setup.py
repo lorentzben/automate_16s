@@ -48,14 +48,12 @@ def check_dependencies():
             "It appears qiime2 is possibly not installed or loaded, but this error appears when everything works ok too")
         # exit(1)
 
-    try:
-        command = subprocess.run(
-            ["./check_conda.sh"], stdout=PIPE, stderr=PIPE, shell=True)
-        logger.info(command.stdout)
-        if command.returncode != 0:
-            logger.error(command.stderr)
-            logger.critical(
-                "a conda environment named \'python2\' does not exist; execute \'conda create -n python2 python=2.7.17\'")
+    
+    command = subprocess.run(["./check_conda.sh"], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(command.stdout)
+    if command.returncode != 0:
+        logger.error(command.stderr)
+        logger.critical("a conda environment named \'python2\' does not exist; execute \'conda create -n python2 python=2.7.17\'")
 
     result = subprocess.run(["./conda_env_depends.sh"], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
