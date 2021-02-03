@@ -1,13 +1,13 @@
 ---
 title: "Analysis Report"
-author: "Ben Lorentz"
 output:
   html_document:
     df_print: paged
 ---
 ```{r install/load libraries, echo=FALSE, message=FALSE, warning=FALSE}
 if(!require(kableExtra)) {install.packages("kableExtra", repos="http://cran.us.r-project.org")}
-if(!require(ggplot2)) {install.packages("ggplot2", repos="http://cran.us.r-project.org")}
+if(!require(ggplot2)){install.packages("remotes")}
+if(!require(ggplot2)) {remotes::install_github("tidyverse/ggplot2@v3.3.2")}
 if(!require(tidyverse)) {install.packages("tidyverse", repos="http://cran.us.r-project.org")}
 if(!require(gplots)) {install.packages("gplots", repos="http://cran.us.r-project.org")}
 if (!requireNamespace("devtools", quietly = TRUE)){install.packages("devtools")}
@@ -22,24 +22,26 @@ if(!require(microbiome)){BiocManager::install("microbiome")}
 if(!require(NMF)){install.packages("NMF")}
 if(!require(pheatmap)){install.packages("pheatmap")}
 if(!require(rstatix)){installl.packages("rstatix")}
-if(!require(knitr)){install.packages("knitr")}
+# if(!require(knitr)){install.packages("knitr")}
 if(!require(tidyverse)){install.packages("tidyverse")}
 if(!require(reshape2)){install.packages("reshape2")}
+if(!require(ampvis2)){remotes::install_github("MadsAlbertsen/ampvis2")}
+if(!require(devtools)) {install.packages("devtools")}
 library(gtools)
 library(kableExtra)
-library(ggplot2)
 library(qiime2R)
 library(phyloseq)
 library(reshape2)
 library(forcats)
 library(gridExtra)
-library(microbiome)
+#library(microbiome)
 library(NMF)
 library(pheatmap)
 library(rstatix)
 library(knitr)
-library(tidyverse)
+#library(tidyverse)
 library(reshape2)
+library(ampvis2)
 
 
 ```
@@ -380,7 +382,8 @@ cycle_z_prune <- prune_taxa(names(cycle_z_prune_names), cycle_1)
 heatmap <- pheatmap::pheatmap(otu_table(cycle_z_prune), labels_row=tax_table(cycle_z_prune)[,"Genus"], annotation_row = data.frame(tax_table(cycle_z_prune)[,"Phylum"]), annotation_col = data.frame(sample_data(cycle_z_prune)[,ioi]), width = 10, height = 10, fontsize = 14, scale = "column")
 
 #saves a copy of the heatmap to outdir
-ggsave("heatmap.png", plot=heatmap, width = 20, height = 10, units = "in", path=outdir )
+ggsave("heatmap.png", plot=heatmap, path=outdir)
+
 
 
 ```
@@ -815,6 +818,7 @@ ggsave("weighted_unifrac_pcoa_ordination.png", plot=weighted_unifrac_pcoa, path=
 
 ```
 
+## Rarefaction Curves
 
 ```{r rarefaction curves, echo=FALSE, fig.height=10, fig.width=16, message=FALSE, warning=FALSE}
 
@@ -1169,12 +1173,38 @@ rarefy_curve_by_treatment
 ggsave("rarefaction_curve_by_treatment.png", plot=rarefy_curve_by_treatment, path=outdir)
 ```
 
+## Ranked Abundance Curves
+```{r, echo=FALSE, fig.height=10, fig.width=16, message=FALSE, warning=FALSE}
+library(ampvis2)
+library(ggplot2)
+devtools::source_gist("8d0ca4206a66be7ff6d76fc4ab8e66c6")
+
+cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv") 
+cycle_1_amp <- phyloseq_to_ampvis2(cycle_1)
+
+by_sample <- ampvis2::amp_rankabundance(cycle_1_amp, group_by = "SampleID") + theme(text=element_text(size = 20))
+by_sample 
+ggsave("rank_abundance_curve_by_treatment.png", plot=by_sample, path=outdir)
+
+by_group <- ampvis2::amp_rankabundance(cycle_1_amp, group_by = ioi) + theme(text=element_text(size = 20))
+by_group
+ggsave("rank_abundance_curve_by_treatment.png", plot=by_group, path=outdir)
 
 
+heatmap <- ampvis2::amp_heatmap(cycle_1_amp,
+                     group_by = "SampleID", 
+                     tax_aggregate = "Genus",
+                     tax_show = 30,
+                     facet_by = ioi,
+                     tax_add = "Phylum",
+                     plot_values = FALSE,
+                     plot_colorscale = "log10") +
+  theme(text=element_text(size = 20))
 
+heatmap
+ggsave("heatmap.png", plot=heatmap, path=outdir)
 
-
-
+```
 
 
 
