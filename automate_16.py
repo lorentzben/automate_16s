@@ -397,7 +397,7 @@ def diversity_measure(metadata, depth):
 
 def calc_rare_depth():
     # reads sample frequences from previously unzipped archive
-    sample_freq = pd.read_csv("table_vis/sample-frequency-detail.csv")
+    sample_freq = pd.read_csv("table_viz/sample-frequency-detail.csv")
     depth = sample_freq.median()[0]
 
     return depth
