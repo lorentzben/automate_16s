@@ -69,8 +69,11 @@ def single_or_paired_read(manifest):
 
 def generate_seq_object(manifest, seq_format, seq_format2):
     logger.debug("importing fastq files to qiime2 artifact format")
-    command = "qiime tools import --type "+seq_format2+" --input-path " + \
-        manifest+" --output-path demux.qza --input-format " + seq_format
+    command = "qiime tools import \
+        --type "+seq_format2+" \
+        --input-path " +manifest+" \
+        --output-path demux.qza \
+        --input-format " + seq_format
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
     if result.returncode == 1:
         logger.critical("There are missing files please review manifest")
@@ -81,13 +84,21 @@ def generate_seq_object(manifest, seq_format, seq_format2):
 
 def qual_control():
     logger.debug("checking quality of reads")
-    command = "qiime demux summarize --i-data demux.qza --o-visualization demux_summary.qzv"
+    command = "qiime demux summarize \
+        --i-data demux.qza \
+        --o-visualization demux_summary.qzv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
 
-    command = "unzip -d " + folder + " demux_summary.qzv"
-    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
+    # TODO Remove this call after the downstream errors are fixed
+    #command = "unzip -d " + folder + " demux_summary.qzv"
+    export_demux_command = "qiime tools export \
+        --input-path demux_summary.qzv \
+        --output-path demux_summary/"
+    result = subprocess.run([export_demux_command], stderr=PIPE, stdout=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
 
 # point of optimization: increase the quality score higher by 3 points? for reverse reads.
 
@@ -145,10 +156,10 @@ def calc_qual_cutoff(seq_format):
     if seq_format == "single":
         logger.debug("determining left and right cutoffs based on qual score")
 
-        input_file = glob.glob(
-            './'+folder+'/*/data/forward-seven-number-summaries.tsv')
+        input_file = "demux_summary/forward-seven-number-summaries.tsv"
+        
 
-        summary = pd.read_table(input_file[0], index_col=0, sep='\t')
+        summary = pd.read_table(input_file, index_col=0, sep='\t')
         left_cutoff, right_cutoff = find_cutoffs(summary)
 
         logger.info("right cutoff: "+str(right_cutoff))
@@ -168,15 +179,13 @@ def calc_qual_cutoff(seq_format):
     elif seq_format == "paired":
         logger.debug(
             "determining forward and revese, left and right cutoffs based on qual score")
-        forward_file = glob.glob(
-            './'+folder+'/*/data/forward-seven-number-summaries.tsv')
-        fr_summary = pd.read_table(forward_file[0], index_col=0, sep='\t')
+        forward_file = "demux_summary/forward-seven-number-summaries.tsv"
+        fr_summary = pd.read_table(forward_file, index_col=0, sep='\t')
 
         forward = find_cutoffs(fr_summary)
 
-        reverse_file = glob.glob(
-            './'+folder+'/*/data/reverse-seven-number-summaries.tsv')
-        rev_summary = pd.read_table(reverse_file[0], index_col=0, sep='\t')
+        reverse_file = "demux_summary/reverse-seven-number-summaries.tsv"
+        rev_summary = pd.read_table(reverse_file, index_col=0, sep='\t')
 
         reverse = find_rev_cutoffs(rev_summary)
 
@@ -203,22 +212,35 @@ def call_denoise(cutoff, seq_format):
     if seq_format == 'single':
         left = cutoff[0]
         right = cutoff[0]
-        command = "qiime dada2 denoise-single --i-demultiplexed-seqs demux.qza --p-trim-left " + str(left)+" --p-trunc-len " + \
-            str(right) + " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
+        command = "qiime dada2 denoise-single \
+            --i-demultiplexed-seqs demux.qza \
+            --p-trim-left " + str(left)+" \
+            --p-trunc-len " + str(right) + " \
+            --o-representative-sequences rep-seqs-dada2.qza \
+            --o-table table-dada2.qza \
+            --o-denoising-stats stats-dada2.qza"
     elif seq_format == 'paired':
         forward_left = cutoff[0][0]
         forward_right = cutoff[0][1]
         rev_left = cutoff[1][0]
         rev_right = cutoff[1][1]
-        command = "qiime dada2 denoise-paired --i-demultiplexed-seqs demux.qza --p-trunc-len-f " + str(forward_right)+" --p-trunc-len-r " + \
-            str(rev_right) + " --p-trim-left-f " + str(forward_left)+" --p-trim-left-r " + str(rev_left) + \
-            " --o-representative-sequences rep-seqs-dada2.qza --o-table table-dada2.qza --o-denoising-stats stats-dada2.qza"
+        command = "qiime dada2 denoise-paired \
+            --i-demultiplexed-seqs demux.qza \
+            --p-trunc-len-f " + str(forward_right)+" \
+            --p-trunc-len-r " + str(rev_right) + " \
+            --p-trim-left-f " + str(forward_left)+" \
+            --p-trim-left-r " + str(rev_left) + " \
+            --o-representative-sequences rep-seqs-dada2.qza \
+            --o-table table-dada2.qza \
+            --o-denoising-stats stats-dada2.qza"
 
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
 
-    command = "qiime metadata tabulate --m-input-file stats-dada2.qza --o-visualization stats-dada2.qzv"
+    command = "qiime metadata tabulate \
+        --m-input-file stats-dada2.qza \
+        --o-visualization stats-dada2.qzv"
 
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
@@ -227,12 +249,17 @@ def call_denoise(cutoff, seq_format):
 
 def feature_visualizations(metadata):
     logger.debug("creating visualization objects")
-    command = "qiime feature-table summarize --i-table table-dada2.qza --o-visualization table.qzv --m-sample-metadata-file " + metadata
+    command = "qiime feature-table summarize \
+        --i-table table-dada2.qza \
+        --o-visualization table.qzv \
+        --m-sample-metadata-file " + metadata
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
 
-    command = "qiime feature-table tabulate-seqs --i-data rep-seqs-dada2.qza --o-visualization rep-seqs.qzv"
+    command = "qiime feature-table tabulate-seqs \
+        --i-data rep-seqs-dada2.qza \
+        --o-visualization rep-seqs.qzv"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
@@ -240,7 +267,12 @@ def feature_visualizations(metadata):
 
 def tree_construction():
     logger.debug("generating phylogenetic tree")
-    command = "qiime phylogeny align-to-tree-mafft-fasttree --i-sequences rep-seqs-dada2.qza --o-alignment aligned-rep-seqs.qza --o-masked-alignment masked-aligned-rep-seqs.qza --o-tree unrooted-tree.qza --o-rooted-tree rooted-tree.qza"
+    command = "qiime phylogeny align-to-tree-mafft-fasttree \
+        --i-sequences rep-seqs-dada2.qza \
+        --o-alignment aligned-rep-seqs.qza \
+        --o-masked-alignment masked-aligned-rep-seqs.qza \
+        --o-tree unrooted-tree.qza \
+        --o-rooted-tree rooted-tree.qza"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
@@ -248,16 +280,18 @@ def tree_construction():
 
 def determine_depth():
     logger.debug("determining the best sampling depth to use ")
-    command = "unzip -d "+folder+" table.qzv"
+    #TODO remove this command if it is no longer needed
+    #command = "unzip -d "+folder+" table.qzv"
+    export_table_vis_command = "qiime tools export \
+        --input-path table.qzv \
+        --output-path table_viz"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
-
     logger.info(result.stdout)
     logger.error(result.stderr)
 
-    input_file = glob.glob(
-        './'+folder+'/*/data/sample-frequency-detail.csv')
+    input_file = "table_viz/sample-frequency-detail.csv"
 
-    features = pd.read_csv(input_file[0], index_col=0, header=None)
+    features = pd.read_csv(input_file, index_col=0, header=None)
 
     total_count = sum(features[1])
     sampling_depth = 0
@@ -294,9 +328,13 @@ def determine_depth():
 
 def diversity_measure(metadata, depth):
     logger.debug("calculating general diversity measurments")
-    command = "qiime diversity core-metrics-phylogenetic --i-phylogeny rooted-tree.qza --i-table table-dada2.qza --p-sampling-depth " + \
-        str(int(depth)) + " --m-metadata-file " + \
-        metadata + " --output-dir core-metrics-results --p-n-jobs-or-threads 'auto'"
+    command = "qiime diversity core-metrics-phylogenetic \
+        --i-phylogeny rooted-tree.qza \
+        --i-table table-dada2.qza \
+        --p-sampling-depth " + str(int(depth)) + " \
+        --m-metadata-file " + metadata + " \
+        --output-dir core-metrics-results \
+        --p-n-jobs-or-threads 'auto'"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
@@ -357,16 +395,7 @@ def diversity_measure(metadata, depth):
     logger.error(result.stderr)
 
 def calc_rare_depth():
-
-    #TODO if this unzipping happens earlier remove this block
-    logger.debug("unzipping table visualization to get median value for rarefaction depth")
-    export_table_command = "qiime tools export \
-        --input-path table.qzv \
-        --output-path table_vis"
-    result = subprocess.run([export_table_command], stdout=PIPE, stderr=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-
+    #reads sample frequences from previously unzipped archive
     sample_freq = pd.read_csv("table_vis/sample-frequency-detail.csv")
     depth = sample_freq.median()[0]
 
@@ -396,19 +425,6 @@ def rarefy_curve_calc(depth, metadata):
     logger.error(result.stderr)
 
 def alpha_div_calc(metadata):
-    logger.debug('calculating alpha diversity')
-    command = "qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results/faith_pd_vector.qza --m-metadata-file " + \
-        metadata + " --o-visualization core-metrics-results/faith-pd-group-significance.qzv"
-    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-
-    command = "qiime diversity alpha-group-significance --i-alpha-diversity core-metrics-results/evenness_vector.qza --m-metadata-file " + \
-        metadata + " --o-visualization core-metrics-results/evenness-group-significance.qzv"
-    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-
     logger.info("calculating significant features ")
     command = "qiime diversity alpha-group-significance \
     --i-alpha-diversity shannon.qza \
@@ -506,10 +522,12 @@ def alpha_div_calc(metadata):
 def beta_div_calc(metadata, item_of_interest):
     logger.debug(
         'calculating beta diversity, only done if column of metadata is provided')
-    command = "qiime diversity beta-group-significance --i-distance-matrix core-metrics-results/unweighted_unifrac_distance_matrix.qza --m-metadata-file " + \
-        metadata + " --m-metadata-column "+item_of_interest + \
-        " --o-visualization core-metrics-results/unweighted-unifrac-" + \
-        item_of_interest+"-significance.qzv --p-pairwise"
+    command = "qiime diversity beta-group-significance \
+        --i-distance-matrix core-metrics-results/unweighted_unifrac_distance_matrix.qza \
+        --m-metadata-file " + metadata + " \
+        --m-metadata-column "+item_of_interest + " \
+        --o-visualization core-metrics-results/unweighted-unifrac-" +item_of_interest+"-significance.qzv \
+        --p-pairwise"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
@@ -554,25 +572,31 @@ def generate_phylogenetic_trees(metadata, item_interest):
     for item in ioi_set:
 
         # filters/splits the feature table based on the current ioi
-        filter_command = "qiime feature-table filter-samples --i-table table-dada2.qza --m-metadata-file metadata.tsv --p-where " + \
-            ioi + "=" + item + " --o-filtered-table "+item+"-filtered-table.qza"
+        filter_command = "qiime feature-table filter-samples \
+            --i-table table-dada2.qza \
+            --m-metadata-file metadata.tsv \
+            --p-where " + ioi + "=" + item + " \
+            --o-filtered-table "+item+"-filtered-table.qza"
         result = subprocess.run(
             [filter_command], shell=True, stdout=PIPE, stderr=PIPE)
         logger.info(result.stdout)
         logger.error(result.stderr)
 
         # adds taxonomic info needed for plotting
-        collapse_command = "qiime taxa collapse --i-table "+item + \
-            "-filtered-table.qza --o-collapsed-table collapse-" + \
-            item+"-table.qza --p-level 7 --i-taxonomy taxonomy.qza"
+        collapse_command = "qiime taxa collapse \
+            --i-table "+item + "-filtered-table.qza \
+            --o-collapsed-table collapse-" + item+"-table.qza \
+            --p-level 7 \
+            --i-taxonomy taxonomy.qza"
         result = subprocess.run(
             [collapse_command], shell=True, stdout=PIPE, stderr=PIPE)
         logger.info(result.stdout)
         logger.error(result.stderr)
 
         # exports artifact so that the next step can collect it
-        export_command = "qiime tools export --input-path collapse-" + \
-            item+"-table.qza --output-path collapse-"+item+"-frequency/"
+        export_command = "qiime tools export \
+            --input-path collapse-" + item+"-table.qza \
+            --output-path collapse-"+item+"-frequency/"
         result = subprocess.run(
             [export_command], shell=True, stdout=PIPE, stderr=PIPE)
         logger.info(result.stdout)
@@ -629,42 +653,21 @@ def generate_phylogenetic_trees(metadata, item_interest):
 
 def generate_result_file(metadata):
     # dada 2 stats extracted from stats-dada2.qzv
-    command = "unzip -d "+folder+" stats-dada2.qzv"
+    #command = "unzip -d "+folder+" stats-dada2.qzv"
+    export_dada2_stats_command = "qiime tools export \
+        --input-path stats-dada2.qzv \
+        --output-path stats-dada2"
+    result = subprocess.run([export_dada2_stats_command], stderr=PIPE, stdout=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    command = ('cp stats-dada2/metadata.tsv dada2_stats.tsv')
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
 
     logger.info(result.stdout)
     logger.error(result.stderr)
 
-    command = ('cp ./'+folder+'/*/data/metadata.tsv dada2_stats.tsv')
-    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
-
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-
-    # Alpha diversity core-metrics-results/evenness-group-significance.qzv AND faith-pd-group-significance.qzv
-    # evenness diversity measurement
-    command = "cp core-metrics-results/evenness-group-significance.qzv ."
-    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-
-    command = "unzip -d evenness -j -n evenness-group-significance.qzv"
-    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-
-    # faith diversity measurement
-    command = "cp core-metrics-results/faith-pd-group-significance.qzv ."
-    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-
-    command = "unzip -d faith -j -n faith-pd-group-significance.qzv"
-    result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-
-    # Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv
+   # Beta diversity core-metrics-results/unweighted_unifrac_emperor.qzv
 
     command = "cp "+metadata+" metadata.tsv"
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
