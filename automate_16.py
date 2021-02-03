@@ -356,6 +356,44 @@ def diversity_measure(metadata, depth):
     logger.info(result.stdout)
     logger.error(result.stderr)
 
+def calc_rare_depth():
+
+    #TODO if this unzipping happens earlier remove this block
+    logger.debug("unzipping table visualization to get median value for rarefaction depth")
+    export_table_command = "qiime tools export \
+        --input-path table.qzv \
+        --output-path table_vis"
+    result = subprocess.run([export_table_command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    sample_freq = pd.read_csv("table_vis/sample-frequency-detail.csv")
+    depth = sample_freq.median()[0]
+
+    return depth
+
+
+
+def rarefy_curve_calc(depth, metadata):
+
+    logger.debug("performing alpha rarefying")
+    alpha_rare_command = "qiime diversity alpha-rarefaction \
+        --i-table table-dada2.qza \
+        --i-phylogeny rooted-tree.qza \
+        --p-max-depth "+depth" \
+        --m-metadata-file "+metadata+" \
+        --o-visualization alpha-rarefaction.qzv"
+    result = subprocess.run([alpha_rare_command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    logger.debug("exporting alpha rarefaction so that r-notebook can find it")
+    export_rare_command = "qiime tools export \
+        --input-path alpha-rarefaction.qzv \
+        --output-path alpha-rareplot"
+    result = subprocess.run([export_rare_command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
 
 def alpha_div_calc(metadata):
     logger.debug('calculating alpha diversity')
@@ -691,6 +729,11 @@ def main(arg):
     diversity_measure(arg.metadata, depth)
 
     assign_taxonomy()
+    
+    rare_depth = calc_rare_depth()
+
+    # in: table-dada2.qza out: dir with rarefaction table
+    rarefy_curve_calc(rare_depth, arg.metadata)
 
     # in: core-metrics-results/faith_pd_vector.qza out: core-metrics-results/faith-pd-group-significance.qzv
     alpha_div_calc(arg.metadata)
