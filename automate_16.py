@@ -378,7 +378,7 @@ def diversity_measure(metadata, depth):
     logger.debug("calculating obs alpha diversity")
     command = "qiime diversity alpha \
     --i-table table-dada2.qza \
-    --p-metric obsered_features \
+    --p-metric observed_features \
     --o-alpha-diversity obs.qza"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
@@ -410,7 +410,7 @@ def rarefy_curve_calc(depth, metadata):
     alpha_rare_command = "qiime diversity alpha-rarefaction \
         --i-table table-dada2.qza \
         --i-phylogeny rooted-tree.qza \
-        --p-max-depth "+str(depth)+" \
+        --p-max-depth "+str(int(depth))+" \
         --m-metadata-file "+metadata+" \
         --o-visualization alpha-rarefaction.qzv"
     result = subprocess.run([alpha_rare_command],
