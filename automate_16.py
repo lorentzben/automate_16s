@@ -378,7 +378,7 @@ def diversity_measure(metadata, depth):
     logger.debug("calculating obs alpha diversity")
     command = "qiime diversity alpha \
     --i-table table-dada2.qza \
-    --p-metric observed_features \
+    --p-metric observed_otus \
     --o-alpha-diversity obs.qza"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
@@ -567,6 +567,7 @@ def assign_taxonomy():
 def generate_phylogenetic_trees(metadata, item_interest):
     # pull in metadata file to extract the categories for the item of interest
     metadata_table = pd.read_table(metadata, sep='\t')
+    ioi=item_interest
 
     metadata_table = metadata_table.drop([0, 1])
 
