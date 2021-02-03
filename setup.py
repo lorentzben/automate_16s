@@ -58,7 +58,7 @@ def check_dependencies():
     result = subprocess.run(["./conda_env_depends.sh"], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     if result.returncode != 0:
-        logger.error(result.stederr)
+        logger.error(result.stderr)
         logger.critical("Error installing packages in conda environment")
 
     logger.info('all software installed and ready to go')
