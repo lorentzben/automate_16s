@@ -410,7 +410,7 @@ def rarefy_curve_calc(depth, metadata):
     alpha_rare_command = "qiime diversity alpha-rarefaction \
         --i-table table-dada2.qza \
         --i-phylogeny rooted-tree.qza \
-        --p-max-depth "+depth+" \
+        --p-max-depth "+str(depth)+" \
         --m-metadata-file "+metadata+" \
         --o-visualization alpha-rarefaction.qzv"
     result = subprocess.run([alpha_rare_command],
