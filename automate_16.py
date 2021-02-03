@@ -71,7 +71,7 @@ def generate_seq_object(manifest, seq_format, seq_format2):
     logger.debug("importing fastq files to qiime2 artifact format")
     command = "qiime tools import \
         --type "+seq_format2+" \
-        --input-path " +manifest+" \
+        --input-path " + manifest+" \
         --output-path demux.qza \
         --input-format " + seq_format
     result = subprocess.run([command], stderr=PIPE, stdout=PIPE, shell=True)
@@ -96,7 +96,8 @@ def qual_control():
     export_demux_command = "qiime tools export \
         --input-path demux_summary.qzv \
         --output-path demux_summary/"
-    result = subprocess.run([export_demux_command], stderr=PIPE, stdout=PIPE, shell=True)
+    result = subprocess.run([export_demux_command],
+                            stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
 
@@ -157,7 +158,6 @@ def calc_qual_cutoff(seq_format):
         logger.debug("determining left and right cutoffs based on qual score")
 
         input_file = "demux_summary/forward-seven-number-summaries.tsv"
-        
 
         summary = pd.read_table(input_file, index_col=0, sep='\t')
         left_cutoff, right_cutoff = find_cutoffs(summary)
@@ -280,7 +280,7 @@ def tree_construction():
 
 def determine_depth():
     logger.debug("determining the best sampling depth to use ")
-    #TODO remove this command if it is no longer needed
+    # TODO remove this command if it is no longer needed
     #command = "unzip -d "+folder+" table.qzv"
     export_table_vis_command = "qiime tools export \
         --input-path table.qzv \
@@ -394,13 +394,13 @@ def diversity_measure(metadata, depth):
     logger.info(result.stdout)
     logger.error(result.stderr)
 
+
 def calc_rare_depth():
-    #reads sample frequences from previously unzipped archive
+    # reads sample frequences from previously unzipped archive
     sample_freq = pd.read_csv("table_vis/sample-frequency-detail.csv")
     depth = sample_freq.median()[0]
 
     return depth
-
 
 
 def rarefy_curve_calc(depth, metadata):
@@ -412,7 +412,8 @@ def rarefy_curve_calc(depth, metadata):
         --p-max-depth "+depth" \
         --m-metadata-file "+metadata+" \
         --o-visualization alpha-rarefaction.qzv"
-    result = subprocess.run([alpha_rare_command], stdout=PIPE, stderr=PIPE, shell=True)
+    result = subprocess.run([alpha_rare_command],
+                            stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
 
@@ -420,9 +421,11 @@ def rarefy_curve_calc(depth, metadata):
     export_rare_command = "qiime tools export \
         --input-path alpha-rarefaction.qzv \
         --output-path alpha-rareplot"
-    result = subprocess.run([export_rare_command], stdout=PIPE, stderr=PIPE, shell=True)
+    result = subprocess.run([export_rare_command],
+                            stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
+
 
 def alpha_div_calc(metadata):
     logger.info("calculating significant features ")
@@ -468,12 +471,11 @@ def alpha_div_calc(metadata):
 
     command = "qiime diversity alpha-group-significance \
     --i-alpha-diversity faith_pd.qza \
-    --m-metadata-file " +metadata+" \
+    --m-metadata-file " + metadata+" \
     --o-visualization faith_pd.qzv"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
-
 
     logger.info("unzipping features into separate dirs")
     command = "qiime tools export \
@@ -526,7 +528,7 @@ def beta_div_calc(metadata, item_of_interest):
         --i-distance-matrix core-metrics-results/unweighted_unifrac_distance_matrix.qza \
         --m-metadata-file " + metadata + " \
         --m-metadata-column "+item_of_interest + " \
-        --o-visualization core-metrics-results/unweighted-unifrac-" +item_of_interest+"-significance.qzv \
+        --o-visualization core-metrics-results/unweighted-unifrac-" + item_of_interest+"-significance.qzv \
         --p-pairwise"
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
@@ -625,8 +627,8 @@ def generate_phylogenetic_trees(metadata, item_interest):
         logger.info(result.stdout)
         logger.error(result.stderr)
 
-        #Outputs the current ioi so that it can be annotatted in the graphlan image
-        with open("current.txt", "w") as file: 
+        # Outputs the current ioi so that it can be annotatted in the graphlan image
+        with open("current.txt", "w") as file:
             file.write(item)
 
         # bash script call to handle the steps within a conda python 2.7.17 envionment
@@ -657,7 +659,8 @@ def generate_result_file(metadata):
     export_dada2_stats_command = "qiime tools export \
         --input-path stats-dada2.qzv \
         --output-path stats-dada2"
-    result = subprocess.run([export_dada2_stats_command], stderr=PIPE, stdout=PIPE, shell=True)
+    result = subprocess.run([export_dada2_stats_command],
+                            stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
 
@@ -732,7 +735,7 @@ def main(arg):
     diversity_measure(arg.metadata, depth)
 
     assign_taxonomy()
-    
+
     rare_depth = calc_rare_depth()
 
     # in: table-dada2.qza out: dir with rarefaction table
