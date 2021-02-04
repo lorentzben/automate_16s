@@ -616,14 +616,18 @@ def generate_phylogenetic_trees(metadata, item_interest):
         logger.error(result.stderr)
 
         # formatting the table so that it is in the correct order
-        table = pd.read_table("otu-"+item+"-table.tsv", sep='\t', header=1)
+        table = pd.read_table("otu-"+str(item)+"-table.tsv", sep='\t', header=1)
+        insertion_site = len(table.columns) - 1
         table = table.drop(columns=['taxonomy'])
         table = table.rename(columns={"#OTU ID": "taxonomy"})
-        table.to_csv("otu-"+item+"-mod-table.tsv", sep='\t', index=False)
+        tax = table.pop("taxonomy")
+        table.insert(insertion_site, "taxonomy", tax)
+        table.insert(0, "OTU_ID", np.arange(len(table)))
+        table.to_csv("otu-"+str(item)+"-mod-table.tsv", sep='\t', index=False)
 
         # human readable table into compressed computer-readble format
-        biom_format_command = "biom convert -i otu-"+item + \
-            "-mod-table.tsv -o otu-table-mod.biom --to-hdf5 --table-type='OTU table' --process-obs-metadata taxonomy"
+        biom_format_command = "biom convert -i otu-"+str(item) + \
+            "-mod-table.tsv -o otu-table-mod.biom --to-hdf5 --table-type=\'OTU table\' --process-obs-metadata taxonomy"
         result = subprocess.run([biom_format_command],
                                 shell=True, stdout=PIPE, stderr=PIPE)
         logger.info(result.stdout)
