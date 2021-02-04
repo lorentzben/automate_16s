@@ -6,7 +6,7 @@ output:
 ---
 ```{r install/load libraries, echo=FALSE, message=FALSE, warning=FALSE}
 if(!require(kableExtra)) {install.packages("kableExtra", repos="http://cran.us.r-project.org")}
-if(!require(ggplot2)){install.packages("remotes")}
+if(!require(remotes)){install.packages("remotes")}
 if(!require(ggplot2)) {remotes::install_github("tidyverse/ggplot2@v3.3.2")}
 if(!require(tidyverse)) {install.packages("tidyverse", repos="http://cran.us.r-project.org")}
 if(!require(gplots)) {install.packages("gplots", repos="http://cran.us.r-project.org")}
@@ -27,6 +27,8 @@ if(!require(tidyverse)){install.packages("tidyverse")}
 if(!require(reshape2)){install.packages("reshape2")}
 if(!require(ampvis2)){remotes::install_github("MadsAlbertsen/ampvis2")}
 if(!require(devtools)) {install.packages("devtools")}
+library(remotes)
+library(openssl)
 library(gtools)
 library(kableExtra)
 library(qiime2R)
