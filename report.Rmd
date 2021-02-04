@@ -378,6 +378,9 @@ cycle_z_taxa <- subset_taxa(cycle_1, get(level) %in% names(cycle_z_names))
 cycle_z_prune_names <- sort(taxa_sums(tax_glom(cycle_z_taxa, taxrank = level)), TRUE)[1:topN]
 cycle_z_prune <- prune_taxa(names(cycle_z_prune_names), cycle_1)
 
+cycle_z_prune@sam_data[[ioi]] <- reorder(cycle_z_prune@sam_data[[ioi]])
+
+
 #plots heatmap with annotations for item of interest
 heatmap <- pheatmap::pheatmap(otu_table(cycle_z_prune), labels_row=tax_table(cycle_z_prune)[,"Genus"], annotation_row = data.frame(tax_table(cycle_z_prune)[,"Phylum"]), annotation_col = data.frame(sample_data(cycle_z_prune)[,ioi]), width = 10, height = 10, fontsize = 14, scale = "column")
 
@@ -417,8 +420,8 @@ chao1 <- read.table("chao1/metadata.tsv", header=TRUE)
 ace <- read.table("ace/metadata.tsv", header=TRUE)
 faith_pd <- read.table("faith_pd/metadata.tsv", header=TRUE)
 
-obs <- data.frame(obs[c('id','observed_features')])
-shannon <- data.frame(shannon[c('id','shannon_entropy')])
+obs <- data.frame(obs[c('id','observed_otus')])
+shannon <- data.frame(shannon[c('id','shannon')])
 simpson <- data.frame(simpson[c('id','simpson')])
 chao1 <- data.frame(chao1[c('id','chao1')])
 ace <- data.frame(ace[c("id","ace")])
@@ -440,14 +443,14 @@ obs_vals = read.csv("./obs/metadata.tsv", sep='\t')
 dims = dim(obs_vals)
 obs_vals <- data.frame(obs_vals[2:dims[1],])
 obs_vals[[ioi]] <- reorder(as.factor(obs_vals[[ioi]]))
-obs_vals$observed_features <- as.numeric(as.character(obs_vals$observed_features))
-obs_boxplot <- ggplot(obs_vals, aes_string(x=ioi,y = obs_vals$observed_features)) + geom_boxplot() + ylab("Observed Features") +theme_bw()
+obs_vals$observed_otus <- as.numeric(as.character(obs_vals$observed_otus))
+obs_boxplot <- ggplot(obs_vals, aes_string(x=ioi,y = obs_vals$observed_otus)) + geom_boxplot() + ylab("Observed Features") +theme_bw()
 obs_boxplot 
 
 ggsave("obs_boxplot.png", plot=obs_boxplot, path=outdir)
 
 #plots obs values in a violin plot format 
-p <- ggplot(obs_vals, aes(x=obs_vals[[ioi]], y=observed_features)) + geom_violin()+ geom_boxplot(width=0.1)
+p <- ggplot(obs_vals, aes(x=obs_vals[[ioi]], y=observed_otus)) + geom_violin()+ geom_boxplot(width=0.1)
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
 p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
 p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("Observed Features") + theme_bw()
@@ -458,19 +461,19 @@ ggsave("obs_violin_plot.png", plot=p, path=outdir)
 ```{r Kruskal-Wallace test for signifiance observed feat, echo=FALSE, message=FALSE, warning=FALSE}
 library("ggpubr")
 obs <- read.table("obs/metadata.tsv", header = TRUE)
-obs_stat <- data.frame(obs[c('id',ioi,'observed_features')])
+obs_stat <- data.frame(obs[c('id',ioi,'observed_otus')])
 
 
-form <- as.formula(paste("observed_features ~ ", ioi))
+form <- as.formula(paste("observed_otus ~ ", ioi))
 kruskal_table <- rstatix::kruskal_test(data = obs_stat, formula = form)
 kruskal_table
 
-form = as.formula(paste("observed_features ~", ioi))
+form = as.formula(paste("observed_otus ~", ioi))
 
 dunn_table <- rstatix::dunn_test(data = obs_stat, formula = form, p.adjust.method = "holm") %>% add_xy_position()
 dunn_table
 
-p <- ggplot(obs_vals, aes(x=obs_vals[[ioi]], y=observed_features)) + geom_violin()+ geom_boxplot(width=0.1)
+p <- ggplot(obs_vals, aes(x=obs_vals[[ioi]], y=observed_otus)) + geom_violin()+ geom_boxplot(width=0.1)
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
 p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
 p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("Observed Features") + theme_bw()
@@ -487,13 +490,13 @@ shannon_vals <- read.table("./shannon/metadata.tsv",sep = '\t', header = TRUE)
 dims = dim(shannon_vals)
 shannon_vals <- data.frame(shannon_vals[2:dims[1],])
 shannon_vals[[ioi]] <- reorder(as.factor(shannon_vals[[ioi]]))
-shannon_vals$shannon_entropy <- as.numeric(as.character(shannon_vals$shannon_entropy))
-shannon_boxplot <- ggplot(shannon_vals, aes(x=shannon_vals[[ioi]], y=shannon_vals$shannon_entropy)) + geom_boxplot() + ylab("Shannon") + theme_bw() + xlab(ioi)
+shannon_vals$shannon <- as.numeric(as.character(shannon_vals$shannon))
+shannon_boxplot <- ggplot(shannon_vals, aes(x=shannon_vals[[ioi]], y=shannon_vals$shannon)) + geom_boxplot() + ylab("Shannon") + theme_bw() + xlab(ioi)
 shannon_boxplot
 
 ggsave("shannon_boxplot.png", plot=shannon_boxplot, path=outdir)
 
-p <- ggplot(shannon_vals, aes(x=shannon_vals[[ioi]], y=shannon_entropy)) + geom_violin()+ geom_boxplot(width=0.1)
+p <- ggplot(shannon_vals, aes(x=shannon_vals[[ioi]], y=shannon)) + geom_violin()+ geom_boxplot(width=0.1)
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
 p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
 p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("Shannon") + theme_bw()
@@ -504,18 +507,18 @@ ggsave("shannon_violin_plot.png", plot=p, path=outdir)
 
 ```{r Kuskal-Wallace test for significance shannon, echo=FALSE, message=FALSE, warning=FALSE}
 shannon <- read.table("shannon/metadata.tsv", header = TRUE, sep='\t')
-shannon_stat <- data.frame(shannon[c('id',ioi,'shannon_entropy')])
+shannon_stat <- data.frame(shannon[c('id',ioi,'shannon')])
 
-form <- as.formula(paste("shannon_entropy ~ ", ioi))
+form <- as.formula(paste("shannon ~ ", ioi))
 kruskal_table <- rstatix::kruskal_test(data = shannon_stat, formula =form)
 kruskal_table
 
-form = as.formula(paste("shannon_entropy ~", ioi))
+form = as.formula(paste("shannon ~", ioi))
 
 dunn_table <- rstatix::dunn_test(data = shannon_stat, formula = form, p.adjust.method = "holm") %>% add_xy_position()
 dunn_table
 
-p <- ggplot(shannon_vals, aes(x=shannon_vals[[ioi]], y=shannon_entropy)) + geom_violin()+ geom_boxplot(width=0.1)
+p <- ggplot(shannon_vals, aes(x=shannon_vals[[ioi]], y=shannon)) + geom_violin()+ geom_boxplot(width=0.1)
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
 p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
 p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("Shannon") + theme_bw()
@@ -827,7 +830,7 @@ numextract <- function(string){
   str_extract(string, "\\-*\\d+\\.*\\d*")
 }
 
-obs_rarefy <- read.csv("alpha-rare/observed_otus.csv")
+obs_rarefy <- read.csv("alpha-rareplot/observed_otus.csv")
 samples <- obs_rarefy[1]
 one <- obs_rarefy[2:11]
 two <- obs_rarefy[12:21]
@@ -1189,6 +1192,8 @@ ggsave("rank_abundance_curve_by_treatment.png", plot=by_sample, path=outdir)
 by_group <- ampvis2::amp_rankabundance(cycle_1_amp, group_by = ioi) + theme(text=element_text(size = 20))
 by_group
 ggsave("rank_abundance_curve_by_treatment.png", plot=by_group, path=outdir)
+
+cycle_1_amp$metadata[[ioi]] <- reorder(cycle_1_amp$metadata[[ioi]])
 
 
 heatmap <- ampvis2::amp_heatmap(cycle_1_amp,
