@@ -4,6 +4,14 @@ output:
   html_document:
     df_print: paged
 ---
+<!-- This is sometimes nessecary, it will manifest with a unable to load shared object '/usr/local/lib/R/ error -->
+<!-- you can run ldconfig -p|grep $BROKEN_PACKAGE -->
+<!-- then you take the stem of where the bin for that package is and replace it below -->
+```{r handle lib errors, echo=FALSE, message=FALSE, warning=FALSE}
+Sys.setenv(LD_LIBRARY_PATH = "/lib64")
+Sys.setenv(PKG_CONFIG_PATH = "/lib64/pkgconfig")
+```
+
 ```{r install/load libraries, echo=FALSE, message=FALSE, warning=FALSE}
 if(!require(kableExtra)) {install.packages("kableExtra", repos="http://cran.us.r-project.org")}
 if(!require(remotes)){install.packages("remotes")}
