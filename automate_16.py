@@ -684,7 +684,7 @@ def generate_result_file(metadata):
     logger.error(result.stderr)
 
     # Sequence to render the rnotebook into a html object
-    command = 'Rscript -e "rmarkdown::render(\'report.Rmd\', output_file=\'long_' + \
+    command = 'Rscript -e "rmarkdown::render(\'report.Rmd\', output_file=\'report_' + \
         report_filename.strip() + '\', clean=TRUE)"'
     result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
