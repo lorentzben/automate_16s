@@ -166,6 +166,8 @@ cy_phylum <- merged %>%
   psmelt() %>%
   arrange(Abundance)
 
+cy_phylum$Sample <- reorder(as.factor(cy_phylum$Sample))
+
 #ggplot2 stacked bar chart separated by item of interet in the metadata from qiime2 identified by user
 by_treatment <- ggplot(cy_phylum, aes(x=Sample, y=Abundance, fill=fct_relevel(fct_reorder(cy_phylum[[level]],Abundance),"Other"))) + 
   geom_bar(stat="identity") +
@@ -251,6 +253,8 @@ cy_genus <- merged %>%
   psmelt() %>%
   arrange(Abundance)
 
+cy_genus$Sample <- reorder(as.factor(cy_genus$Sample))
+
 #ggplot figure of stacked bar chart separated by treatment
 by_treatment <- ggplot(cy_genus, aes(x=Sample, y=Abundance, fill=fct_relevel(fct_reorder(cy_genus[[level]],Abundance),"Other"))) + 
   geom_bar(stat="identity") +
@@ -335,6 +339,8 @@ cy_species <- merged %>%
   transform_sample_counts(function(x) {x/sum(x)}) %>%
   psmelt() %>%
   arrange(Abundance)
+
+cy_species$Sample <- reorder(as.factor(cy_species$Sample))
 
 #ggplot stacked bar chart separated by treatment
 by_treatment <- ggplot(cy_species, aes(x=Sample, y=Abundance, fill=fct_relevel(fct_reorder(cy_species[[level]],Abundance),"Other"))) + 
@@ -468,6 +474,8 @@ p
 
 ggsave("obs_violin_plot.png", plot=p, path=outdir)
 ```
+
+
 ```{r Kruskal-Wallace test for signifiance observed feat, echo=FALSE, message=FALSE, warning=FALSE}
 library("ggpubr")
 obs <- read.table("obs/metadata.tsv", header = TRUE)
@@ -1199,11 +1207,13 @@ by_sample <- ampvis2::amp_rankabundance(cycle_1_amp, group_by = "SampleID") + th
 by_sample 
 ggsave("rank_abundance_curve_by_treatment.png", plot=by_sample, path=outdir)
 
+cycle_1_amp$metadata[[ioi]] <- reorder(cycle_1_amp$metadata[[ioi]])
+
 by_group <- ampvis2::amp_rankabundance(cycle_1_amp, group_by = ioi) + theme(text=element_text(size = 20))
 by_group
 ggsave("rank_abundance_curve_by_treatment.png", plot=by_group, path=outdir)
 
-cycle_1_amp$metadata[[ioi]] <- reorder(cycle_1_amp$metadata[[ioi]])
+
 
 
 heatmap <- ampvis2::amp_heatmap(cycle_1_amp,
@@ -1221,6 +1231,17 @@ ggsave("heatmap.png", plot=heatmap, path=outdir)
 
 ```
 
+
+## Unifrac Heatmap 
+
+```{r}
+metadata<-read_q2metadata("metadata.tsv")
+metadata[[ioi]] <- reorder(metadata[[ioi]])
+w_unifrac_dist <- read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
+pheatmap(w_unifrac_dist$data)
+w_unifrac_dist$data
+
+```
 
 
 
