@@ -1231,6 +1231,76 @@ weight_heatmap
 ggsave("beta_div_heatmap_Weighted_unifrac.png", plot=weight_heatmap, path=outdir)
 ```
 
+## Beta Diversity Between Groups
+
+### Weighted Unifrac qiime2 generated boxplots
+
+```{r Weighted Unifrac qiime2 generated boxplots, echo=FALSE, message=FALSE, warning=FALSE}
+bdiv_box_filenames <- list.files(path = "weighted-sig/", pattern="*-boxplots.png")
+
+include_graphics(paste0("weighted-sig/",bdiv_box_filenames))
+
+```
+
+### Unweighted Unifrac qiime2 generated boxplots
+
+```{r Unweighted Unifrac qiime2 generated boxplots ,echo=FALSE, message=FALSE, warning=FALSE}
+bdiv_box_filenames <- list.files(path = "unweighted-sig/", pattern="*-boxplots.png")
+
+include_graphics(paste0("unweighted-sig/",bdiv_box_filenames))
+
+```
+
+### r generated Weighted boxplots
+```{r generated Weighted boxplots, echo=FALSE, message=FALSE, warning=FALSE}
+weighted_measurements <- read.csv("weighted-sig/raw_data.tsv", sep="\t")
+
+split_weighted_measure <- split(weighted_measurements, weighted_measurements$Group1)
+
+for(frame in split_weighted_measure){
+  
+  frame$Group2 <- reorder(as.factor(frame$Group2))
+  p <- ggplot(frame, aes(x=frame$Group2, y=Distance)) + geom_violin()+ geom_boxplot(width=0.1)
+  p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
+  p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
+  p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab("Group") + ylab("Weighted Unifrac Distance") + theme_bw() + labs(title = (as.character(paste0("Distance to ",frame$Group1[1]))))
+  print(p)
+}
+```
 
 
+### r generated Unweighted boxplots
+```{r generated Unweighted boxplots, echo=FALSE, message=FALSE, warning=FALSE}
+unweighted_measurements <- read.csv("unweighted-sig/raw_data.tsv", sep="\t")
+
+split_data_frames <- split(unweighted_measurements, unweighted_measurements$Group1)
+
+
+for(frame in split_data_frames){
+  
+  frame$Group2 <- reorder(as.factor(frame$Group2))
+  p <- ggplot(frame, aes(x=frame$Group2, y=Distance)) + geom_violin()+ geom_boxplot(width=0.1)
+  p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
+  p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
+  p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab("Group") + ylab("Unweighted Unifrac Distance") + theme_bw() + labs(title = (as.character(paste0("Distance to ",frame$Group1[1]))))
+  print(p)
+}
+```
+
+## Weighted Unifrac Permanova
+```{r Permanova results Weighted Unifrac from qiime, echo=FALSE, message=FALSE, warning=FALSE}
+weighted_permanova <- read.csv("weighted-sig/permanova-pairwise.csv")
+weighted_permanova <- data.frame(weighted_permanova)
+weighted_permanova <- weighted_permanova[order(weighted_permanova$Group.1),]
+weighted_permanova
+```
+
+## Unweighted Unifrac Permanova
+
+```{r Permanova results Unweighted Unifrac from qiime, echo=FALSE, message=FALSE, warning=FALSE}
+unweighted_permanova <- read.csv("unweighted-sig/permanova-pairwise.csv")
+unweighted_permanova <- data.frame(unweighted_permanova)
+unweighted_permanova <- unweighted_permanova[order(unweighted_permanova$Group.1),]
+unweighted_permanova
+```
 
