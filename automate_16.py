@@ -521,10 +521,10 @@ def alpha_div_calc(metadata):
     logger.info(result.stdout)
     logger.error(result.stderr)
 
-
+#TODO calc this for weighted unifrac
 def beta_div_calc(metadata, item_of_interest):
     logger.debug(
-        'calculating beta diversity, only done if column of metadata is provided')
+        'calculating beta diversity unweighted, only done if column of metadata is provided')
     command = "qiime diversity beta-group-significance \
         --i-distance-matrix core-metrics-results/unweighted_unifrac_distance_matrix.qza \
         --m-metadata-file " + metadata + " \
@@ -538,6 +538,39 @@ def beta_div_calc(metadata, item_of_interest):
         logger.critical(
             "the variable provided does not appear to be a column of the metadata file, or is not a categorical item, please review")
         exit(1)
+
+    logger.debug("exporting unweighted unifrac visualization")
+    export_unweight_command = "qiime tools export \
+        --input-path core-metrics-results/unweighted-unifrac-" + item_of_interest+"-significance.qzv \
+        --output-path unweighted-sig/"
+    result = subprocess.run([export_unweight_command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    logger.debug(
+        'calculating beta diversity weighted, only done if column of metadata is provided')
+    command = "qiime diversity beta-group-significance \
+        --i-distance-matrix core-metrics-results/weighted_unifrac_distance_matrix.qza \
+        --m-metadata-file " + metadata + " \
+        --m-metadata-column "+item_of_interest + " \
+        --o-visualization core-metrics-results/weighted-unifrac-" + item_of_interest+"-significance.qzv \
+        --p-pairwise"
+    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+    if result.returncode == 1:
+        logger.critical(
+            "the variable provided does not appear to be a column of the metadata file, or is not a categorical item, please review")
+        exit(1)
+
+    logger.debug("exporting weighted unifrac visualization")
+    export_weight_command = "qiime tools export \
+        --input-path core-metrics-results/weighted-unifrac-" + item_of_interest+"-significance.qzv \
+        --output-path weighted-sig/"
+    result = subprocess.run([export_weight_command], stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
 
 
 def assign_taxonomy():
