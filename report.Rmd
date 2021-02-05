@@ -373,37 +373,25 @@ include_graphics(tree_filenames)
 
 ## Species Abundance Heatmap
 
-```{r heatmap at the Genus level annotatted with item of interest, echo=FALSE, fig.height=12, fig.width=18, message=FALSE, warning=FALSE}
+```{r heatmap at the Genus level annotatted with item of interest, echo=FALSE, fig.height=10, fig.width=14, message=FALSE, warning=FALSE}
+devtools::source_gist("8d0ca4206a66be7ff6d76fc4ab8e66c6")
+cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv") 
+cycle_1@sam_data[[ioi]] <- reorder(cycle_1@sam_data[[ioi]])
 
-level = "Genus"
+cycle_1_amp <- phyloseq_to_ampvis2(cycle_1)
 
-#Create phyloseq object from qiime objects
-cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
+heatmap <- ampvis2::amp_heatmap(cycle_1_amp,
+                     group_by = "SampleID", 
+                     tax_aggregate = "Genus",
+                     tax_show = 30,
+                     facet_by = ioi,
+                     tax_add = "Phylum",
+                     plot_values = FALSE,
+                     plot_colorscale = "log10") +
+  theme(text=element_text(size = 20))
 
-#Select number of taxa at species level to plot
-topN <- 35
-
-# z transform whole dataset
-cycle_z <- microbiome::transform(cycle_1, "Z")
-
-#subsets top n items at phylo rank
-cycle_z_names <- sort(tapply(taxa_sums(cycle_z), tax_table(cycle_z)[,as.character(level)], sum), TRUE) [1:topN]
-cycle_z_taxa <- subset_taxa(cycle_1, get(level) %in% names(cycle_z_names))
-
-#selects and removes top n item at phylo rank, (without previous step would take ASV/OTUs and there would be overlap)
-cycle_z_prune_names <- sort(taxa_sums(tax_glom(cycle_z_taxa, taxrank = level)), TRUE)[1:topN]
-cycle_z_prune <- prune_taxa(names(cycle_z_prune_names), cycle_1)
-
-cycle_z_prune@sam_data[[ioi]] <- reorder(cycle_z_prune@sam_data[[ioi]])
-
-
-#plots heatmap with annotations for item of interest
-heatmap <- pheatmap::pheatmap(otu_table(cycle_z_prune), labels_row=tax_table(cycle_z_prune)[,"Genus"], annotation_row = data.frame(tax_table(cycle_z_prune)[,"Phylum"]), annotation_col = data.frame(sample_data(cycle_z_prune)[,ioi]), width = 10, height = 10, fontsize = 14, scale = "column")
-
-#saves a copy of the heatmap to outdir
+heatmap
 ggsave("heatmap.png", plot=heatmap, path=outdir)
-
-
 
 ```
 
@@ -1215,19 +1203,6 @@ ggsave("rank_abundance_curve_by_treatment.png", plot=by_group, path=outdir)
 
 
 
-
-heatmap <- ampvis2::amp_heatmap(cycle_1_amp,
-                     group_by = "SampleID", 
-                     tax_aggregate = "Genus",
-                     tax_show = 30,
-                     facet_by = ioi,
-                     tax_add = "Phylum",
-                     plot_values = FALSE,
-                     plot_colorscale = "log10") +
-  theme(text=element_text(size = 20))
-
-heatmap
-ggsave("heatmap.png", plot=heatmap, path=outdir)
 
 ```
 
