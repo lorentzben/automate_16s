@@ -36,6 +36,7 @@ if(!require(reshape2)){install.packages("reshape2")}
 if(!require(ampvis2)){remotes::install_github("MadsAlbertsen/ampvis2")}
 if(!require(devtools)) {install.packages("devtools")}
 if(!require(ggdendro)){install.packages("ggendro")}
+if(!require(vegan)){install.packages("vegan")}
 library(remotes)
 library(openssl)
 library(gtools)
@@ -54,7 +55,7 @@ library(knitr)
 library(reshape2)
 library(ampvis2)
 library(ggdendro)
-
+library(vegan)
 
 ```
 <!-- input files required:  -->
@@ -1289,22 +1290,6 @@ for(frame in split_data_frames){
 }
 ```
 
-## Weighted Unifrac Permanova
-```{r Permanova results Weighted Unifrac from qiime, echo=FALSE, message=FALSE, warning=FALSE}
-weighted_permanova <- read.csv("weighted-sig/permanova-pairwise.csv")
-weighted_permanova <- data.frame(weighted_permanova)
-weighted_permanova <- weighted_permanova[order(weighted_permanova$Group.1),]
-weighted_permanova
-```
-
-## Unweighted Unifrac Permanova
-
-```{r Permanova results Unweighted Unifrac from qiime, echo=FALSE, message=FALSE, warning=FALSE}
-unweighted_permanova <- read.csv("unweighted-sig/permanova-pairwise.csv")
-unweighted_permanova <- data.frame(unweighted_permanova)
-unweighted_permanova <- unweighted_permanova[order(unweighted_permanova$Group.1),]
-unweighted_permanova
-```
 
 ## UPGMA Plot for Weighted Unifrac Distance
 
@@ -1486,5 +1471,125 @@ unweight_plot
 ggsave("UPGMA_unweighted_unifrac_plot.png", plot=unweight_plot, path=outdir)
 
 ```
+
+## PERMANOVA Weighted Unifrac
+
+```{r}
+library(vegan)
+cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
+w_unifrac <- UniFrac(cycle_1, weighted = TRUE)
+meta <- sample_data(cycle_1)
+adonis(w_unifrac ~ meta[[ioi]])
+
+```
+## Weighted Unifrac Permanova Pairwise
+
+```{r Permanova results Weighted Unifrac from qiime, echo=FALSE, message=FALSE, warning=FALSE}
+weighted_permanova <- read.csv("weighted-sig/permanova-pairwise.csv")
+weighted_permanova <- data.frame(weighted_permanova)
+weighted_permanova <- weighted_permanova[order(weighted_permanova$Group.1),]
+weighted_permanova
+```
+
+
+## PERMANOVA Unweighted Unifrac
+
+```{r}
+
+cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
+u_unifrac <- UniFrac(cycle_1, weighted = FALSE)
+meta <- sample_data(cycle_1)
+adonis(u_unifrac ~ meta[[ioi]])
+
+```
+
+## Unweighted Unifrac Permanova Pairwise
+
+```{r Permanova results Unweighted Unifrac from qiime, echo=FALSE, message=FALSE, warning=FALSE}
+unweighted_permanova <- read.csv("unweighted-sig/permanova-pairwise.csv")
+unweighted_permanova <- data.frame(unweighted_permanova)
+unweighted_permanova <- unweighted_permanova[order(unweighted_permanova$Group.1),]
+unweighted_permanova
+```
+
+## ANOSIM
+
+```{r echo=FALSE, fig.height=8, fig.width=10, message=FALSE, warning=FALSE}
+cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
+sample_data(cycle_1)[[ioi]] <- reorder(as.factor(sample_data(cycle_1)[[ioi]]))
+
+w_uni <- read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
+#Weighted Unifrac
+attach(sample_data(cycle_1))
+cy.ano <- anosim(w_uni$data, grouping = eval(as.name(ioi)))
+cy.ano$class.vec <- reorder(as.factor(cy.ano$class.vec))
+summary(cy.ano)
+
+
+png(paste0(outdir,"/ANOSIM_weighted_unifrac.png"))
+plot(cy.ano) +
+mtext(text = "ANOSIM Weighted Unifrac", adj=0)
+dev.off()
+
+plot(cy.ano) +
+mtext(text = "ANOSIM Weighted Unifrac", adj=0)
+
+un_uni <- read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
+#Unweighted Unifrac
+attach(sample_data(cycle_1))
+cy.ano <- anosim(un_uni$data, grouping = eval(as.name(ioi)))
+cy.ano$class.vec <- reorder(as.factor(cy.ano$class.vec))
+summary(cy.ano)
+
+
+png(paste0(outdir,"/ANOSIM_unweighted_unifrac.png"))
+plot(cy.ano) +
+mtext(text = "ANOSIM unWeighted Unifrac", adj=0)
+dev.off()
+
+plot(cy.ano) +
+mtext(text = "ANOSIM Weighted Unifrac", adj=0)
+
+bray <- read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
+#Bray Curtis
+attach(sample_data(cycle_1))
+cy.ano <- anosim(bray$data, grouping = eval(as.name(ioi)))
+cy.ano$class.vec <- reorder(as.factor(cy.ano$class.vec))
+summary(cy.ano)
+
+
+png(paste0(outdir,"/ANOSIM_bray.png"))
+plot(cy.ano) +
+mtext(text = "ANOSIM Bray-Curtis", adj=0)
+dev.off()
+
+plot(cy.ano) +
+mtext(text = "ANOSIM Bray-Curtis", adj=0)
+
+jaccard <- read_qza("core-metrics-results/jaccard_distance_matrix.qza")
+#Jaccard
+attach(sample_data(cycle_1))
+cy.ano <- anosim(jaccard$data, grouping = eval(as.name(ioi)))
+cy.ano$class.vec <- reorder(as.factor(cy.ano$class.vec))
+summary(cy.ano)
+
+
+png(paste0(outdir,"/ANOSIM_jaccard.png"))
+plot(cy.ano) +
+mtext(text = "ANOSIM Jaccard", adj=0)
+dev.off()
+
+plot(cy.ano) +
+mtext(text = "ANOSIM Jaccard", adj=0)
+
+```
+
+## ADONIS
+
+## AMOVA
+
+## Lefse
+
+
 
 
