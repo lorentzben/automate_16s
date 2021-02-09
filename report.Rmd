@@ -37,6 +37,8 @@ if(!require(ampvis2)){remotes::install_github("MadsAlbertsen/ampvis2")}
 if(!require(devtools)) {install.packages("devtools")}
 if(!require(ggdendro)){install.packages("ggendro")}
 if(!require(vegan)){install.packages("vegan")}
+if(!require(pegas)){install.packages("pegas")}
+if(!require(microbiomeMarker)){remotes::install_github("yiluheihei/microbiomeMarker")}
 library(remotes)
 library(openssl)
 library(gtools)
@@ -56,7 +58,8 @@ library(reshape2)
 library(ampvis2)
 library(ggdendro)
 library(vegan)
-
+library(pegas)
+library(microbiomeMarker)
 ```
 <!-- input files required:  -->
 <!-- item_of_interest.csv -->
@@ -1474,7 +1477,7 @@ ggsave("UPGMA_unweighted_unifrac_plot.png", plot=unweight_plot, path=outdir)
 
 ## PERMANOVA Weighted Unifrac
 
-```{r}
+```{r Weighted Unifrac PERMANOVA, echo=FALSE, message=FALSE, warning=FALSE}
 library(vegan)
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
 w_unifrac <- UniFrac(cycle_1, weighted = TRUE)
@@ -1494,7 +1497,7 @@ weighted_permanova
 
 ## PERMANOVA Unweighted Unifrac
 
-```{r}
+```{r Unweighted Unifrac PERMANOVA, echo=FALSE, message=FALSE, warning=FALSE}
 
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
 u_unifrac <- UniFrac(cycle_1, weighted = FALSE)
@@ -1510,6 +1513,29 @@ unweighted_permanova <- read.csv("unweighted-sig/permanova-pairwise.csv")
 unweighted_permanova <- data.frame(unweighted_permanova)
 unweighted_permanova <- unweighted_permanova[order(unweighted_permanova$Group.1),]
 unweighted_permanova
+```
+
+
+## PERMANOVA Bray Curtis
+
+```{r Bray Curtis PERMANOVA, echo=FALSE, message=FALSE, warning=FALSE}
+
+cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
+bray_dist <- read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
+meta <- sample_data(cycle_1)
+adonis(bray_dist$data ~ meta[[ioi]])
+
+```
+
+## PERMANOVA Jaccard 
+
+```{r Jaccard PERMANOVA, echo=FALSE, message=FALSE, warning=FALSE}
+
+cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
+jaccard <- read_qza("core-metrics-results/jaccard_distance_matrix.qza")
+meta <- sample_data(cycle_1)
+adonis(jaccard$data ~ meta[[ioi]])
+
 ```
 
 ## ANOSIM
@@ -1584,12 +1610,126 @@ mtext(text = "ANOSIM Jaccard", adj=0)
 
 ```
 
+## Multi-response permutaiton procedure (MRPP)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
+sample_data(cycle_1)[[ioi]] <- reorder(as.factor(sample_data(cycle_1)[[ioi]]))
+
+w_uni <- read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
+# Weighted Unifrac
+print("MRPP based on Weighted Unifrac distance")
+mrpp(w_uni$data, grouping = sample_data(cycle_1)[[ioi]])
+
+un_uni <- read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
+# Unweighted Unifrac 
+print("MRPP based on Unweighted Unifrac distance")
+mrpp(un_uni$data, grouping = sample_data(cycle_1)[[ioi]])
+
+bray <- read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
+# Bray Curtis
+print("MRPP based on Bray-Curtis distance")
+mrpp(bray$data, grouping=sample_data(cycle_1)[[ioi]])
+
+
+jaccard <- read_qza("core-metrics-results/jaccard_distance_matrix.qza")
+# Jaccard 
+print("MRPP based on Jaccard distance")
+mrpp(jaccard$data, grouping = sample_data(cycle_1)[[ioi]])
+
+
+```
+
 ## ADONIS
+
+```{r PERMANOVA testing using ADONIS, echo=FALSE, message=FALSE, warning=FALSE}
+cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
+sample_data(cycle_1)[[ioi]] <- reorder(as.factor(sample_data(cycle_1)[[ioi]]))
+
+w_uni <- read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
+w_uni <- w_uni$data
+form = as.formula(paste("w_uni ~ ", ioi))
+# Weighted Unifrac
+print("PERMANOVA based on Weighted Unifrac Distance")
+adonis(formula = form)
+
+
+un_uni <- read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
+un_uni <- un_uni$data
+form = as.formula(paste("un_uni ~ ", ioi))
+# Unweighted Unifrac 
+print("PERMANOVA based on Unweighted Unifrac Distance")
+adonis(form)
+
+bray <- read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
+bray <- bray$data 
+form <- as.formula(paste("bray ~", ioi))
+# Bray Curtis
+print("PERMANOVA based on Bray-Curtis distance")
+adonis(form)
+
+
+jaccard <- read_qza("core-metrics-results/jaccard_distance_matrix.qza")
+jaccard <- jaccard$data
+form <- as.formula(paste("jaccard ~", ioi))
+# Jaccard 
+print("PERMANOVA based on Jaccard distance")
+adonis(form)
+
+```
 
 ## AMOVA
 
+```{r AMOVA testing, echo=FALSE, message=FALSE, warning=FALSE}
+#library(poppr)
+
+cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
+sample_data(cycle_1)[[ioi]] <- reorder(as.factor(sample_data(cycle_1)[[ioi]]))
+
+w_uni <- read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
+w_uni <- w_uni$data
+# Weighted Unifrac
+
+form = as.formula(paste("w_uni ~ ", ioi))
+print("AMOVA based on Weighted Unifrac")
+pegas::amova(formula = form)
+
+u_uni <- read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
+u_uni <- u_uni$data
+# Unweighted Unifrac
+
+form = as.formula(paste("u_uni ~ ", ioi))
+print("AMOVA based on Unweighted Unifrac")
+pegas::amova(formula = form)
+
+bray <- read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
+bray <- bray$data
+# Bray Curtis
+form = as.formula(paste("bray ~", ioi))
+print("AMOVA based on Bray Curtis")
+pegas::amova(formula = form)
+
+jaccard <- read_qza("core-metrics-results/jaccard_distance_matrix.qza")
+jaccard <- jaccard$data
+# Jaccard 
+form <- as.formula(paste("jaccard ~", ioi))
+print("AMOVA based on Jaccard Distance")
+pegas::amova(formula=form)
+```
+
 ## Lefse
 
+```{r Lefse analysis, echo=FALSE, message=FALSE, warning=FALSE}
+cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
 
+res <- lefse(cycle_1, class=ioi, multicls_strat=TRUE)
 
+head(marker_table(res))
 
+plot_ef_bar(temp, label_level=1)
+
+plot_cladogram(res)
+
+```
+
+## Maaslin
