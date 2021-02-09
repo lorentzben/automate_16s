@@ -20,11 +20,11 @@ if(!require(tidyverse)) {install.packages("tidyverse", repos="http://cran.us.r-p
 if(!require(gplots)) {install.packages("gplots", repos="http://cran.us.r-project.org")}
 if (!requireNamespace("devtools", quietly = TRUE)){install.packages("devtools")}
 if(!require(qiime2R)) {devtools::install_github("jbisanz/qiime2R")} # current version is 0.99.20
-if(!require(phyloseq)) {install.packages("phyloseq")}
-if(!require(gtools)) {install.packages("gtools")}
-if(!require(reshape2)) {install.packages("reshape2")}
-if(!require(forcats)) {install.packages("forcats")}
-if(!require(gridExtra)) {install.packages("gridExtra")}
+if(!require(phyloseq)) {install.packages("phyloseq",repos="http://cran.us.r-project.org")}
+if(!require(gtools)) {install.packages("gtools",repos="http://cran.us.r-project.org")}
+if(!require(reshape2)) {install.packages("reshape2",repos="http://cran.us.r-project.org")}
+if(!require(forcats)) {install.packages("forcats",repos="http://cran.us.r-project.org")}
+if(!require(gridExtra)) {install.packages("gridExtra",repos="http://cran.us.r-project.org")}
 if(!requireNamespace("BiocManager")){install.packages("BiocManager")}
 if(!require(microbiome)){BiocManager::install("microbiome")}
 if(!require(NMF)){install.packages("NMF",repos="http://cran.us.r-project.org")}
