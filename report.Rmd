@@ -96,8 +96,8 @@ ioi <- read.csv("item_of_interest.csv")
 ioi<-as.character(ioi)
 
 outdir_name <- "Figures"
-if(!dir.exists(paste0("./",outdir_name))) {dir.create(paste0("./",outdir_name))}
-outdir <- paste0("./",outdir_name)
+if(!dir.exists(paste("./",outdir_name))) {dir.create(paste("./",outdir_name))}
+outdir <- paste("./",outdir_name)
 
 
 ```
@@ -1244,7 +1244,7 @@ ggsave("beta_div_heatmap_Weighted_unifrac.png", plot=weight_heatmap, path=outdir
 ```{r Weighted Unifrac qiime2 generated boxplots, echo=FALSE, message=FALSE, warning=FALSE}
 bdiv_box_filenames <- list.files(path = "weighted-sig/", pattern="*-boxplots.png")
 
-include_graphics(paste0("weighted-sig/",bdiv_box_filenames))
+include_graphics(paste("weighted-sig/",bdiv_box_filenames))
 
 ```
 
@@ -1253,7 +1253,7 @@ include_graphics(paste0("weighted-sig/",bdiv_box_filenames))
 ```{r Unweighted Unifrac qiime2 generated boxplots ,echo=FALSE, message=FALSE, warning=FALSE}
 bdiv_box_filenames <- list.files(path = "unweighted-sig/", pattern="*-boxplots.png")
 
-include_graphics(paste0("unweighted-sig/",bdiv_box_filenames))
+include_graphics(paste("unweighted-sig/",bdiv_box_filenames))
 
 ```
 
@@ -1269,7 +1269,7 @@ for(frame in split_weighted_measure){
   p <- ggplot(frame, aes(x=frame$Group2, y=Distance)) + geom_violin()+ geom_boxplot(width=0.1)
   p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
   p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
-  p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab("Group") + ylab("Weighted Unifrac Distance") + theme_bw() + labs(title = (as.character(paste0("Distance to ",frame$Group1[1]))))
+  p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab("Group") + ylab("Weighted Unifrac Distance") + theme_bw() + labs(title = (as.character(paste("Distance to ",frame$Group1[1]))))
   print(p)
 }
 ```
@@ -1288,7 +1288,7 @@ for(frame in split_data_frames){
   p <- ggplot(frame, aes(x=frame$Group2, y=Distance)) + geom_violin()+ geom_boxplot(width=0.1)
   p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
   p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
-  p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab("Group") + ylab("Unweighted Unifrac Distance") + theme_bw() + labs(title = (as.character(paste0("Distance to ",frame$Group1[1]))))
+  p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab("Group") + ylab("Unweighted Unifrac Distance") + theme_bw() + labs(title = (as.character(paste("Distance to ",frame$Group1[1]))))
   print(p)
 }
 ```
@@ -1552,7 +1552,7 @@ cy.ano$class.vec <- reorder(as.factor(cy.ano$class.vec))
 summary(cy.ano)
 
 
-png(paste0(outdir,"/ANOSIM_weighted_unifrac.png"))
+png(paste(outdir,"/ANOSIM_weighted_unifrac.png"))
 plot(cy.ano) +
 mtext(text = "ANOSIM Weighted Unifrac", adj=0)
 dev.off()
@@ -1568,7 +1568,7 @@ cy.ano$class.vec <- reorder(as.factor(cy.ano$class.vec))
 summary(cy.ano)
 
 
-png(paste0(outdir,"/ANOSIM_unweighted_unifrac.png"))
+png(paste(outdir,"/ANOSIM_unweighted_unifrac.png"))
 plot(cy.ano) +
 mtext(text = "ANOSIM unWeighted Unifrac", adj=0)
 dev.off()
@@ -1584,7 +1584,7 @@ cy.ano$class.vec <- reorder(as.factor(cy.ano$class.vec))
 summary(cy.ano)
 
 
-png(paste0(outdir,"/ANOSIM_bray.png"))
+png(paste(outdir,"/ANOSIM_bray.png"))
 plot(cy.ano) +
 mtext(text = "ANOSIM Bray-Curtis", adj=0)
 dev.off()
@@ -1600,7 +1600,7 @@ cy.ano$class.vec <- reorder(as.factor(cy.ano$class.vec))
 summary(cy.ano)
 
 
-png(paste0(outdir,"/ANOSIM_jaccard.png"))
+png(paste(outdir,"/ANOSIM_jaccard.png"))
 plot(cy.ano) +
 mtext(text = "ANOSIM Jaccard", adj=0)
 dev.off()

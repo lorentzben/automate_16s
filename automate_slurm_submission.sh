@@ -22,6 +22,9 @@ VAR_OF_INTEREST="body-site"
 module load Python/3.8.2-GCCcore-8.3.0
 module load QIIME2/2020.6
 module load R/4.0.0-foss-2019b
+module load GDAL/3.0.2-foss-2019b-Python-3.7.4
+module load PROJ/6.2.1-GCCcore-8.3.0
+module load GEOS/3.8.0-GCC-8.3.0-Python-3.7.4
 
 python3 -m pip install --user pandas
 CODE= python3 setup.py -n $MANIFEST -d $SEQS
