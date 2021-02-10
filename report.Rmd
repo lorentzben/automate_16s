@@ -1229,8 +1229,8 @@ ggsave("beta_div_heatmap_Weighted_unifrac.png", plot=weight_heatmap, path=outdir
 ```{r Weighted Unifrac qiime2 generated boxplots, echo=FALSE, message=FALSE, warning=FALSE}
 bdiv_box_filenames <- list.files(path = "weighted-sig/", pattern="*-boxplots.png")
 
-include_graphics(paste00("weighted-sig/",bdiv_box_filenames))
-?paste00()
+include_graphics(paste0("weighted-sig/",bdiv_box_filenames))
+
 
 ```
 
@@ -1239,7 +1239,7 @@ include_graphics(paste00("weighted-sig/",bdiv_box_filenames))
 ```{r Unweighted Unifrac qiime2 generated boxplots ,echo=FALSE, message=FALSE, warning=FALSE}
 bdiv_box_filenames <- list.files(path = "unweighted-sig/", pattern="*-boxplots.png")
 
-include_graphics(paste00("unweighted-sig/",bdiv_box_filenames))
+include_graphics(paste0("unweighted-sig/",bdiv_box_filenames))
 
 ```
 
@@ -1255,7 +1255,7 @@ for(frame in split_weighted_measure){
   p <- ggplot(frame, aes(x=frame$Group2, y=Distance)) + geom_violin()+ geom_boxplot(width=0.1)
   p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
   p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
-  p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab("Group") + ylab("Weighted Unifrac Distance") + theme_bw() + labs(title = (as.character(paste00("Distance to ",frame$Group1[1]))))
+  p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab("Group") + ylab("Weighted Unifrac Distance") + theme_bw() + labs(title = (as.character(paste0("Distance to ",frame$Group1[1]))))
   print(p)
 }
 ```
@@ -1274,7 +1274,7 @@ for(frame in split_data_frames){
   p <- ggplot(frame, aes(x=frame$Group2, y=Distance)) + geom_violin()+ geom_boxplot(width=0.1)
   p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
   p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
-  p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab("Group") + ylab("Unweighted Unifrac Distance") + theme_bw() + labs(title = (as.character(paste00("Distance to ",frame$Group1[1]))))
+  p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab("Group") + ylab("Unweighted Unifrac Distance") + theme_bw() + labs(title = (as.character(paste0("Distance to ",frame$Group1[1]))))
   print(p)
 }
 ```
@@ -1538,7 +1538,7 @@ cy.ano$class.vec <- reorder(as.factor(cy.ano$class.vec))
 summary(cy.ano)
 
 
-png(paste00(outdir,"/ANOSIM_weighted_unifrac.png"))
+png(paste0(outdir,"/ANOSIM_weighted_unifrac.png"))
 plot(cy.ano) +
 mtext(text = "ANOSIM Weighted Unifrac", adj=0)
 dev.off()
@@ -1554,7 +1554,7 @@ cy.ano$class.vec <- reorder(as.factor(cy.ano$class.vec))
 summary(cy.ano)
 
 
-png(paste00(outdir,"/ANOSIM_unweighted_unifrac.png"))
+png(paste0(outdir,"/ANOSIM_unweighted_unifrac.png"))
 plot(cy.ano) +
 mtext(text = "ANOSIM unWeighted Unifrac", adj=0)
 dev.off()
@@ -1570,7 +1570,7 @@ cy.ano$class.vec <- reorder(as.factor(cy.ano$class.vec))
 summary(cy.ano)
 
 
-png(paste00(outdir,"/ANOSIM_bray.png"))
+png(paste0(outdir,"/ANOSIM_bray.png"))
 plot(cy.ano) +
 mtext(text = "ANOSIM Bray-Curtis", adj=0)
 dev.off()
@@ -1586,7 +1586,7 @@ cy.ano$class.vec <- reorder(as.factor(cy.ano$class.vec))
 summary(cy.ano)
 
 
-png(paste00(outdir,"/ANOSIM_jaccard.png"))
+png(paste0(outdir,"/ANOSIM_jaccard.png"))
 plot(cy.ano) +
 mtext(text = "ANOSIM Jaccard", adj=0)
 dev.off()
@@ -1634,7 +1634,7 @@ sample_data(cycle_1)[[ioi]] <- reorder(as.factor(sample_data(cycle_1)[[ioi]]))
 
 w_uni <- qiime2R::read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
 w_uni <- w_uni$data
-form = as.formula(paste00("w_uni ~ ", ioi))
+form = as.formula(paste0("w_uni ~ ", ioi))
 # Weighted Unifrac
 print("PERMANOVA based on Weighted Unifrac Distance")
 adonis(formula = form)
@@ -1642,14 +1642,14 @@ adonis(formula = form)
 
 un_uni <- qiime2R::read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
 un_uni <- un_uni$data
-form = as.formula(paste00("un_uni ~ ", ioi))
+form = as.formula(paste0("un_uni ~ ", ioi))
 # Unweighted Unifrac 
 print("PERMANOVA based on Unweighted Unifrac Distance")
 adonis(form)
 
 bray <- qiime2R::read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
 bray <- bray$data 
-form <- as.formula(paste00("bray ~", ioi))
+form <- as.formula(paste0("bray ~", ioi))
 # Bray Curtis
 print("PERMANOVA based on Bray-Curtis distance")
 adonis(form)
@@ -1657,7 +1657,7 @@ adonis(form)
 
 jaccard <- qiime2R::read_qza("core-metrics-results/jaccard_distance_matrix.qza")
 jaccard <- jaccard$data
-form <- as.formula(paste00("jaccard ~", ioi))
+form <- as.formula(paste0("jaccard ~", ioi))
 # Jaccard 
 print("PERMANOVA based on Jaccard distance")
 adonis(form)
@@ -1676,7 +1676,7 @@ w_uni <- qiime2R::read_qza("core-metrics-results/weighted_unifrac_distance_matri
 w_uni <- w_uni$data
 # Weighted Unifrac
 
-form = as.formula(paste00("w_uni ~ ", ioi))
+form = as.formula(paste0("w_uni ~ ", ioi))
 print("AMOVA based on Weighted Unifrac")
 pegas::amova(formula = form)
 
