@@ -1204,8 +1204,8 @@ ggsave("rank_abundance_curve_by_treatment.png", plot=by_group, path=outdir)
 ```{r echo=FALSE,fig.height=8, fig.width=14, message=FALSE, warning=FALSE}
 metadata<-read_q2metadata("metadata.tsv")
 metadata[[ioi]] <- reorder(metadata[[ioi]])
-w_unifrac_dist <- read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
-u_unifrac_dist <- read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
+w_unifrac_dist <- qiime2R::read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
+u_unifrac_dist <- qiime2R::read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
 
 un_weight_matrix <- as.matrix(u_unifrac_dist$data)
 un_weight_matrix[lower.tri(un_weight_matrix)] <- NA
@@ -1506,7 +1506,7 @@ unweighted_permanova
 ```{r Bray Curtis PERMANOVA, echo=FALSE, message=FALSE, warning=FALSE}
 
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
-bray_dist <- read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
+bray_dist <- qiime2R::read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
 meta <- sample_data(cycle_1)
 adonis(bray_dist$data ~ meta[[ioi]])
 
@@ -1517,7 +1517,7 @@ adonis(bray_dist$data ~ meta[[ioi]])
 ```{r Jaccard PERMANOVA, echo=FALSE, message=FALSE, warning=FALSE}
 
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
-jaccard <- read_qza("core-metrics-results/jaccard_distance_matrix.qza")
+jaccard <- qiime2R::read_qza("core-metrics-results/jaccard_distance_matrix.qza")
 meta <- sample_data(cycle_1)
 adonis(jaccard$data ~ meta[[ioi]])
 
@@ -1529,7 +1529,7 @@ adonis(jaccard$data ~ meta[[ioi]])
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
 sample_data(cycle_1)[[ioi]] <- reorder(as.factor(sample_data(cycle_1)[[ioi]]))
 
-w_uni <- read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
+w_uni <- qiime2R::read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
 #Weighted Unifrac
 attach(sample_data(cycle_1))
 cy.ano <- anosim(w_uni$data, grouping = eval(as.name(ioi)))
@@ -1545,7 +1545,7 @@ dev.off()
 plot(cy.ano) +
 mtext(text = "ANOSIM Weighted Unifrac", adj=0)
 
-un_uni <- read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
+un_uni <- qiime2R::read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
 #Unweighted Unifrac
 attach(sample_data(cycle_1))
 cy.ano <- anosim(un_uni$data, grouping = eval(as.name(ioi)))
@@ -1561,7 +1561,7 @@ dev.off()
 plot(cy.ano) +
 mtext(text = "ANOSIM Weighted Unifrac", adj=0)
 
-bray <- read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
+bray <- qiime2R::read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
 #Bray Curtis
 attach(sample_data(cycle_1))
 cy.ano <- anosim(bray$data, grouping = eval(as.name(ioi)))
@@ -1577,7 +1577,7 @@ dev.off()
 plot(cy.ano) +
 mtext(text = "ANOSIM Bray-Curtis", adj=0)
 
-jaccard <- read_qza("core-metrics-results/jaccard_distance_matrix.qza")
+jaccard <- qiime2R::read_qza("core-metrics-results/jaccard_distance_matrix.qza")
 #Jaccard
 attach(sample_data(cycle_1))
 cy.ano <- anosim(jaccard$data, grouping = eval(as.name(ioi)))
@@ -1601,23 +1601,23 @@ mtext(text = "ANOSIM Jaccard", adj=0)
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
 sample_data(cycle_1)[[ioi]] <- reorder(as.factor(sample_data(cycle_1)[[ioi]]))
 
-w_uni <- read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
+w_uni <- qiime2R::read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
 # Weighted Unifrac
 print("MRPP based on Weighted Unifrac distance")
 mrpp(w_uni$data, grouping = sample_data(cycle_1)[[ioi]])
 
-un_uni <- read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
+un_uni <- qiime2R::read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
 # Unweighted Unifrac 
 print("MRPP based on Unweighted Unifrac distance")
 mrpp(un_uni$data, grouping = sample_data(cycle_1)[[ioi]])
 
-bray <- read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
+bray <- qiime2R::read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
 # Bray Curtis
 print("MRPP based on Bray-Curtis distance")
 mrpp(bray$data, grouping=sample_data(cycle_1)[[ioi]])
 
 
-jaccard <- read_qza("core-metrics-results/jaccard_distance_matrix.qza")
+jaccard <- qiime2R::read_qza("core-metrics-results/jaccard_distance_matrix.qza")
 # Jaccard 
 print("MRPP based on Jaccard distance")
 mrpp(jaccard$data, grouping = sample_data(cycle_1)[[ioi]])
@@ -1631,7 +1631,7 @@ mrpp(jaccard$data, grouping = sample_data(cycle_1)[[ioi]])
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
 sample_data(cycle_1)[[ioi]] <- reorder(as.factor(sample_data(cycle_1)[[ioi]]))
 
-w_uni <- read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
+w_uni <- qiime2R::read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
 w_uni <- w_uni$data
 form = as.formula(paste("w_uni ~ ", ioi))
 # Weighted Unifrac
@@ -1639,14 +1639,14 @@ print("PERMANOVA based on Weighted Unifrac Distance")
 adonis(formula = form)
 
 
-un_uni <- read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
+un_uni <- qiime2R::read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
 un_uni <- un_uni$data
 form = as.formula(paste("un_uni ~ ", ioi))
 # Unweighted Unifrac 
 print("PERMANOVA based on Unweighted Unifrac Distance")
 adonis(form)
 
-bray <- read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
+bray <- qiime2R::read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
 bray <- bray$data 
 form <- as.formula(paste("bray ~", ioi))
 # Bray Curtis
@@ -1654,7 +1654,7 @@ print("PERMANOVA based on Bray-Curtis distance")
 adonis(form)
 
 
-jaccard <- read_qza("core-metrics-results/jaccard_distance_matrix.qza")
+jaccard <- qiime2R::read_qza("core-metrics-results/jaccard_distance_matrix.qza")
 jaccard <- jaccard$data
 form <- as.formula(paste("jaccard ~", ioi))
 # Jaccard 
@@ -1671,7 +1671,7 @@ adonis(form)
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
 sample_data(cycle_1)[[ioi]] <- reorder(as.factor(sample_data(cycle_1)[[ioi]]))
 
-w_uni <- read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
+w_uni <- qiime2R::read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
 w_uni <- w_uni$data
 # Weighted Unifrac
 
@@ -1679,7 +1679,7 @@ form = as.formula(paste("w_uni ~ ", ioi))
 print("AMOVA based on Weighted Unifrac")
 pegas::amova(formula = form)
 
-u_uni <- read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
+u_uni <- qiime2R::read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
 u_uni <- u_uni$data
 # Unweighted Unifrac
 
@@ -1687,14 +1687,14 @@ form = as.formula(paste("u_uni ~ ", ioi))
 print("AMOVA based on Unweighted Unifrac")
 pegas::amova(formula = form)
 
-bray <- read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
+bray <- qiime2R::read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
 bray <- bray$data
 # Bray Curtis
 form = as.formula(paste("bray ~", ioi))
 print("AMOVA based on Bray Curtis")
 pegas::amova(formula = form)
 
-jaccard <- read_qza("core-metrics-results/jaccard_distance_matrix.qza")
+jaccard <- qiime2R::read_qza("core-metrics-results/jaccard_distance_matrix.qza")
 jaccard <- jaccard$data
 # Jaccard 
 form <- as.formula(paste("jaccard ~", ioi))
