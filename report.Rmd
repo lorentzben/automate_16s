@@ -718,10 +718,11 @@ p
 ### Bray curtis ordination
 
 ```{r beta diversity plot of bray curtis measurement, echo=FALSE, message=FALSE, warning=FALSE}
+library(qiime2R)
 metadata<-read_q2metadata("metadata.tsv")
 metadata[[ioi]] <- reorder(metadata[[ioi]])
-bray_pcoa <- read_qza("core-metrics-results/bray_curtis_pcoa_results.qza")
-shannon<-read_qza("core-metrics-results/shannon_vector.qza")
+bray_pcoa <- qiime2R::read_qza("core-metrics-results/bray_curtis_pcoa_results.qza")
+shannon<-qiime2R::read_qza("core-metrics-results/shannon_vector.qza")
 shannon <- shannon$data %>% rownames_to_column("SampleID")
 
 
@@ -744,8 +745,8 @@ ggsave("bray_curtis_pcoa_ordination.png", plot=bray_curtis, path=outdir)
 
 ```{r pcoa using Jaccard distance, echo=FALSE, message=FALSE, warning=FALSE}
 metadata<-read_q2metadata("metadata.tsv")
-jaccard <- read_qza("core-metrics-results/jaccard_pcoa_results.qza")
-shannon<-read_qza("core-metrics-results/shannon_vector.qza")
+jaccard <- qiime2R::read_qza("core-metrics-results/jaccard_pcoa_results.qza")
+shannon<-qiime2R::read_qza("core-metrics-results/shannon_vector.qza")
 shannon <- shannon$data %>% rownames_to_column("SampleID")
 
 metadata[[ioi]] <- reorder(metadata[[ioi]])
@@ -770,8 +771,8 @@ ggsave("jaccard_pcoa_ordination.png", plot=jaccard_pcoa, path=outdir)
 ```{r unweighted unifrac pcoa ordination, echo=FALSE, message=FALSE, warning=FALSE}
 metadata<-read_q2metadata("metadata.tsv")
 metadata[[ioi]] <- reorder(metadata[[ioi]])
-jaccard <- read_qza("core-metrics-results/unweighted_unifrac_pcoa_results.qza")
-shannon<-read_qza("core-metrics-results/shannon_vector.qza")
+jaccard <- qiime2R::read_qza("core-metrics-results/unweighted_unifrac_pcoa_results.qza")
+shannon<-qiime2R::read_qza("core-metrics-results/shannon_vector.qza")
 shannon <- shannon$data %>% rownames_to_column("SampleID")
 
 
@@ -796,8 +797,8 @@ ggsave("unweighted_unifrac_pcoa_ordination.png", plot=unweight_unifrac_pcoa, pat
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 metadata<-read_q2metadata("metadata.tsv")
 metadata[[ioi]] <- reorder(metadata[[ioi]])
-jaccard <- read_qza("core-metrics-results/weighted_unifrac_pcoa_results.qza")
-shannon<-read_qza("core-metrics-results/shannon_vector.qza")
+jaccard <- qiime2R::read_qza("core-metrics-results/weighted_unifrac_pcoa_results.qza")
+shannon<-qiime2R::read_qza("core-metrics-results/shannon_vector.qza")
 shannon <- shannon$data %>% rownames_to_column("SampleID")
 
 
