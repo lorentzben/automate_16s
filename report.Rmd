@@ -1712,7 +1712,7 @@ res <- lefse(cycle_1, class=ioi, multicls_strat=TRUE)
 
 head(marker_table(res))
 
-plot_ef_bar(temp, label_level=1)
+plot_ef_bar(res, label_level=1)
 
 plot_cladogram(res)
 
