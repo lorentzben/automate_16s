@@ -2,6 +2,7 @@
 require(dplyr)
 require(tibble)
 require(qiime2R)
+require(phyloseq)
 
 args = commandArgs(trailingOnly=TRUE)
 if (length(args)==0) {
