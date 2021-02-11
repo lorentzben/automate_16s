@@ -691,7 +691,20 @@ def generate_phylogenetic_trees(metadata, item_interest):
         logger.info(result.stdout)
         logger.error(result.stderr)
 
+def lefse_analysis(item_interest):
+    # call script to format the qiime data into lefse compatable format
+    qiime_to_lefse_command = "Rscript qiime_to_lefse.R " +str(item_interest)
+    result = subprocess.run([qiime_to_lefse_command], shell=True, stdout=PIPE, stderr=PIPE)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
 
+    # call script to run conda env to run lefse in 
+    lefse_analysis_command = "bash lefse_analysis.sh"
+    result = subprocess.run([lefse_analysis_command], shell=True, stdout=PIPE, stderr=PIPE)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
+
+    
 def generate_result_file(metadata):
     # dada 2 stats extracted from stats-dada2.qzv
     #command = "unzip -d "+folder+" stats-dada2.qzv"
@@ -787,6 +800,8 @@ def main(arg):
         beta_div_calc(arg.metadata, arg.interest)
 
     generate_phylogenetic_trees(arg.metadata, arg.interest)
+
+    lefse_analysis(arg.interest)
 
     generate_result_file(arg.metadata)
 
