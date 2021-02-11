@@ -48,9 +48,6 @@ new_samp_2 <- new_samp_2 %>%
   select(as.name(ioi))
 
 # generates phyloseq object with sample data of only item of interest so that phyloseq to lefs can run
-new_samp_data <- data.frame(cbind(rownames(sample_data(cycle_1)), as.character(sample_data(cycle_1)[[ioi]])))
-colnames(new_samp_data) <- c("SampleID","ioi")
-sample_data(new_samp_data)
 cycle_2 <- phyloseq(cycle_1@otu_table, cycle_1@tax_table, cycle_1@phy_tree, sample_data(new_samp_2))
 
 # transforms phyloseq object into lefse input object 
