@@ -801,6 +801,15 @@ jaccard <- qiime2R::read_qza("core-metrics-results/weighted_unifrac_pcoa_results
 shannon<-qiime2R::read_qza("core-metrics-results/shannon_vector.qza")
 shannon <- shannon$data %>% rownames_to_column("SampleID")
 
+weighted_unifrac_pcoa <- jaccard$data$Vectors %>%
+  select(SampleID, PC1, PC2) %>%
+  left_join(metadata) %>%
+  left_join(shannon)
+
+weighted_unifrac_pcoa <- jaccard$data$Vectors %>%
+  select(SampleID, PC1, PC2)
+
+weighted_unifrac_pcoa
 
 weighted_unifrac_pcoa <- jaccard$data$Vectors %>%
   select(SampleID, PC1, PC2) %>%
@@ -823,16 +832,19 @@ ggsave("weighted_unifrac_pcoa_ordination.png", plot=weighted_unifrac_pcoa, path=
 library(qiime2R)
 metadata<-read_q2metadata("metadata.tsv")
 metadata[[ioi]] <- reorder(metadata[[ioi]])
-eu_pcoa <- qiime2R::read_qza("core-metrics-results/euclidean_distance_results.qza")
+eu_dist <- qiime2R::read_qza("core-metrics-results/euclidean_distance_results.qza")
 shannon<-qiime2R::read_qza("core-metrics-results/shannon_vector.qza")
 shannon <- shannon$data %>% rownames_to_column("SampleID")
+eu_pcoa <- pcoa(eu_dist$data, correction="none")
 
+eu_df <- data.frame(eu_pcoa$vectors[,1:2]) 
+eu_df["SampleID"] <- rownames(eu_df)
+rownames(eu_df) <- rownames('')
 
-euclid <- eu_pcoa$data$Vectors %>%
-  select(SampleID, PC1, PC2) %>%
+euclid <- eu_df %>%
   left_join(metadata) %>%
   left_join(shannon) %>%
-  ggplot(aes_string(x="PC1", y="PC2", color=ioi, size="shannon_entropy"))+
+  ggplot(aes_string(x="Axis.1", y="Axis.2", color=ioi, size="shannon_entropy"))+
   geom_point(alpha=0.5) +
   theme_q2r() +
   scale_size_continuous(name="Shannon Diversity") +
