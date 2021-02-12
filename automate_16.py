@@ -727,7 +727,7 @@ def generate_result_file(metadata):
     logger.error(result.stderr)
 
     make_report_command = "./make_report.sh"
-    result = subprocess.run([activate_env_command], stdout=PIPE, stderr=PIPE, shell=True)
+    result = subprocess.run([make_report_command], stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
 
