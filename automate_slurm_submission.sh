@@ -42,6 +42,7 @@ then
    exit
 fi
 
+'''
 #TODO Move the Report Gen out of the python loop and put here
 module load GDAL/3.0.2-foss-2019b-Python-3.7.4
 CODE3= Rscript -e "rmarkdown::render('report.Rmd', output_file='report_$dt.html', clean=TRUE)"
@@ -52,3 +53,4 @@ then
    exit
 fi
 module unload GDAL/3.0.2-foss-2019b-Python-3.7.4
+'''
