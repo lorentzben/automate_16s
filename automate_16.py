@@ -391,6 +391,15 @@ def diversity_measure(metadata, depth):
     logger.info(result.stdout)
     logger.error(result.stderr)
 
+    logger.debug("calculating euclidian distance")
+    calc_euclid_dist_command = "qiime diversity beta \
+        --i-table table-dada2.qza \
+        --p-metric euclidean \
+        --o-distance-matrix core-metrics-results/euclidean_distance_results.qza"
+        result = subprocess.run([calc_euclid_command], stdout=PIPE, stderr=PIPE, shell=True)
+        logger.info(result.stdout)
+        logger.error(result.stderr)
+
 
 def calc_rare_depth():
     # reads sample frequences from previously unzipped archive

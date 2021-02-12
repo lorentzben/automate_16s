@@ -817,6 +817,31 @@ weighted_unifrac_pcoa
 ggsave("weighted_unifrac_pcoa_ordination.png", plot=weighted_unifrac_pcoa, path=outdir)
 
 ```
+### PCA based on Euclidian Distance
+
+```{r beta diversity plot of bray curtis measurement, echo=FALSE, message=FALSE, warning=FALSE}
+library(qiime2R)
+metadata<-read_q2metadata("metadata.tsv")
+metadata[[ioi]] <- reorder(metadata[[ioi]])
+eu_pcoa <- qiime2R::read_qza("core-metrics-results/euclidean_distance_results.qza")
+shannon<-qiime2R::read_qza("core-metrics-results/shannon_vector.qza")
+shannon <- shannon$data %>% rownames_to_column("SampleID")
+
+
+euclid <- eu_pcoa$data$Vectors %>%
+  select(SampleID, PC1, PC2) %>%
+  left_join(metadata) %>%
+  left_join(shannon) %>%
+  ggplot(aes_string(x="PC1", y="PC2", color=ioi, size="shannon_entropy"))+
+  geom_point(alpha=0.5) +
+  theme_q2r() +
+  scale_size_continuous(name="Shannon Diversity") +
+  scale_color_discrete(name=ioi)
+
+euclid
+ggsave("PCA_euclidain_ordination.png", plot=euclid , path=outdir)
+
+```
 
 ## Rarefaction Curves
 
