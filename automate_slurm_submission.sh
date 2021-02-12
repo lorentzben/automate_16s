@@ -23,6 +23,7 @@ module load Python/3.8.2-GCCcore-8.3.0
 module load QIIME2/2020.6
 module load R/4.0.0-foss-2019b
 
+dt=$(date '+%d-%m-%Y_%H.%M.%S');
 
 python3 -m pip install --user pandas
 CODE= python3 setup.py -n $MANIFEST -d $SEQS
@@ -40,3 +41,14 @@ then
    echo "There was an issue please review the logfile"
    exit
 fi
+
+#TODO Move the Report Gen out of the python loop and put here
+module load GDAL/3.0.2-foss-2019b-Python-3.7.4
+CODE3= Rscript -e "rmarkdown::render('report.Rmd', output_file='report_$dt.html', clean=TRUE)"
+
+if [[ $CODE3 -eq 1 ]]
+then
+   echo "There was an issue please review the logfile"
+   exit
+fi
+module unload GDAL/3.0.2-foss-2019b-Python-3.7.4

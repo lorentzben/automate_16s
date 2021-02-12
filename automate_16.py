@@ -91,8 +91,7 @@ def qual_control():
     logger.info(result.stdout)
     logger.error(result.stderr)
 
-    # TODO Remove this call after the downstream errors are fixed
-    #command = "unzip -d " + folder + " demux_summary.qzv"
+    
     export_demux_command = "qiime tools export \
         --input-path demux_summary.qzv \
         --output-path demux_summary/"
@@ -280,8 +279,6 @@ def tree_construction():
 
 def determine_depth():
     logger.debug("determining the best sampling depth to use ")
-    # TODO remove this command if it is no longer needed
-    #command = "unzip -d "+folder+" table.qzv"
     export_table_vis_command = "qiime tools export \
         --input-path table.qzv \
         --output-path table_viz"
@@ -521,7 +518,7 @@ def alpha_div_calc(metadata):
     logger.info(result.stdout)
     logger.error(result.stderr)
 
-#TODO calc this for weighted unifrac
+
 def beta_div_calc(metadata, item_of_interest):
     logger.debug(
         'calculating beta diversity unweighted, only done if column of metadata is provided')
@@ -729,6 +726,8 @@ def generate_result_file(metadata):
     logger.info(result.stdout)
     logger.error(result.stderr)
 
+    # TODO remove this block once confirmed bash export works
+    '''
     # Sequence to render the rnotebook into a html object
     command = 'Rscript -e "rmarkdown::render(\'report.Rmd\', output_file=\'report_' + \
         report_filename.strip() + '\', clean=TRUE)"'
@@ -739,7 +738,7 @@ def generate_result_file(metadata):
         logger.critical(
             "there was an issue generating the report for this analysis")
         exit(1)
-
+    '''
 
 def main(arg):
 
