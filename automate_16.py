@@ -91,7 +91,6 @@ def qual_control():
     logger.info(result.stdout)
     logger.error(result.stderr)
 
-    
     export_demux_command = "qiime tools export \
         --input-path demux_summary.qzv \
         --output-path demux_summary/"
@@ -282,7 +281,8 @@ def determine_depth():
     export_table_vis_command = "qiime tools export \
         --input-path table.qzv \
         --output-path table_viz"
-    result = subprocess.run([export_table_vis_command], stderr=PIPE, stdout=PIPE, shell=True)
+    result = subprocess.run([export_table_vis_command],
+                            stderr=PIPE, stdout=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
 
@@ -393,12 +393,13 @@ def diversity_measure(metadata, depth):
 
     logger.debug("calculating euclidian distance")
     calc_euclid_dist_command = "qiime diversity beta \
-        --i-table table-dada2.qza \
-        --p-metric euclidean \
-        --o-distance-matrix core-metrics-results/euclidean_distance_results.qza"
-        result = subprocess.run([calc_euclid_command], stdout=PIPE, stderr=PIPE, shell=True)
-        logger.info(result.stdout)
-        logger.error(result.stderr)
+    --i-table table-dada2.qza \
+    --p-metric euclidean \
+    --o-distance-matrix core-metrics-results/euclidean_distance_results.qza"
+    result = subprocess.run([calc_euclid_dist_command],
+                            stdout=PIPE, stderr=PIPE, shell=True)
+    logger.info(result.stdout)
+    logger.error(result.stderr)
 
 
 def calc_rare_depth():
@@ -549,7 +550,8 @@ def beta_div_calc(metadata, item_of_interest):
     export_unweight_command = "qiime tools export \
         --input-path core-metrics-results/unweighted-unifrac-" + item_of_interest+"-significance.qzv \
         --output-path unweighted-sig/"
-    result = subprocess.run([export_unweight_command], stdout=PIPE, stderr=PIPE, shell=True)
+    result = subprocess.run([export_unweight_command],
+                            stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
 
@@ -573,10 +575,10 @@ def beta_div_calc(metadata, item_of_interest):
     export_weight_command = "qiime tools export \
         --input-path core-metrics-results/weighted-unifrac-" + item_of_interest+"-significance.qzv \
         --output-path weighted-sig/"
-    result = subprocess.run([export_weight_command], stdout=PIPE, stderr=PIPE, shell=True)
+    result = subprocess.run([export_weight_command],
+                            stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
-
 
 
 def assign_taxonomy():
@@ -606,7 +608,7 @@ def assign_taxonomy():
 def generate_phylogenetic_trees(metadata, item_interest):
     # pull in metadata file to extract the categories for the item of interest
     metadata_table = pd.read_table(metadata, sep='\t')
-    ioi=item_interest
+    ioi = item_interest
 
     metadata_table = metadata_table.drop([0, 1])
 
@@ -655,7 +657,8 @@ def generate_phylogenetic_trees(metadata, item_interest):
         logger.error(result.stderr)
 
         # formatting the table so that it is in the correct order
-        table = pd.read_table("otu-"+str(item)+"-table.tsv", sep='\t', header=1)
+        table = pd.read_table(
+            "otu-"+str(item)+"-table.tsv", sep='\t', header=1)
         table = table.drop(columns=['taxonomy'])
         table = table.rename(columns={"#OTU ID": "taxonomy"})
         tax = table.pop("taxonomy")
@@ -697,20 +700,23 @@ def generate_phylogenetic_trees(metadata, item_interest):
         logger.info(result.stdout)
         logger.error(result.stderr)
 
+
 def lefse_analysis(item_interest):
     # call script to format the qiime data into lefse compatable format
-    qiime_to_lefse_command = "Rscript qiime_to_lefse.R " +str(item_interest)
-    result = subprocess.run([qiime_to_lefse_command], shell=True, stdout=PIPE, stderr=PIPE)
+    qiime_to_lefse_command = "Rscript qiime_to_lefse.R " + str(item_interest)
+    result = subprocess.run([qiime_to_lefse_command],
+                            shell=True, stdout=PIPE, stderr=PIPE)
     logger.info(result.stdout)
     logger.error(result.stderr)
 
-    # call script to run conda env to run lefse in 
+    # call script to run conda env to run lefse in
     lefse_analysis_command = "bash lefse_analysis.sh"
-    result = subprocess.run([lefse_analysis_command], shell=True, stdout=PIPE, stderr=PIPE)
+    result = subprocess.run([lefse_analysis_command],
+                            shell=True, stdout=PIPE, stderr=PIPE)
     logger.info(result.stdout)
     logger.error(result.stderr)
 
-    
+
 def generate_result_file(metadata):
     # dada 2 stats extracted from stats-dada2.qzv
     #command = "unzip -d "+folder+" stats-dada2.qzv"
@@ -736,7 +742,8 @@ def generate_result_file(metadata):
     logger.error(result.stderr)
 
     make_report_command = "./make_report.sh"
-    result = subprocess.run([make_report_command], stdout=PIPE, stderr=PIPE, shell=True)
+    result = subprocess.run([make_report_command],
+                            stdout=PIPE, stderr=PIPE, shell=True)
     logger.info(result.stdout)
     logger.error(result.stderr)
 
@@ -758,6 +765,7 @@ def generate_result_file(metadata):
             "there was an issue generating the report for this analysis")
         exit(1)
     '''
+
 
 def main(arg):
 
