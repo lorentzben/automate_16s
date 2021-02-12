@@ -819,7 +819,7 @@ ggsave("weighted_unifrac_pcoa_ordination.png", plot=weighted_unifrac_pcoa, path=
 ```
 ### PCA based on Euclidian Distance
 
-```{r beta diversity plot of bray curtis measurement, echo=FALSE, message=FALSE, warning=FALSE}
+```{r beta diversity plot of Euclidian Distance, echo=FALSE, message=FALSE, warning=FALSE}
 library(qiime2R)
 metadata<-read_q2metadata("metadata.tsv")
 metadata[[ioi]] <- reorder(metadata[[ioi]])
