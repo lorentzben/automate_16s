@@ -74,6 +74,15 @@ automate_YY_MM_DD_HH_MM_SSSSSS.log
 
 ---
 
+## Creating Manifest
+
+To speed up the manifest creation the command below will list the compressed files in the directory and save this to a txt file that can be opened in a program like Excel to format in the shape of EXAMPLE_MANIFEST.tsv 
+
+```shell
+ls $SEQUENCE_DIR/*.fastq.gz > sequences.tsv
+
+```
+
 #### Useful files
 
 core-metrics-results/
