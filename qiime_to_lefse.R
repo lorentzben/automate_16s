@@ -50,7 +50,7 @@ new_samp_2 <- new_samp_2 %>%
 
 # generates phyloseq object with sample data of only item of interest so that phyloseq to lefs can run
 cycle_2 <- phyloseq(cycle_1@otu_table, cycle_1@tax_table, cycle_1@phy_tree, sample_data(new_samp_2))
-cycle_2@sam_data[[ioi]] <- reorder(cycle_2@sam_data[[ioi]])
+#cycle_2@sam_data[[ioi]] <- reorder(cycle_2@sam_data[[ioi]])
 
 all_comparisons <- unique(cycle_2@sam_data[[ioi]])
 combos <- split(combn(all_comparisons,2),  col(combn(all_comparisons,2)))
