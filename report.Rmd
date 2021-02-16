@@ -826,33 +826,23 @@ weighted_unifrac_pcoa
 ggsave("weighted_unifrac_pcoa_ordination.png", plot=weighted_unifrac_pcoa, path=outdir)
 
 ```
-### PCA based on Euclidian Distance
 
-```{r beta diversity plot of Euclidian Distance, echo=FALSE, message=FALSE, warning=FALSE}
-library(qiime2R)
-metadata<-read_q2metadata("metadata.tsv")
-metadata[[ioi]] <- reorder(metadata[[ioi]])
-eu_dist <- qiime2R::read_qza("core-metrics-results/euclidean_distance_results.qza")
-shannon<-qiime2R::read_qza("core-metrics-results/shannon_vector.qza")
-shannon <- shannon$data %>% rownames_to_column("SampleID")
-eu_pcoa <- pcoa(eu_dist$data, correction="none")
+### Principal Components Analysis
 
-eu_df <- data.frame(eu_pcoa$vectors[,1:2]) 
-eu_df["SampleID"] <- rownames(eu_df)
-rownames(eu_df) <- rownames('')
+```{r PCA created by ampvis2, echo=FALSE, message=FALSE, warning=FALSE}
+devtools::source_gist("8d0ca4206a66be7ff6d76fc4ab8e66c6")
 
-euclid <- eu_df %>%
-  left_join(metadata) %>%
-  left_join(shannon) %>%
-  ggplot(aes_string(x="Axis.1", y="Axis.2", color=ioi, size="shannon_entropy"))+
-  geom_point(alpha=0.5) +
-  theme_q2r() +
-  scale_size_continuous(name="Shannon Diversity") +
-  scale_color_discrete(name=ioi)
+cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv") 
+cycle_1@sam_data[[ioi]] <- reorder(cycle_1@sam_data[[ioi]])
+cycle_1_amp <- phyloseq_to_ampvis2(cycle_1)
 
-euclid
-ggsave("PCA_euclidain_ordination.png", plot=euclid , path=outdir)
+euclidean_frame <- amp_ordinate(cycle_1_amp, filter_species = 0, type = "PCA", transform = "hellinger", print_caption = T,sample_color_by = ioi, sample_colorframe = T) 
+euclidean_frame
+ggsave("PCA_euclidain_ordination_whith_boundries.png", plot=euclidean_frame , path=outdir)
+euclidean <- amp_ordinate(cycle_1_amp, filter_species = 0, type = "PCA", transform = "hellinger", print_caption = T,sample_color_by = ioi) 
+euclidean
 
+ggsave("PCA_euclidain_ordination_whith_boundries.png", plot=euclidean , path=outdir)
 ```
 
 ## Rarefaction Curves

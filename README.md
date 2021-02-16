@@ -83,6 +83,14 @@ ls $SEQUENCE_DIR/*.fastq.gz > sequences.tsv
 
 ```
 
+* Once in Excel, Place the stub for the sub-folder sequences are found in plus $PWD in the column next to the filenames for example: 
+  * $PWD/seqs/ | Sequence_1.fastq.gz
+* Then use the =CONCAT() function to create a column of joined filenames
+* Copy and special paste where keep values is selected
+* Add sample names in leftmost column
+
+Once the manifest is constructed, the sample-id column can be retained and metadata features can be added to ensure the sample-id's are the same across the analysis. 
+
 #### Useful files
 
 core-metrics-results/
