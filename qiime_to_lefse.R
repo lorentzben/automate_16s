@@ -45,13 +45,24 @@ cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","m
 # modifications to select item of interest and remove the rest of the metadata
 new_samp_2 <- data.frame(sample_data(cycle_1))
 new_samp_2 <- new_samp_2 %>% 
-  select(as.name(ioi))
+  select(as.name(ioi)) 
+
 
 # generates phyloseq object with sample data of only item of interest so that phyloseq to lefs can run
 cycle_2 <- phyloseq(cycle_1@otu_table, cycle_1@tax_table, cycle_1@phy_tree, sample_data(new_samp_2))
+cycle_2@sam_data[[ioi]] <- reorder(cycle_2@sam_data[[ioi]])
 
-# transforms phyloseq object into lefse input object 
+all_comparisons <- unique(cycle_2@sam_data[[ioi]])
+combos <- split(combn(all_comparisons,2),  col(combn(all_comparisons,2)))
+
+for(item in combos){
+  comp <- subset_samples(cycle_2, eval(as.name(ioi)) %in% item)
+  
+  # transforms phyloseq object into lefse input object
+  lefse <- phyloseq_to_lefs(comp)
+  write.table(lefse, paste0(item[1],"_",item[2],"_lefse_formatted.txt"), sep="\t", row.names = T, col.names = F, quote = F)
+}
+
 mm <- phyloseq_to_lefs(cycle_2)
 
 write.table(mm, args[2] , sep="\t", row.names = T, col.names = F, quote = F)
-
