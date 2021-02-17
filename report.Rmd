@@ -7,13 +7,14 @@ output:
 <!-- This is sometimes nessecary, it will manifest with a unable to load shared object '/usr/local/lib/R/ error -->
 <!-- you can run ldconfig -p|grep $BROKEN_PACKAGE -->
 <!-- then you take the stem of where the bin for that package is and replace it below -->
+
 ```{r handle lib errors, echo=FALSE, message=FALSE, warning=FALSE}
 Sys.setenv(LD_LIBRARY_PATH = "/lib64")
 Sys.setenv(PKG_CONFIG_PATH = "/lib64/pkgconfig")
 #Sys.setenv(R_REMOTES_NO_ERRORS_FROM_WARNINGS="true")
 ```
 
-```{r install/load libraries, echo=FALSE, message=FALSE, warning=FALSE}
+```{r install/load libraries, message=FALSE, warning=FALSE, include=FALSE}
 if(!require(kableExtra)) {install.packages("kableExtra", repos="http://cran.us.r-project.org")}
 if(!require(remotes)){install.packages("remotes")}
 if(!require(ggplot2)) {remotes::install_github("tidyverse/ggplot2@v3.3.2")}
@@ -1510,6 +1511,8 @@ unweighted_permanova <- read.csv("unweighted-sig/permanova-pairwise.csv")
 unweighted_permanova <- data.frame(unweighted_permanova)
 unweighted_permanova <- unweighted_permanova[order(unweighted_permanova$Group.1),]
 unweighted_permanova
+
+adjust_pvalue(unweighted_permanova,p.col = "p.value",output.col = "tmp", method = "BH")
 ```
 
 
@@ -1537,76 +1540,118 @@ adonis(jaccard$data ~ meta[[ioi]])
 
 ## ANOSIM
 
+```{r Method to do pairwise anosim comparisons, echo=FALSE, message=FALSE, warning=FALSE}
+pairwise_anosim <- function(dat, column_of_int, dissim){
+  all_comparisons <- unique(sample_data(dat)[[column_of_int]])
+  combos <- split(combn(all_comparisons,2),  col(combn(all_comparisons,2)))
+  p_res <- c()
+  
+  for(item in combos){
+  comp <- subset_samples(dat, eval(as.name(ioi)) %in% item)
+  grp <- get_variable(comp, column_of_int)
+  
+  ano <- anosim(distance(comp, dissim), grp)
+  ano_stats <- c(as.character(item), round(ano$statistic,6), ano$permutations, ano$dissimilarity, round(ano$signif,3))
+  tmp <- c(ano, as.character(item))
+  p_res <- rbind(p_res, ano_stats)
+  
+  }
+  tmp_2 <- data.frame(p_res)
+  colnames(tmp_2)<- c("group1", "group2", "statistic", "permutations", "dissimilarity", "p.val")
+  result <- adjust_pvalue(tmp_2, p.col = "p.val", output.col = "p.adjust",method = "BH")
+  result <- add_significance(result, p.col = "p.adjust", output.col = "p.signif")
+  return(result)
+  
+}
+
+#out <- pairwise_anosim(cycle_1, ioi , dissim = "bray")
+#out
+
+pairwise_anosim_uni <- function(dat, column_of_int, weight){
+  all_comparisons <- unique(sample_data(dat)[[column_of_int]])
+  combos <- split(combn(all_comparisons,2),  col(combn(all_comparisons,2)))
+  p_res <- c()
+  
+  for(item in combos){
+  comp <- subset_samples(dat, eval(as.name(ioi)) %in% item)
+  grp <- get_variable(comp, column_of_int)
+  
+  tmp <- UniFrac(comp, weighted = weight)
+  ano <- anosim(tmp, sample_data(comp)[[ioi]])
+  ano_stats <- c(as.character(item), round(ano$statistic,6), ano$permutations, ano$dissimilarity, round(ano$signif,3))
+  tmp <- c(ano, as.character(item))
+  p_res <- rbind(p_res, ano_stats)
+  
+  }
+  tmp_2 <- data.frame(p_res)
+  colnames(tmp_2)<- c("group1","group2", "statistic", "permutations", "p")
+  result <- adjust_pvalue(tmp_2, p.col = "p", output.col = "p.adj",method = "BH")
+  result <- add_significance(result, p.col="p.adj",output.col = "p.signif")
+  return(result)
+  
+}
+
+
+```
+
+
+
 ```{r echo=FALSE, fig.height=8, fig.width=10, message=FALSE, warning=FALSE}
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
-sample_data(cycle_1)[[ioi]] <- reorder(as.factor(sample_data(cycle_1)[[ioi]]))
+sample_data(cycle_1)[[ioi]] <- reorder(sample_data(cycle_1)[[ioi]])
 
-w_uni <- qiime2R::read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
-#Weighted Unifrac
-attach(sample_data(cycle_1))
-cy.ano <- anosim(w_uni$data, grouping = eval(as.name(ioi)))
-cy.ano$class.vec <- reorder(as.factor(cy.ano$class.vec))
-summary(cy.ano)
-
-w_uni_plot <- autoplot(cy.ano, notch=F) + theme_bw() +labs(title = "ANOSIM Weighted Unifrac")
+#Weighted Unifrac Anosim
+tmp <- UniFrac(cycle_1, weighted=T)
+res <- anosim(tmp, sample_data(cycle_1)[[ioi]])
+res
+#Weighted Unifrac Anosim Pairwise
+w_uni_pear <- pairwise_anosim_uni(cycle_1, ioi, T) 
+w_uni_pear
+#Weighted Unifrac ANOSIM Plot
+w_uni_plot <- autoplot(res, notch=F) + theme_bw() +labs(title = "ANOSIM Weighted Unifrac")  + stat_pvalue_manual(w_uni_pear, label = "p.signif", y.position = max(res$dis.rank)-(.5*median(res$dis.rank)),step.increase = .03, tip.length = 0.01)
 w_uni_plot
+#Save image to disk
+ggsave("ANOSIM_weighted_unifrac_boxplot.png", plot = w_uni_plot,path = outdir)
 
-png(paste0(outdir,"/ANOSIM_weighted_unifrac.png"))
-plot(cy.ano) +
-mtext(text = "ANOSIM Weighted Unifrac", adj=0)
-dev.off()
-
-plot(cy.ano) +
-mtext(text = "ANOSIM Weighted Unifrac", adj=0)
-
-un_uni <- qiime2R::read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
 #Unweighted Unifrac
-attach(sample_data(cycle_1))
-cy.ano <- anosim(un_uni$data, grouping = eval(as.name(ioi)))
-cy.ano$class.vec <- reorder(as.factor(cy.ano$class.vec))
-summary(cy.ano)
+tmp <- UniFrac(cycle_1, weighted = F)
+res <- anosim(tmp, sample_data(cycle_1)[[ioi]])
+res
+#Unweighted Unifrac Anosim Pairwise
+uw_uni_pair <- pairwise_anosim_uni(cycle_1, ioi, T)
+uw_uni_pair
+#Unweighted Unifrac ANOSIM plot
+uw_uni_plot <- autoplot(res,notch = F) +theme_bw() + labs(title = "ANOSIM Unweighted Unifrac") +
+  stat_pvalue_manual(uw_uni_pair, label="p.signif", y.position = max(res$dis.rank)-(.5*median(res$dis.rank)),step.increase = .03, tip.length = 0.01)
+uw_uni_plot
+#save to disk
+ggsave("ANOSIM_unweighted_unifrac_boxplot.png", plot=uw_uni_plot, path=outdir)
 
+#Bray Curtis Distance
+grp <- get_variable(cycle_1, ioi)
+ano <- anosim(distance(cycle_1, "bray"), grp)
+ano
+#Bray Curtis ANOSIM pairwise
+bray_pair <- pairwise_anosim(cycle_1, ioi, "bray")
+bray_pair
+#Bray Curtis ANOSIM plot
+bray_plot <- autoplot(ano, notch=F) + theme_bw() + labs(title ="ANOSIM Bray Curtis") + stat_pvalue_manual(bray_pair, label="p.signif", y.position = max(ano$dis.rank)-(.5*median(res$dis.rank)), step.increase = .03, tip.length = 0.01)
+bray_plot
+#save to disk
+ggsave("ANOSIM_bray_curtis_boxplot.png", plot=bray_plot, path=outdir)
 
-png(paste0(outdir,"/ANOSIM_unweighted_unifrac.png"))
-plot(cy.ano) +
-mtext(text = "ANOSIM unWeighted Unifrac", adj=0)
-dev.off()
-
-plot(cy.ano) +
-mtext(text = "ANOSIM Weighted Unifrac", adj=0)
-
-bray <- qiime2R::read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
-#Bray Curtis
-attach(sample_data(cycle_1))
-cy.ano <- anosim(bray$data, grouping = eval(as.name(ioi)))
-cy.ano$class.vec <- reorder(as.factor(cy.ano$class.vec))
-summary(cy.ano)
-
-
-png(paste0(outdir,"/ANOSIM_bray.png"))
-plot(cy.ano) +
-mtext(text = "ANOSIM Bray-Curtis", adj=0)
-dev.off()
-
-
-plot(cy.ano) +
-mtext(text = "ANOSIM Bray-Curtis", adj=0)
-
-jaccard <- qiime2R::read_qza("core-metrics-results/jaccard_distance_matrix.qza")
-#Jaccard
-attach(sample_data(cycle_1))
-cy.ano <- anosim(jaccard$data, grouping = eval(as.name(ioi)))
-cy.ano$class.vec <- reorder(as.factor(cy.ano$class.vec))
-summary(cy.ano)
-
-
-png(paste0(outdir,"/ANOSIM_jaccard.png"))
-plot(cy.ano) +
-mtext(text = "ANOSIM Jaccard", adj=0)
-dev.off()
-
-plot(cy.ano) +
-mtext(text = "ANOSIM Jaccard", adj=0)
+#Jaccard Distance
+grp <- get_variable(cycle_1, ioi)
+ano <- anosim(distance(cycle_1, "jaccard"), grp)
+ano
+#Jaccard ANOSIM pairwise
+jaccard_pair <- pairwise_anosim(cycle_1, ioi, "jaccard")
+jaccard_pair
+#Jaccard ANOSIM plot
+jaccard_plot <- autoplot(ano, notch =F) + theme_bw() + labs(title = "ANOSIM Jaccard") + stat_pvalue_manual(jaccard_pair, label = "p.signif", y.position = max(ano$dis.rank)-(.5*median(res$dis.rank)), step.increase = .03, tip.length = 0.01)
+jaccard_plot
+#save to disk 
+ggsave("ANOSIM_jaccard_boxplot.png", plot=jaccard_plot, path = outdir)
 
 ```
 
@@ -1728,4 +1773,36 @@ lefse_filenames <- do.call(c, list(lefse_res_filenames, lefse_clado_filenames))
 include_graphics(lefse_filenames)
 
 ```
+
+
+```{r making pairwise unifrac distances for pairwise comparisions}
+pairwise_anosim_uni <- function(dat, column_of_int, weight){
+  all_comparisons <- unique(sample_data(dat)[[column_of_int]])
+  combos <- split(combn(all_comparisons,2),  col(combn(all_comparisons,2)))
+  p_res <- c()
+  
+  for(item in combos){
+  comp <- subset_samples(dat, eval(as.name(ioi)) %in% item)
+  grp <- get_variable(comp, column_of_int)
+  
+  tmp <- UniFrac(comp, weighted = weight)
+  ano <- anosim(tmp, sample_data(comp)[[ioi]])
+  ano_stats <- c(as.character(item), round(ano$statistic,6), ano$permutations, ano$dissimilarity, round(ano$signif,3))
+  tmp <- c(ano, as.character(item))
+  p_res <- rbind(p_res, ano_stats)
+  
+  }
+  tmp_2 <- data.frame(p_res)
+  colnames(tmp_2)<- c("group1","group2", "statistic", "permutations", "p")
+  result <- adjust_pvalue(tmp_2, p.col = "p", output.col = "p.adj",method = "BH")
+  result <- add_significance(result, p.col="p.adj",output.col = "p.signif")
+  return(result)
+  
+}
+
+
+
+```
+
+
 
