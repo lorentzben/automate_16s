@@ -10,6 +10,7 @@ output:
 ```{r handle lib errors, echo=FALSE, message=FALSE, warning=FALSE}
 Sys.setenv(LD_LIBRARY_PATH = "/lib64")
 Sys.setenv(PKG_CONFIG_PATH = "/lib64/pkgconfig")
+#Sys.setenv(R_REMOTES_NO_ERRORS_FROM_WARNINGS="true")
 ```
 
 ```{r install/load libraries, echo=FALSE, message=FALSE, warning=FALSE}
@@ -39,7 +40,8 @@ if(!require(ggdendro)){install.packages("ggendro",repos="http://cran.us.r-projec
 if(!require(vegan)){install.packages("vegan",repos="http://cran.us.r-project.org")}
 if(!require(pegas)){install.packages("pegas",repos="http://cran.us.r-project.org")}
 if(!require(microbiomeMarker)){remotes::install_github("yiluheihei/microbiomeMarker")}
-library(remotes)
+if(!require(ggvegan)){remotes::install_github("gavinsimpson/ggvegan")}
+# library(remotes)
 library(openssl)
 library(gtools)
 library(kableExtra)
@@ -59,6 +61,7 @@ library(ampvis2)
 library(ggdendro)
 library(vegan)
 library(pegas)
+library(ggvegan)
 library(microbiomeMarker)
 ```
 <!-- input files required:  -->
@@ -1251,26 +1254,7 @@ ggsave("beta_div_heatmap_Weighted_unifrac.png", plot=weight_heatmap, path=outdir
 
 ## Beta Diversity Between Groups
 
-### Weighted Unifrac qiime2 generated boxplots
-
-```{r Weighted Unifrac qiime2 generated boxplots, echo=FALSE, message=FALSE, warning=FALSE}
-bdiv_box_filenames <- list.files(path = "weighted-sig/", pattern="*-boxplots.png")
-
-include_graphics(paste0("weighted-sig/",bdiv_box_filenames))
-
-
-```
-
-### Unweighted Unifrac qiime2 generated boxplots
-
-```{r Unweighted Unifrac qiime2 generated boxplots ,echo=FALSE, message=FALSE, warning=FALSE}
-bdiv_box_filenames <- list.files(path = "unweighted-sig/", pattern="*-boxplots.png")
-
-include_graphics(paste0("unweighted-sig/",bdiv_box_filenames))
-
-```
-
-### r generated Weighted boxplots
+### Weighted boxplots
 ```{r generated Weighted boxplots, echo=FALSE, message=FALSE, warning=FALSE}
 weighted_measurements <- read.csv("weighted-sig/raw_data.tsv", sep="\t")
 
@@ -1288,7 +1272,7 @@ for(frame in split_weighted_measure){
 ```
 
 
-### r generated Unweighted boxplots
+### Unweighted boxplots
 ```{r generated Unweighted boxplots, echo=FALSE, message=FALSE, warning=FALSE}
 unweighted_measurements <- read.csv("unweighted-sig/raw_data.tsv", sep="\t")
 
@@ -1564,6 +1548,8 @@ cy.ano <- anosim(w_uni$data, grouping = eval(as.name(ioi)))
 cy.ano$class.vec <- reorder(as.factor(cy.ano$class.vec))
 summary(cy.ano)
 
+w_uni_plot <- autoplot(cy.ano, notch=F) + theme_bw() +labs(title = "ANOSIM Weighted Unifrac")
+w_uni_plot
 
 png(paste0(outdir,"/ANOSIM_weighted_unifrac.png"))
 plot(cy.ano) +
@@ -1601,6 +1587,7 @@ png(paste0(outdir,"/ANOSIM_bray.png"))
 plot(cy.ano) +
 mtext(text = "ANOSIM Bray-Curtis", adj=0)
 dev.off()
+
 
 plot(cy.ano) +
 mtext(text = "ANOSIM Bray-Curtis", adj=0)
@@ -1733,7 +1720,10 @@ pegas::amova(formula=form)
 ## Lefse
 
 ```{r Lefse analysis Results, echo=FALSE, message=FALSE, warning=FALSE, fig.height=25, fig.width=10}
-lefse_filenames <- c("lefse_analysis.png", "image_graph_lefse.png","lefse_cladogram.png")
+lefse_res_filenames <- list.files(pattern="*_res.png")
+lefse_clado_filenames <- list.files(pattern="*_better_cladogram.png")
+
+lefse_filenames <- do.call(c, list(lefse_res_filenames, lefse_clado_filenames))
 
 include_graphics(lefse_filenames)
 
