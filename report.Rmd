@@ -1614,7 +1614,7 @@ pairwise_anosim <- function(dat, column_of_int, dissim){
   p_res <- c()
   
   for(i in 1:dim(combos)[1]){
-  comp <- subset_samples(dat, eval(as.name(ioi)) %in% combos[i,])
+  comp <- prune_samples(sample_data(dat)[[ioi]] %in% combos[i,], dat)
   grp <- get_variable(comp, column_of_int)
   
   ano <- anosim(distance(comp, dissim), grp)
@@ -1640,7 +1640,7 @@ pairwise_anosim_uni <- function(dat, column_of_int, weight){
   p_res <- c()
   
   for(i in 1:dim(combos)[1]){
-  comp <- subset_samples(dat, eval(as.name(ioi)) %in% combos[i,])
+  comp <- prune_samples(eval(sample_data(dat)[[ioi]] %in% combos[i,], dat)
   grp <- get_variable(comp, column_of_int)
   
   tmp <- UniFrac(comp, weighted = weight)
