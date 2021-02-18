@@ -1519,7 +1519,8 @@ pairwise_permanova_uni <- function(dat, column_of_int, weight){
 
   for(i in 1:dim(comb_tab)[1]){
     try <- sample_data(dat)[[ioi]]
-    comp <- subset_samples(dat, try %in% comb_tab[i,])
+    #comp1 <- subset_samples(dat, eval(as.name(ioi)) %in% comb_tab[i,])
+    comp <- prune_samples(sample_data(dat)[[ioi]] %in% comb_tab[i,], dat)
     grp <- get_variable(comp, column_of_int)
   
     tmp <- UniFrac(comp, weighted = weight)
