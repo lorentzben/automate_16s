@@ -1723,35 +1723,155 @@ ggsave("ANOSIM_jaccard_boxplot.png", plot=jaccard_plot, path = outdir)
 
 ## Multi-response permutaiton procedure (MRPP)
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r Methods to do pairwise MRPP comparisons, echo=FALSE, message=FALSE, warning=FALSE}
+pairwise_MRPP <- function(dat, column_of_int, dissim){
+  all_comparisons <- unique(sample_data(dat)[[column_of_int]])
+  combos <- (t(combn(all_comparisons,2)))
+  p_res <- c()
+  
+  for(i in 1:dim(combos)[1]){
+  comp <- prune_samples(sample_data(dat)[[ioi]] %in% combos[i,], dat)
+  grp <- get_variable(comp, column_of_int)
+  
+  mrpp_res <- mrpp(distance(comp, dissim), grp)
+  mrpp_stats <- c(as.character(combos[i,1]), as.character(combos[i,2]), round(mrpp_res$delta,6), mrpp_res$permutations, mrpp_res$distance, round(mrpp_res$Pvalue,3))
+  #tmp <- c(ano, as.character(item))
+  p_res <- rbind(p_res, mrpp_stats)
+  
+  }
+  tmp_2 <- data.frame(p_res)
+  colnames(tmp_2)<- c("group1", "group2", "delta", "permutations", "dissimilarity", "p.val")
+  result <- adjust_pvalue(tmp_2, p.col = "p.val", output.col = "p.adjust",method = "BH")
+  result <- add_significance(result, p.col = "p.adjust", output.col = "p.signif")
+  return(result)
+  
+}
+
+#out <- pairwise_anosim(cycle_1, ioi , dissim = "bray")
+#out
+
+pairwise_MRPP_uni <- function(dat, column_of_int, weight){
+  all_comparisons <- unique(sample_data(dat)[[column_of_int]])
+  combos <- (t(combn(all_comparisons,2)))
+  p_res <- c()
+  
+  for(i in 1:dim(combos)[1]){
+  comp <- prune_samples(sample_data(dat)[[ioi]] %in% combos[i,], dat)
+  grp <- get_variable(comp, column_of_int)
+  
+  tmp <- UniFrac(comp, weighted = weight)
+  mrpp_res <- mrpp(tmp, grp)
+  mrpp_stats <- c(as.character(combos[i,1]), as.character(combos[i,2]), round(mrpp_res$delta,6), mrpp_res$permutations, round(mrpp_res$Pvalue,3))
+  #tmp <- c(ano, as.character(item))
+  p_res <- rbind(p_res, mrpp_stats)
+  
+  }
+  tmp_2 <- data.frame(p_res)
+  colnames(tmp_2)<- c("group1","group2", "delta", "permutations", "p")
+  result <- adjust_pvalue(tmp_2, p.col = "p", output.col = "p.adj",method = "BH")
+  result <- add_significance(result, p.col="p.adj",output.col = "p.signif")
+  return(result)
+  
+}
+```
+
+
+```{r MRPP analysis, echo=FALSE, message=FALSE, warning=FALSE}
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
 sample_data(cycle_1)[[ioi]] <- reorder(as.factor(sample_data(cycle_1)[[ioi]]))
 
-w_uni <- qiime2R::read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
 # Weighted Unifrac
+w_uni <- UniFrac(cycle_1, weighted = T)
 print("MRPP based on Weighted Unifrac distance")
-mrpp(w_uni$data, grouping = sample_data(cycle_1)[[ioi]])
+grp <- get_variable(cycle_1, ioi)
+mrpp(w_uni, grouping =  grp)
+#MRPP pairwise Weighted Unifrac
+w_uni_res <- pairwise_MRPP_uni(cycle_1, ioi, T)
+w_uni_res
 
-un_uni <- qiime2R::read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
-# Unweighted Unifrac 
+
+# Unweighted Unifrac
+u_uni <- UniFrac(cycle_1, weighted = F)
+grp <- get_variable(cycle_1, ioi)
 print("MRPP based on Unweighted Unifrac distance")
-mrpp(un_uni$data, grouping = sample_data(cycle_1)[[ioi]])
+mrpp(u_uni, grouping = grp)
+# MRPP pairwise Unweighted Unifrac
+u_uni_res <- pairwise_MRPP_uni(cycle_1, ioi, F)
+u_uni_res
 
-bray <- qiime2R::read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
 # Bray Curtis
 print("MRPP based on Bray-Curtis distance")
-mrpp(bray$data, grouping=sample_data(cycle_1)[[ioi]])
-
+grp <- get_variable(cycle_1, ioi)
+mrpp(distance(cycle_1, "bray"), grouping =  grp)
+# MRPP pairwise Bray
+bray_res <- pairwise_MRPP(cycle_1, ioi, "bray")
+bray_res
 
 jaccard <- qiime2R::read_qza("core-metrics-results/jaccard_distance_matrix.qza")
 # Jaccard 
 print("MRPP based on Jaccard distance")
-mrpp(jaccard$data, grouping = sample_data(cycle_1)[[ioi]])
+grp <- get_variable(cycle_1, ioi)
+mrpp(distance(cycle_1, "jaccard"), grouping =  grp)
+# MRPP pairwise Jaccard
+jaccard_res <- pairwise_MRPP(cycle_1, ioi, "jaccard")
+jaccard_res
 
 
 ```
 
 ## AMOVA
+
+```{r Methods to do pairwise AMOVA comparisons, echo=FALSE, message=FALSE, warning=FALSE}
+pairwise_AMOVA <- function(dat, column_of_int, dissim){
+  all_comparisons <- unique(sample_data(dat)[[column_of_int]])
+  combos <- (t(combn(all_comparisons,2)))
+  p_res <- c()
+  
+  for(i in 1:dim(combos)[1]){
+  comp <- prune_samples(sample_data(dat)[[ioi]] %in% combos[i,], dat)
+  grp <- get_variable(comp, column_of_int)
+  dist <- distance(comp, dissim)
+  amova_res <- pegas::amova(as.formula(dist ~ grp))
+  amova_stats <- c(as.character(combos[i,1]), as.character(combos[i,2]), round(amova_res$tab$MSD[1],6), dissim, round(amova_res$varcomp$P.value[1],3))
+  
+  p_res <- rbind(p_res, amova_stats)
+  
+  }
+  tmp_2 <- data.frame(p_res)
+  colnames(tmp_2)<- c("group1", "group2", "MSD","distance", "p.val")
+  result <- adjust_pvalue(tmp_2, p.col = "p.val", output.col = "p.adjust",method = "BH")
+  result <- add_significance(result, p.col = "p.adjust", output.col = "p.signif")
+  return(result)
+  
+}
+
+#out <- pairwise_anosim(cycle_1, ioi , dissim = "bray")
+#out
+
+pairwise_AMOVA_uni <- function(dat, column_of_int, weight){
+  all_comparisons <- unique(sample_data(dat)[[column_of_int]])
+  combos <- (t(combn(all_comparisons,2)))
+  p_res <- c()
+  
+  for(i in 1:dim(combos)[1]){
+  comp <- prune_samples(sample_data(dat)[[ioi]] %in% combos[i,], dat)
+  grp <- get_variable(comp, column_of_int)
+  
+  tmp <- UniFrac(comp, weighted = weight)
+  amova_res <- pegas::amova(as.formula(tmp ~ grp))
+  amova_stats <- c(as.character(combos[i,1]), as.character(combos[i,2]),weight, round(amova_res$tab$MSD[1],6),  round(amova_res$varcomp$P.value[1],3))
+ 
+  p_res <- rbind(p_res, amova_stats)
+  
+  }
+  tmp_2 <- data.frame(p_res)
+  colnames(tmp_2)<- c("group1", "group2", "MSD","weighted", "p.val")
+  result <- adjust_pvalue(tmp_2, p.col = "p.val", output.col = "p.adj",method = "BH")
+  result <- add_significance(result, p.col="p.adj",output.col = "p.signif")
+  return(result)
+  
+}
+```
 
 ```{r AMOVA testing, echo=FALSE, message=FALSE, warning=FALSE}
 #library(poppr)
@@ -1759,10 +1879,43 @@ mrpp(jaccard$data, grouping = sample_data(cycle_1)[[ioi]])
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
 sample_data(cycle_1)[[ioi]] <- reorder(as.factor(sample_data(cycle_1)[[ioi]]))
 
-dist <- distance(cycle_1, 'bray')
-grp <- get_variable(cycle_1, ioi)
-res <- pegas::amova(as.formula(dist ~ grp))
+#AMOVA Weighted Unifrac
+tmp <- UniFrac(cycle_1, weighted = T)
+w_uni_grp <- get_variable(cycle_1, ioi)
+res <- pegas::amova(tmp ~ w_uni_grp)
 res
+#AMOVA Weighted unifrac pairwise
+w_uni_pair <- pairwise_AMOVA_uni(cycle_1, ioi, T)
+w_uni_pair
+
+#AMOVA Unweighted Unifrac
+tmp <- UniFrac(cycle_1, weighted=F)
+u_uni_grp <- get_variable(cycle_1, ioi)
+res <- pegas::amova(tmp ~ u_uni_grp)
+res
+#AMOVA Unweighted Unifrac pairwise
+u_uni_pair <- pairwise_AMOVA_uni(cycle_1, ioi, F)
+u_uni_pair
+
+
+#AMOVA bray curtis
+dist <- distance(cycle_1, 'bray')
+bray_grp <- get_variable(cycle_1, ioi)
+res <- pegas::amova(as.formula(dist ~ bray_grp))
+res
+#AMOVA bray curtis pairwise
+bray_amova_pairwise <- pairwise_AMOVA(cycle_1, ioi, 'bray')
+bray_amova_pairwise
+
+#AMOVA Jaccard 
+dist <- distance(cycle_1, 'jaccard')
+jaccard_grp <- get_variable(cycle_1, ioi)
+res <- pegas::amova(dist ~ jaccard_grp)
+res
+#AMOVA Jaccard Pairwise 
+jaccard_amova_pairwise <- pairwise_AMOVA(cycle_1, ioi, 'jaccard')
+jaccard_amova_pairwise
+
 ```
 
 w_uni <- qiime2R::read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
