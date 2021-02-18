@@ -1751,44 +1751,6 @@ mrpp(jaccard$data, grouping = sample_data(cycle_1)[[ioi]])
 
 ```
 
-## ADONIS
-
-```{r PERMANOVA testing using ADONIS, echo=FALSE, message=FALSE, warning=FALSE}
-cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
-sample_data(cycle_1)[[ioi]] <- reorder(as.factor(sample_data(cycle_1)[[ioi]]))
-
-w_uni <- qiime2R::read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
-w_uni <- w_uni$data
-form = as.formula(paste0("w_uni ~ ", ioi))
-# Weighted Unifrac
-print("PERMANOVA based on Weighted Unifrac Distance")
-adonis(formula = form)
-
-
-un_uni <- qiime2R::read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
-un_uni <- un_uni$data
-form = as.formula(paste0("un_uni ~ ", ioi))
-# Unweighted Unifrac 
-print("PERMANOVA based on Unweighted Unifrac Distance")
-adonis(form)
-
-bray <- qiime2R::read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
-bray <- bray$data 
-form <- as.formula(paste0("bray ~", ioi))
-# Bray Curtis
-print("PERMANOVA based on Bray-Curtis distance")
-adonis(form)
-
-
-jaccard <- qiime2R::read_qza("core-metrics-results/jaccard_distance_matrix.qza")
-jaccard <- jaccard$data
-form <- as.formula(paste0("jaccard ~", ioi))
-# Jaccard 
-print("PERMANOVA based on Jaccard distance")
-adonis(form)
-
-```
-
 ## AMOVA
 
 ```{r AMOVA testing, echo=FALSE, message=FALSE, warning=FALSE}
