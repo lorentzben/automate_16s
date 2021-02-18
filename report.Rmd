@@ -1759,9 +1759,16 @@ mrpp(jaccard$data, grouping = sample_data(cycle_1)[[ioi]])
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
 sample_data(cycle_1)[[ioi]] <- reorder(as.factor(sample_data(cycle_1)[[ioi]]))
 
+dist <- distance(cycle_1, 'bray')
+grp <- get_variable(cycle_1, ioi)
+res <- pegas::amova(as.formula(dist ~ grp))
+res
+```
+
 w_uni <- qiime2R::read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
 w_uni <- w_uni$data
 # Weighted Unifrac
+
 
 form = as.formula(paste0("w_uni ~ ", ioi))
 print("AMOVA based on Weighted Unifrac")
@@ -1788,7 +1795,7 @@ jaccard <- jaccard$data
 form <- as.formula(paste0("jaccard ~", ioi))
 print("AMOVA based on Jaccard Distance")
 pegas::amova(formula=form)
-```
+
 
 ## Lefse
 
