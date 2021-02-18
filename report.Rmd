@@ -1506,7 +1506,9 @@ pairwise_permanova <- function(dat, column_of_int, dissim){
 
 #out <- pairwise_anosim(cycle_1, ioi , dissim = "bray")
 #out
+```
 
+```{r Methods to do pairwise Unifrac PERMANOVA comparisons, echo=FALSE, message=FALSE, warning=FALSE}
 pairwise_permanova_uni <- function(dat, column_of_int, weight){
   all_comparisons <- unique(sample_data(dat)[[ioi]])
   comb_tab <- (t(combn(all_comparisons,2)))
