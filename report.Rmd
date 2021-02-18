@@ -1518,6 +1518,7 @@ pairwise_permanova_uni <- function(dat, column_of_int, weight){
 
 
   for(i in 1:dim(comb_tab)[1]){
+    comb_tab <- (t(combn(all_comparisons,2)))
     comp <- subset_samples(dat, (get(ioi) %in% comb_tab[i,]))
     grp <- get_variable(comp, column_of_int)
   
