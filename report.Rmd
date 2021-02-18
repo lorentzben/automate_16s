@@ -1517,19 +1517,19 @@ pairwise_permanova_uni <- function(dat, column_of_int, weight){
   p_res <- c()
   
   for(i in 1:dim(comb_tab)[1]){
-  comp <- subset_samples(dat, eval(as.name(ioi)) %in% comb_tab[i,])
-  grp <- get_variable(comp, column_of_int)
+    comp <- subset_samples(dat, eval(as.name(ioi)) %in% comb_tab[i,])
+    grp <- get_variable(comp, column_of_int)
   
-  tmp <- UniFrac(comp, weighted = weight)
-  permanova <- adonis(tmp ~ grp)
-  permanova <- tibble::tibble(permanova$aov.tab)
-  colnames(permanova)[5] <- "r^2"
-  colnames(permanova)[6] <- "p"
-  permanova_stats <- data.frame(as.character(comb_tab[i,1]), as.character(comb_tab[i,2]), permanova[1,])
-  colnames(permanova_stats)[1] <- "group1"
-  colnames(permanova_stats)[2] <- "group2"
-  data.frame(permanova_stats)
-  p_res <- rbind(p_res, permanova_stats)
+    tmp <- UniFrac(comp, weighted = weight)
+    permanova <- adonis(tmp ~ grp)
+    permanova <- tibble::tibble(permanova$aov.tab)
+    colnames(permanova)[5] <- "r^2"
+    colnames(permanova)[6] <- "p"
+    permanova_stats <- data.frame(as.character(comb_tab[i,1]), as.character(comb_tab[i,2]), permanova[1,])
+    colnames(permanova_stats)[1] <- "group1"
+    colnames(permanova_stats)[2] <- "group2"
+    data.frame(permanova_stats)
+    p_res <- rbind(p_res, permanova_stats)
   
   }
   tmp_2 <- data.frame(p_res)
