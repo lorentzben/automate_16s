@@ -1511,9 +1511,9 @@ pairwise_permanova <- function(dat, column_of_int, dissim){
 ```{r Methods to do pairwise Unifrac PERMANOVA comparisons, echo=FALSE, message=FALSE, warning=FALSE}
 pairwise_permanova_uni <- function(dat, column_of_int, weight){
   all_comparisons <- unique(sample_data(dat)[[column_of_int]])
-  print(all_comparisons)
+  
   comb_tab <- (t(combn(all_comparisons,2)))
-  print(comb_tab)
+  
   p_res <- c()
 
 
@@ -1640,7 +1640,7 @@ pairwise_anosim_uni <- function(dat, column_of_int, weight){
   p_res <- c()
   
   for(i in 1:dim(combos)[1]){
-  comp <- prune_samples(eval(sample_data(dat)[[ioi]] %in% combos[i,], dat)
+  comp <- prune_samples(sample_data(dat)[[ioi]] %in% combos[i,], dat)
   grp <- get_variable(comp, column_of_int)
   
   tmp <- UniFrac(comp, weighted = weight)
