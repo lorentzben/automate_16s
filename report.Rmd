@@ -1475,66 +1475,126 @@ ggsave("UPGMA_unweighted_unifrac_plot.png", plot=unweight_plot, path=outdir)
 
 ## PERMANOVA Weighted Unifrac
 
+```{r Methods to do pairwise PERMANOVA comparisons, echo=FALSE, message=FALSE, warning=FALSE}
+pairwise_permanova <- function(dat, column_of_int, dissim){
+  all_comparisons <- unique(sample_data(dat)[[column_of_int]])
+  combos <- (t(combn(all_comparisons,2)))
+  p_res <- c()
+  
+  for(i in 1:dim(combos)[1]){
+  comp <- subset_samples(dat, eval(as.name(ioi)) %in% combos[i,])
+  grp <- get_variable(comp, column_of_int)
+  
+  permanova <- adonis(distance(comp, dissim) ~ grp)
+  permanova <- tibble::tibble(permanova$aov.tab)
+  colnames(permanova)[5] <- "r^2"
+  colnames(permanova)[6] <- "p"
+  permanova_stats <- data.frame(as.character(combos[i,1]), as.character(combos[i,2]), permanova[1,])
+  colnames(permanova_stats)[1] <- "group1"
+  colnames(permanova_stats)[2] <- "group2"
+  data.frame(permanova_stats)
+  p_res <- rbind(p_res, permanova_stats)
+  
+  }
+  tmp_2 <- data.frame(p_res)
+  #colnames(tmp_2)<- c("group1","group2", "statistic", "permutations", "p")
+  result <- adjust_pvalue(tmp_2, p.col = "p", output.col = "p.adj",method = "BH")
+  result <- add_significance(result, p.col="p.adj",output.col = "p.signif")
+  return(result)
+  
+}
+
+#out <- pairwise_anosim(cycle_1, ioi , dissim = "bray")
+#out
+
+pairwise_permanova_uni <- function(dat, column_of_int, weight){
+  all_comparisons <- unique(sample_data(dat)[[column_of_int]])
+  combos <- (t(combn(all_comparisons,2)))
+  p_res <- c()
+  
+  for(i in 1:dim(combos)[1]){
+  comp <- subset_samples(dat, eval(as.name(ioi)) %in% combos[i,])
+  grp <- get_variable(comp, column_of_int)
+  
+  tmp <- UniFrac(comp, weighted = weight)
+  permanova <- adonis(tmp ~ grp)
+  permanova <- tibble::tibble(permanova$aov.tab)
+  colnames(permanova)[5] <- "r^2"
+  colnames(permanova)[6] <- "p"
+  permanova_stats <- data.frame(as.character(combos[i,1]), as.character(combos[i,2]), permanova[1,])
+  colnames(permanova_stats)[1] <- "group1"
+  colnames(permanova_stats)[2] <- "group2"
+  data.frame(permanova_stats)
+  p_res <- rbind(p_res, permanova_stats)
+  
+  }
+  tmp_2 <- data.frame(p_res)
+  #colnames(tmp_2)<- c("group1","group2", "statistic", "permutations", "p")
+  result <- adjust_pvalue(tmp_2, p.col = "p", output.col = "p.adj",method = "BH")
+  result <- add_significance(result, p.col="p.adj",output.col = "p.signif")
+  return(result)
+  
+}
+
+```
+
+
 ```{r Weighted Unifrac PERMANOVA, echo=FALSE, message=FALSE, warning=FALSE}
 library(vegan)
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
-w_unifrac <- UniFrac(cycle_1, weighted = TRUE)
-meta <- sample_data(cycle_1)
-adonis(w_unifrac ~ meta[[ioi]])
+sample_data(cycle_1)[[ioi]] <- reorder(sample_data(cycle_1)[[ioi]])
+# PERMANOVA of Weighted Unifrac
+u_unifrac <- UniFrac(cycle_1, weighted = T)
+grp <- get_variable(cycle_1, ioi)
+res <- adonis(u_unifrac ~ grp)
+res
+# Pairwise PERMANOVA of Weighted Unifrac
+test <- pairwise_permanova_uni(cycle_1, ioi, T)
+test
+
 
 ```
-## Weighted Unifrac Permanova Pairwise
+## PERMANOVA Unweighted Unifrac 
 
 ```{r Permanova results Weighted Unifrac from qiime, echo=FALSE, message=FALSE, warning=FALSE}
-weighted_permanova <- read.csv("weighted-sig/permanova-pairwise.csv")
-weighted_permanova <- data.frame(weighted_permanova)
-weighted_permanova <- weighted_permanova[order(weighted_permanova$Group.1),]
-weighted_permanova
-```
-
-
-## PERMANOVA Unweighted Unifrac
-
-```{r Unweighted Unifrac PERMANOVA, echo=FALSE, message=FALSE, warning=FALSE}
-
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
-u_unifrac <- UniFrac(cycle_1, weighted = FALSE)
-meta <- sample_data(cycle_1)
-adonis(u_unifrac ~ meta[[ioi]])
-
+sample_data(cycle_1)[[ioi]] <- reorder(sample_data(cycle_1)[[ioi]])
+# PERMANOVA of Unweighted Unifrac
+u_unifrac <- UniFrac(cycle_1, weighted = F)
+grp <- get_variable(cycle_1, ioi)
+res <- adonis(u_unifrac ~ grp)
+res
+# Pairwise PERMANOVA of Unweighted Unifrac
+test <- pairwise_permanova_uni(cycle_1, ioi, F)
+test
 ```
-
-## Unweighted Unifrac Permanova Pairwise
-
-```{r Permanova results Unweighted Unifrac from qiime, echo=FALSE, message=FALSE, warning=FALSE}
-unweighted_permanova <- read.csv("unweighted-sig/permanova-pairwise.csv")
-unweighted_permanova <- data.frame(unweighted_permanova)
-unweighted_permanova <- unweighted_permanova[order(unweighted_permanova$Group.1),]
-unweighted_permanova
-
-adjust_pvalue(unweighted_permanova,p.col = "p.value",output.col = "tmp", method = "BH")
-```
-
 
 ## PERMANOVA Bray Curtis
 
 ```{r Bray Curtis PERMANOVA, echo=FALSE, message=FALSE, warning=FALSE}
-
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
-bray_dist <- qiime2R::read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
-meta <- sample_data(cycle_1)
-adonis(bray_dist$data ~ meta[[ioi]])
-
+sample_data(cycle_1)[[ioi]] <- reorder(sample_data(cycle_1)[[ioi]])
+#PERMANOVA Bray Curtis
+grp <- get_variable(cycle_1, ioi)
+res <- adonis(distance(cycle_1, 'bray') ~ grp)
+res
+#PERMANOVA Bray Curtis Pairwise
+bray_pairwise <- pairwise_permanova(cycle_1,ioi,"bray")
+bray_pairwise
 ```
 
 ## PERMANOVA Jaccard 
 
 ```{r Jaccard PERMANOVA, echo=FALSE, message=FALSE, warning=FALSE}
-
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
-jaccard <- qiime2R::read_qza("core-metrics-results/jaccard_distance_matrix.qza")
-meta <- sample_data(cycle_1)
-adonis(jaccard$data ~ meta[[ioi]])
+sample_data(cycle_1)[[ioi]] <- reorder(sample_data(cycle_1)[[ioi]])
+# PERMANOVA Jaccard distance
+grp <- get_variable(cycle_1, ioi)
+res <- adonis(distance(cycle_1, "jaccard") ~ grp)
+res
+# PERMANOVA Pairwise Jaccard 
+jaccard_pairwise <- pairwise_permanova(cycle_1, ioi, "jaccard")
+jaccard_pairwise
 
 ```
 
@@ -1543,16 +1603,16 @@ adonis(jaccard$data ~ meta[[ioi]])
 ```{r Method to do pairwise anosim comparisons, echo=FALSE, message=FALSE, warning=FALSE}
 pairwise_anosim <- function(dat, column_of_int, dissim){
   all_comparisons <- unique(sample_data(dat)[[column_of_int]])
-  combos <- split(combn(all_comparisons,2),  col(combn(all_comparisons,2)))
+  combos <- (t(combn(all_comparisons,2)))
   p_res <- c()
   
-  for(item in combos){
-  comp <- subset_samples(dat, eval(as.name(ioi)) %in% item)
+  for(i in 1:dim(combos)[1]){
+  comp <- subset_samples(dat, eval(as.name(ioi)) %in% combos[i,])
   grp <- get_variable(comp, column_of_int)
   
   ano <- anosim(distance(comp, dissim), grp)
-  ano_stats <- c(as.character(item), round(ano$statistic,6), ano$permutations, ano$dissimilarity, round(ano$signif,3))
-  tmp <- c(ano, as.character(item))
+  ano_stats <- c(as.character(combos[i,1]), as.character(combos[i,2]), round(ano$statistic,6), ano$permutations, ano$dissimilarity, round(ano$signif,3))
+  #tmp <- c(ano, as.character(item))
   p_res <- rbind(p_res, ano_stats)
   
   }
@@ -1569,17 +1629,17 @@ pairwise_anosim <- function(dat, column_of_int, dissim){
 
 pairwise_anosim_uni <- function(dat, column_of_int, weight){
   all_comparisons <- unique(sample_data(dat)[[column_of_int]])
-  combos <- split(combn(all_comparisons,2),  col(combn(all_comparisons,2)))
+  combos <- (t(combn(all_comparisons,2)))
   p_res <- c()
   
-  for(item in combos){
-  comp <- subset_samples(dat, eval(as.name(ioi)) %in% item)
+  for(i in 1:dim(combos)[1]){
+  comp <- subset_samples(dat, eval(as.name(ioi)) %in% combos[i,])
   grp <- get_variable(comp, column_of_int)
   
   tmp <- UniFrac(comp, weighted = weight)
   ano <- anosim(tmp, sample_data(comp)[[ioi]])
-  ano_stats <- c(as.character(item), round(ano$statistic,6), ano$permutations, ano$dissimilarity, round(ano$signif,3))
-  tmp <- c(ano, as.character(item))
+  ano_stats <- c(as.character(combos[i,1]), as.character(combos[i,2]), round(ano$statistic,6), ano$permutations, ano$dissimilarity, round(ano$signif,3))
+  #tmp <- c(ano, as.character(item))
   p_res <- rbind(p_res, ano_stats)
   
   }
@@ -1590,7 +1650,6 @@ pairwise_anosim_uni <- function(dat, column_of_int, weight){
   return(result)
   
 }
-
 
 ```
 
@@ -1775,34 +1834,7 @@ include_graphics(lefse_filenames)
 ```
 
 
-```{r making pairwise unifrac distances for pairwise comparisions}
-pairwise_anosim_uni <- function(dat, column_of_int, weight){
-  all_comparisons <- unique(sample_data(dat)[[column_of_int]])
-  combos <- split(combn(all_comparisons,2),  col(combn(all_comparisons,2)))
-  p_res <- c()
-  
-  for(item in combos){
-  comp <- subset_samples(dat, eval(as.name(ioi)) %in% item)
-  grp <- get_variable(comp, column_of_int)
-  
-  tmp <- UniFrac(comp, weighted = weight)
-  ano <- anosim(tmp, sample_data(comp)[[ioi]])
-  ano_stats <- c(as.character(item), round(ano$statistic,6), ano$permutations, ano$dissimilarity, round(ano$signif,3))
-  tmp <- c(ano, as.character(item))
-  p_res <- rbind(p_res, ano_stats)
-  
-  }
-  tmp_2 <- data.frame(p_res)
-  colnames(tmp_2)<- c("group1","group2", "statistic", "permutations", "p")
-  result <- adjust_pvalue(tmp_2, p.col = "p", output.col = "p.adj",method = "BH")
-  result <- add_significance(result, p.col="p.adj",output.col = "p.signif")
-  return(result)
-  
-}
 
-
-
-```
 
 
 
