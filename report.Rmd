@@ -3,6 +3,7 @@ title: "Analysis Report"
 output:
   html_document:
     df_print: paged
+    smart: false
 ---
 <!-- This is sometimes nessecary, it will manifest with a unable to load shared object '/usr/local/lib/R/ error -->
 <!-- you can run ldconfig -p|grep $BROKEN_PACKAGE -->
