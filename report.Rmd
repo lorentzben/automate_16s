@@ -1685,9 +1685,9 @@ res <- anosim(tmp, sample_data(cycle_1)[[ioi]])
 res
 #Weighted Unifrac Anosim Pairwise
 w_uni_pear <- pairwise_anosim_uni(cycle_1, ioi, T) 
-w_uni_pear <- data.frame(w_uni_pear)
-w_uni_pear <- w_uni_pear[mixedsort(w_uni_pear$group1),]
-kable(w_uni_pear) %>%
+w_uni_pear_df <- data.frame(w_uni_pear)
+w_uni_pear_df <- w_uni_pear_df[mixedsort(w_uni_pear_df$group1),]
+kable(w_uni_pear_df) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Weighted Unifrac ANOSIM Plot
 w_uni_plot <- autoplot(res, notch=F) + theme_bw() +labs(title = "ANOSIM Weighted Unifrac")  + stat_pvalue_manual(w_uni_pear, label = "p.signif", y.position = max(res$dis.rank)-(.5*median(res$dis.rank)),step.increase = .03, tip.length = 0.01)
@@ -1701,9 +1701,9 @@ res <- anosim(tmp, sample_data(cycle_1)[[ioi]])
 res
 #Unweighted Unifrac Anosim Pairwise
 uw_uni_pair <- pairwise_anosim_uni(cycle_1, ioi, T)
-uw_uni_pair <- data.frame(uw_uni_pair)
-uw_uni_pair <- uw_uni_pair[mixedsort(uw_uni_pair$group1),]
-kable(uw_uni_pair) %>% 
+uw_uni_pair_df <- data.frame(uw_uni_pair)
+uw_uni_pair_df <- uw_uni_pair_df[mixedsort(uw_uni_pair_df$group1),]
+kable(uw_uni_pair_df) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Unweighted Unifrac ANOSIM plot
 uw_uni_plot <- autoplot(res,notch = F) +theme_bw() + labs(title = "ANOSIM Unweighted Unifrac") +
@@ -1718,9 +1718,9 @@ ano <- anosim(distance(cycle_1, "bray"), grp)
 ano
 #Bray Curtis ANOSIM pairwise
 bray_pair <- pairwise_anosim(cycle_1, ioi, "bray")
-bray_pair <- data.frame(bray_pair)
-bray_pair <- bray_pair[mixedsort(bray_pair$group1),]
-kable(bray_pair) %>% 
+bray_pair_df <- data.frame(bray_pair)
+bray_pair <- bray_pair_df[mixedsort(bray_pair_df$group1),]
+kable(bray_pair_df) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Bray Curtis ANOSIM plot
 bray_plot <- autoplot(ano, notch=F) + theme_bw() + labs(title ="ANOSIM Bray Curtis") + stat_pvalue_manual(bray_pair, label="p.signif", y.position = max(ano$dis.rank)-(.5*median(res$dis.rank)), step.increase = .03, tip.length = 0.01)
@@ -1734,9 +1734,9 @@ ano <- anosim(distance(cycle_1, "jaccard"), grp)
 ano
 #Jaccard ANOSIM pairwise
 jaccard_pair <- pairwise_anosim(cycle_1, ioi, "jaccard")
-jaccard_pair <- data.frame(jaccard_pair)
-jaccard_pair <- jaccard_pair[mixedsort(jaccard_pair$group1), ]
-kable(jaccard_pair) %>%
+jaccard_pair_df <- data.frame(jaccard_pair)
+jaccard_pair_df <- jaccard_pair_df[mixedsort(jaccard_pair_df$group1), ]
+kable(jaccard_pair_df) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Jaccard ANOSIM plot
 jaccard_plot <- autoplot(ano, notch =F) + theme_bw() + labs(title = "ANOSIM Jaccard") + stat_pvalue_manual(jaccard_pair, label = "p.signif", y.position = max(ano$dis.rank)-(.5*median(res$dis.rank)), step.increase = .03, tip.length = 0.01)
