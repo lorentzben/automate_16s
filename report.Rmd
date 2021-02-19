@@ -1896,7 +1896,7 @@ pairwise_AMOVA_uni <- function(dat, column_of_int, weight){
   
   tmp <- UniFrac(comp, weighted = weight)
   amova_res <- pegas::amova(as.formula(tmp ~ grp))
-  amova_stats <- c(as.numeric(as.character(combos[i,1])), as.numericas.character(combos[i,2]),weight, round(amova_res$tab$MSD[1],6),  round(amova_res$varcomp$P.value[1],3))
+  amova_stats <- c(as.character(combos[i,1]), as.character(combos[i,2]),weight, round(amova_res$tab$MSD[1],6),  round(amova_res$varcomp$P.value[1],3))
  
   p_res <- rbind(p_res, amova_stats)
   
