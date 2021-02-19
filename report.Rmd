@@ -1686,7 +1686,7 @@ res
 #Weighted Unifrac Anosim Pairwise
 w_uni_pear <- pairwise_anosim_uni(cycle_1, ioi, T) 
 w_uni_pear_df <- data.frame(w_uni_pear)
-w_uni_pear_df <- w_uni_pear_df[mixedsort(w_uni_pear_df$group1),]
+w_uni_pear_df <- w_uni_pear_df[mixedorder(w_uni_pear_df$group1),]
 kable(w_uni_pear_df) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Weighted Unifrac ANOSIM Plot
@@ -1702,7 +1702,7 @@ res
 #Unweighted Unifrac Anosim Pairwise
 uw_uni_pair <- pairwise_anosim_uni(cycle_1, ioi, T)
 uw_uni_pair_df <- data.frame(uw_uni_pair)
-uw_uni_pair_df <- uw_uni_pair_df[mixedsort(uw_uni_pair_df$group1),]
+uw_uni_pair_df <- uw_uni_pair_df[mixedorder(uw_uni_pair_df$group1),]
 kable(uw_uni_pair_df) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Unweighted Unifrac ANOSIM plot
@@ -1719,7 +1719,7 @@ ano
 #Bray Curtis ANOSIM pairwise
 bray_pair <- pairwise_anosim(cycle_1, ioi, "bray")
 bray_pair_df <- data.frame(bray_pair)
-bray_pair <- bray_pair_df[mixedsort(bray_pair_df$group1),]
+bray_pair <- bray_pair_df[mixedorder(bray_pair_df$group1),]
 kable(bray_pair_df) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Bray Curtis ANOSIM plot
@@ -1735,7 +1735,7 @@ ano
 #Jaccard ANOSIM pairwise
 jaccard_pair <- pairwise_anosim(cycle_1, ioi, "jaccard")
 jaccard_pair_df <- data.frame(jaccard_pair)
-jaccard_pair_df <- jaccard_pair_df[mixedsort(jaccard_pair_df$group1), ]
+jaccard_pair_df <- jaccard_pair_df[mixedorder(jaccard_pair_df$group1), ]
 kable(jaccard_pair_df) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Jaccard ANOSIM plot
