@@ -1849,7 +1849,7 @@ mrpp(distance(cycle_1, "jaccard"), grouping =  grp)
 # MRPP pairwise Jaccard
 jaccard_res <- pairwise_MRPP(cycle_1, ioi, "jaccard")
 jaccard_res <- data.frame(jaccard_res)
-jaccard_res <- jaccard_res[mixedsort(jaccard_res$desc(group1),]
+jaccard_res <- jaccard_res[mixedsort(jaccard_res$group1),]
 kable(jaccard_res) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
