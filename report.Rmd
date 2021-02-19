@@ -1500,7 +1500,9 @@ pairwise_permanova <- function(dat, column_of_int, dissim){
   #colnames(tmp_2)<- c("group1","group2", "statistic", "permutations", "p")
   result <- adjust_pvalue(tmp_2, p.col = "p", output.col = "p.adj",method = "BH")
   result <- add_significance(result, p.col="p.adj",output.col = "p.signif")
-  return(result)
+  res_df <- data.frame(result)
+  res_df <- res_df[mixedorder(res_df$group1),]
+  return(res_df)
   
 }
 
@@ -1540,7 +1542,9 @@ pairwise_permanova_uni <- function(dat, column_of_int, weight){
   #colnames(tmp_2)<- c("group1","group2", "statistic", "permutations", "p")
   result <- adjust_pvalue(tmp_2, p.col = "p", output.col = "p.adj",method = "BH")
   result <- add_significance(result, p.col="p.adj",output.col = "p.signif")
-  return(result)
+  res_df <- data.frame(result)
+  res_df <- res_df[mixedorder(res_df$group1),]
+  return(res_df)
   
 }
 
@@ -1558,8 +1562,7 @@ res <- adonis(u_unifrac ~ grp)
 res
 # Pairwise PERMANOVA of Weighted Unifrac
 test <- pairwise_permanova_uni(cycle_1, ioi, T)
-test <- data.frame(test)
-test <- test[mixedsort(test$group1),]
+
 kable(test) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
@@ -1578,8 +1581,6 @@ res <- adonis(u_unifrac ~ grp)
 res
 # Pairwise PERMANOVA of Unweighted Unifrac
 test <- pairwise_permanova_uni(cycle_1, ioi, F)
-test <- data.frame(test)
-test <- test[mixedsort(test$group1),]
 kable(test) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
@@ -1595,8 +1596,6 @@ res <- adonis(distance(cycle_1, 'bray') ~ grp)
 res
 #PERMANOVA Bray Curtis Pairwise
 bray_pairwise <- pairwise_permanova(cycle_1,ioi,"bray")
-bray_pairwise <- data.frame(bray_pairwise)
-bray_pairwise <- bray_pairwise[mixedsort(bray_pairwise$group1),]
 kable(bray_pairwise) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
@@ -1612,8 +1611,6 @@ res <- adonis(distance(cycle_1, "jaccard") ~ grp)
 res
 # PERMANOVA Pairwise Jaccard 
 jaccard_pairwise <- pairwise_permanova(cycle_1, ioi, "jaccard")
-jaccard_pairwise <- data.frame(jaccard_pairwise)
-jaccard_pairwise <- jaccard_pairwise[mixedsort(jaccard_pairwise$group1),]
 kable(jaccard_pairwise) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
