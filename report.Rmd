@@ -1919,37 +1919,6 @@ jaccard_amova_pairwise
 
 ```
 
-w_uni <- qiime2R::read_qza("core-metrics-results/weighted_unifrac_distance_matrix.qza")
-w_uni <- w_uni$data
-# Weighted Unifrac
-
-
-form = as.formula(paste0("w_uni ~ ", ioi))
-print("AMOVA based on Weighted Unifrac")
-pegas::amova(formula = form)
-
-u_uni <- qiime2R::read_qza("core-metrics-results/unweighted_unifrac_distance_matrix.qza")
-u_uni <- u_uni$data
-# Unweighted Unifrac
-
-form = as.formula(paste0("u_uni ~ ", ioi))
-print("AMOVA based on Unweighted Unifrac")
-pegas::amova(formula = form)
-
-bray <- qiime2R::read_qza("core-metrics-results/bray_curtis_distance_matrix.qza")
-bray <- bray$data
-# Bray Curtis
-form = as.formula(paste0("bray ~", ioi))
-print("AMOVA based on Bray Curtis")
-pegas::amova(formula = form)
-
-jaccard <- qiime2R::read_qza("core-metrics-results/jaccard_distance_matrix.qza")
-jaccard <- jaccard$data
-# Jaccard 
-form <- as.formula(paste0("jaccard ~", ioi))
-print("AMOVA based on Jaccard Distance")
-pegas::amova(formula=form)
-
 
 ## Lefse
 
