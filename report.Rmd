@@ -43,6 +43,7 @@ if(!require(vegan)){install.packages("vegan",repos="http://cran.us.r-project.org
 if(!require(pegas)){install.packages("pegas",repos="http://cran.us.r-project.org")}
 if(!require(microbiomeMarker)){remotes::install_github("yiluheihei/microbiomeMarker")}
 if(!require(ggvegan)){remotes::install_github("gavinsimpson/ggvegan")}
+if(!require(ggpubr)){install.packages("ggpubr")}
 # library(remotes)
 library(openssl)
 library(gtools)
@@ -65,6 +66,7 @@ library(vegan)
 library(pegas)
 library(ggvegan)
 library(microbiomeMarker)
+library(ggpubr)
 ```
 <!-- input files required:  -->
 <!-- item_of_interest.csv -->
@@ -1556,7 +1558,10 @@ res <- adonis(u_unifrac ~ grp)
 res
 # Pairwise PERMANOVA of Weighted Unifrac
 test <- pairwise_permanova_uni(cycle_1, ioi, T)
-test
+test <- data.frame(test)
+test <- test[mixedsort(test$group1),]
+kable(test) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 
 ```
@@ -1573,7 +1578,10 @@ res <- adonis(u_unifrac ~ grp)
 res
 # Pairwise PERMANOVA of Unweighted Unifrac
 test <- pairwise_permanova_uni(cycle_1, ioi, F)
-test
+test <- data.frame(test)
+test <- test[mixedsort(test$group1),]
+kable(test) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
 ## PERMANOVA Bray Curtis
@@ -1587,7 +1595,10 @@ res <- adonis(distance(cycle_1, 'bray') ~ grp)
 res
 #PERMANOVA Bray Curtis Pairwise
 bray_pairwise <- pairwise_permanova(cycle_1,ioi,"bray")
-bray_pairwise
+bray_pairwise <- data.frame(bray_pairwise)
+bray_pairwise <- bray_pairwise[mixedsort(bray_pairwise$group1),]
+kable(bray_pairwise) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
 ## PERMANOVA Jaccard 
@@ -1601,7 +1612,10 @@ res <- adonis(distance(cycle_1, "jaccard") ~ grp)
 res
 # PERMANOVA Pairwise Jaccard 
 jaccard_pairwise <- pairwise_permanova(cycle_1, ioi, "jaccard")
-jaccard_pairwise
+jaccard_pairwise <- data.frame(jaccard_pairwise)
+jaccard_pairwise <- jaccard_pairwise[mixedsort(jaccard_pairwise$group1),]
+kable(jaccard_pairwise) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 ```
 
@@ -1671,7 +1685,10 @@ res <- anosim(tmp, sample_data(cycle_1)[[ioi]])
 res
 #Weighted Unifrac Anosim Pairwise
 w_uni_pear <- pairwise_anosim_uni(cycle_1, ioi, T) 
-w_uni_pear
+w_uni_pear <- data.frame(w_uni_pear)
+w_uni_pear <- w_uni_pear[mixedorder(w_uni_pear$group1),]
+kable(w_uni_pear) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Weighted Unifrac ANOSIM Plot
 w_uni_plot <- autoplot(res, notch=F) + theme_bw() +labs(title = "ANOSIM Weighted Unifrac")  + stat_pvalue_manual(w_uni_pear, label = "p.signif", y.position = max(res$dis.rank)-(.5*median(res$dis.rank)),step.increase = .03, tip.length = 0.01)
 w_uni_plot
@@ -1684,7 +1701,10 @@ res <- anosim(tmp, sample_data(cycle_1)[[ioi]])
 res
 #Unweighted Unifrac Anosim Pairwise
 uw_uni_pair <- pairwise_anosim_uni(cycle_1, ioi, T)
-uw_uni_pair
+uw_uni_pair <- data.frame(uw_uni_pair)
+uw_uni_pair <- uw_uni_pair[mixedorder(uw_uni_pair$group1),]
+kable(uw_uni_pair) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Unweighted Unifrac ANOSIM plot
 uw_uni_plot <- autoplot(res,notch = F) +theme_bw() + labs(title = "ANOSIM Unweighted Unifrac") +
   stat_pvalue_manual(uw_uni_pair, label="p.signif", y.position = max(res$dis.rank)-(.5*median(res$dis.rank)),step.increase = .03, tip.length = 0.01)
@@ -1698,7 +1718,10 @@ ano <- anosim(distance(cycle_1, "bray"), grp)
 ano
 #Bray Curtis ANOSIM pairwise
 bray_pair <- pairwise_anosim(cycle_1, ioi, "bray")
-bray_pair
+bray_pair <- data.frame(bray_pair)
+bray_pair <- bray_pair[mixedorder(bray_pair$group1),]
+kable(bray_pair) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Bray Curtis ANOSIM plot
 bray_plot <- autoplot(ano, notch=F) + theme_bw() + labs(title ="ANOSIM Bray Curtis") + stat_pvalue_manual(bray_pair, label="p.signif", y.position = max(ano$dis.rank)-(.5*median(res$dis.rank)), step.increase = .03, tip.length = 0.01)
 bray_plot
@@ -1711,7 +1734,10 @@ ano <- anosim(distance(cycle_1, "jaccard"), grp)
 ano
 #Jaccard ANOSIM pairwise
 jaccard_pair <- pairwise_anosim(cycle_1, ioi, "jaccard")
-jaccard_pair
+jaccard_pair <- data.frame(jaccard_pair)
+jaccard_pair <- jaccard_pair[mixedsort(jaccard_pair$group1), ]
+kable(jaccard_pair) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Jaccard ANOSIM plot
 jaccard_plot <- autoplot(ano, notch =F) + theme_bw() + labs(title = "ANOSIM Jaccard") + stat_pvalue_manual(jaccard_pair, label = "p.signif", y.position = max(ano$dis.rank)-(.5*median(res$dis.rank)), step.increase = .03, tip.length = 0.01)
 jaccard_plot
@@ -1786,7 +1812,10 @@ grp <- get_variable(cycle_1, ioi)
 mrpp(w_uni, grouping =  grp)
 #MRPP pairwise Weighted Unifrac
 w_uni_res <- pairwise_MRPP_uni(cycle_1, ioi, T)
-w_uni_res
+w_uni_res <- data.frame(w_uni_res)
+w_uni_res <- w_uni_res[mixedsort(w_uni_res$group1),]
+kable(w_uni_res) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 
 # Unweighted Unifrac
@@ -1796,7 +1825,10 @@ print("MRPP based on Unweighted Unifrac distance")
 mrpp(u_uni, grouping = grp)
 # MRPP pairwise Unweighted Unifrac
 u_uni_res <- pairwise_MRPP_uni(cycle_1, ioi, F)
-u_uni_res
+u_uni_res <- data.frame(u_uni_res)
+u_uni_res <- u_uni_res[mixedsort(u_uni_res$group1),]
+kable(u_uni_res) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 # Bray Curtis
 print("MRPP based on Bray-Curtis distance")
@@ -1804,7 +1836,10 @@ grp <- get_variable(cycle_1, ioi)
 mrpp(distance(cycle_1, "bray"), grouping =  grp)
 # MRPP pairwise Bray
 bray_res <- pairwise_MRPP(cycle_1, ioi, "bray")
-bray_res
+bray_res <- data.frame(bray_res)
+bray_res <- bray_res[mixedsort(bray_res$group1),]
+kable(bray_res) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 jaccard <- qiime2R::read_qza("core-metrics-results/jaccard_distance_matrix.qza")
 # Jaccard 
@@ -1813,7 +1848,10 @@ grp <- get_variable(cycle_1, ioi)
 mrpp(distance(cycle_1, "jaccard"), grouping =  grp)
 # MRPP pairwise Jaccard
 jaccard_res <- pairwise_MRPP(cycle_1, ioi, "jaccard")
-jaccard_res
+jaccard_res <- data.frame(jaccard_res)
+jaccard_res <- jaccard_res[mixedsort(jaccard_res$desc(group1),]
+kable(jaccard_res) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 
 ```
@@ -1858,7 +1896,7 @@ pairwise_AMOVA_uni <- function(dat, column_of_int, weight){
   
   tmp <- UniFrac(comp, weighted = weight)
   amova_res <- pegas::amova(as.formula(tmp ~ grp))
-  amova_stats <- c(as.character(combos[i,1]), as.character(combos[i,2]),weight, round(amova_res$tab$MSD[1],6),  round(amova_res$varcomp$P.value[1],3))
+  amova_stats <- c(as.numeric(as.character(combos[i,1])), as.numericas.character(combos[i,2]),weight, round(amova_res$tab$MSD[1],6),  round(amova_res$varcomp$P.value[1],3))
  
   p_res <- rbind(p_res, amova_stats)
   
@@ -1886,7 +1924,10 @@ res <- pegas::amova(tmp ~ w_uni_grp)
 res
 #AMOVA Weighted unifrac pairwise
 w_uni_pair <- pairwise_AMOVA_uni(cycle_1, ioi, T)
-w_uni_pair
+w_uni_pair <- data.frame(w_uni_pair)
+w_uni_pair <- w_uni_pair[mixedsort(w_uni_pair$group1),]
+kable(w_uni_pair) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 #AMOVA Unweighted Unifrac
 tmp <- UniFrac(cycle_1, weighted=F)
@@ -1895,7 +1936,10 @@ res <- pegas::amova(tmp ~ u_uni_grp)
 res
 #AMOVA Unweighted Unifrac pairwise
 u_uni_pair <- pairwise_AMOVA_uni(cycle_1, ioi, F)
-u_uni_pair
+u_uni_pair <- data.frame(u_uni_pair)
+u_uni_pair <- u_uni_pair[mixedsort(u_uni_pair$group1),]
+kable(u_uni_pair) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 
 #AMOVA bray curtis
@@ -1905,7 +1949,10 @@ res <- pegas::amova(as.formula(dist ~ bray_grp))
 res
 #AMOVA bray curtis pairwise
 bray_amova_pairwise <- pairwise_AMOVA(cycle_1, ioi, 'bray')
-bray_amova_pairwise
+bray_amova_pairwise <- data.frame(bray_amova_pairwise)
+bray_amova_pairwise <- bray_amova_pairwise[mixedsort(bray_amova_pairwise$group1),]
+kable(bray_amova_pairwise) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 #AMOVA Jaccard 
 dist <- distance(cycle_1, 'jaccard')
@@ -1914,7 +1961,10 @@ res <- pegas::amova(dist ~ jaccard_grp)
 res
 #AMOVA Jaccard Pairwise 
 jaccard_amova_pairwise <- pairwise_AMOVA(cycle_1, ioi, 'jaccard')
-jaccard_amova_pairwise
+jaccard_amova_pairwise <- data.frame(jaccard_amova_pairwise)
+jaccard_amova_pairwise <- jaccard_amova_pairwise[mixedsort(jaccard_amova_pairwise$group1),]
+kable(jaccard_amova_pairwise) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 ```
 
