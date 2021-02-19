@@ -1689,7 +1689,7 @@ w_uni_pear <- pairwise_anosim_uni(cycle_1, ioi, T)
 kable(w_uni_pear) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Weighted Unifrac ANOSIM Plot
-w_uni_plot <- autoplot(res, notch=F) + theme_bw() +labs(title = "ANOSIM Weighted Unifrac")  + stat_pvalue_manual(w_uni_pear, label = "p.signif", y.position = max(res$dis.rank)-(.5*median(res$dis.rank)),step.increase = .03, tip.length = 0.01)
+w_uni_plot <- autoplot(res, notch=F) + theme_bw() +labs(title = "ANOSIM Weighted Unifrac")  + stat_pvalue_manual(w_uni_pear, label = "p.signif", y.position = max(res$dis.rank)-(.5*median(res$dis.rank)),step.increase = .03, tip.length = 0.01) + xlab(as.character(ioi)) + ylab("Rank Value")
 w_uni_plot
 #Save image to disk
 ggsave("ANOSIM_weighted_unifrac_boxplot.png", plot = w_uni_plot,path = outdir)
@@ -1704,7 +1704,7 @@ kable(uw_uni_pair) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Unweighted Unifrac ANOSIM plot
 uw_uni_plot <- autoplot(res,notch = F) +theme_bw() + labs(title = "ANOSIM Unweighted Unifrac") +
-  stat_pvalue_manual(uw_uni_pair, label="p.signif", y.position = max(res$dis.rank)-(.5*median(res$dis.rank)),step.increase = .03, tip.length = 0.01)
+  stat_pvalue_manual(uw_uni_pair, label="p.signif", y.position = max(res$dis.rank)-(.5*median(res$dis.rank)),step.increase = .03, tip.length = 0.01)+ xlab(as.character(ioi)) + ylab("Rank Value")
 uw_uni_plot
 #save to disk
 ggsave("ANOSIM_unweighted_unifrac_boxplot.png", plot=uw_uni_plot, path=outdir)
@@ -1718,7 +1718,7 @@ bray_pair <- pairwise_anosim(cycle_1, ioi, "bray")
 kable(bray_pair) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Bray Curtis ANOSIM plot
-bray_plot <- autoplot(ano, notch=F) + theme_bw() + labs(title ="ANOSIM Bray Curtis") + stat_pvalue_manual(bray_pair, label="p.signif", y.position = max(ano$dis.rank)-(.5*median(res$dis.rank)), step.increase = .03, tip.length = 0.01)
+bray_plot <- autoplot(ano, notch=F) + theme_bw() + labs(title ="ANOSIM Bray Curtis") + stat_pvalue_manual(bray_pair, label="p.signif", y.position = max(ano$dis.rank)-(.5*median(res$dis.rank)), step.increase = .03, tip.length = 0.01) + xlab(as.character(ioi)) + ylab("Rank Value")
 bray_plot
 #save to disk
 ggsave("ANOSIM_bray_curtis_boxplot.png", plot=bray_plot, path=outdir)
@@ -1732,7 +1732,7 @@ jaccard_pair <- pairwise_anosim(cycle_1, ioi, "jaccard")
 kable(jaccard_pair) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Jaccard ANOSIM plot
-jaccard_plot <- autoplot(ano, notch =F) + theme_bw() + labs(title = "ANOSIM Jaccard") + stat_pvalue_manual(jaccard_pair, label = "p.signif", y.position = max(ano$dis.rank)-(.5*median(res$dis.rank)), step.increase = .03, tip.length = 0.01)
+jaccard_plot <- autoplot(ano, notch =F) + theme_bw() + labs(title = "ANOSIM Jaccard") + stat_pvalue_manual(jaccard_pair, label = "p.signif", y.position = max(ano$dis.rank)-(.5*median(res$dis.rank)), step.increase = .03, tip.length = 0.01) + xlab(as.character(ioi)) + ylab("Rank Value")
 jaccard_plot
 #save to disk 
 ggsave("ANOSIM_jaccard_boxplot.png", plot=jaccard_plot, path = outdir)
