@@ -543,7 +543,6 @@ p <- p + stat_pvalue_manual(dunn_table, label = "p.adj.signif",hide.ns = TRUE)
 p
 ```
 
-
 ### Simpson
 
 ```{r alpha diversity plot of simpson diversity, echo=FALSE, message=FALSE, warning=FALSE}
@@ -673,7 +672,6 @@ p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("
 p <- p+ stat_pvalue_manual(dunn_table, label = "p.adj.signif", hide.ns = TRUE)
 p
 ```
-
 
 ### Phylogenetic Distance Over The whole Tree
 
@@ -1206,6 +1204,7 @@ ggsave("rarefaction_curve_by_treatment.png", plot=rarefy_curve_by_treatment, pat
 ```
 
 ## Ranked Abundance Curves
+
 ```{r, echo=FALSE, fig.height=10, fig.width=16, message=FALSE, warning=FALSE}
 library(ampvis2)
 library(ggplot2)
@@ -1229,9 +1228,7 @@ ggsave("rank_abundance_curve_by_treatment.png", plot=by_group, path=outdir)
 
 ```
 
-
 ## Unifrac Heatmap 
-
 
 ```{r echo=FALSE,fig.height=8, fig.width=14, message=FALSE, warning=FALSE}
 metadata<-read_q2metadata("metadata.tsv")
@@ -1257,6 +1254,7 @@ ggsave("beta_div_heatmap_Weighted_unifrac.png", plot=weight_heatmap, path=outdir
 ## Beta Diversity Between Groups
 
 ### Weighted boxplots
+
 ```{r generated Weighted boxplots, echo=FALSE, message=FALSE, warning=FALSE}
 weighted_measurements <- read.csv("weighted-sig/raw_data.tsv", sep="\t")
 
@@ -1273,8 +1271,8 @@ for(frame in split_weighted_measure){
 }
 ```
 
-
 ### Unweighted boxplots
+
 ```{r generated Unweighted boxplots, echo=FALSE, message=FALSE, warning=FALSE}
 unweighted_measurements <- read.csv("unweighted-sig/raw_data.tsv", sep="\t")
 
@@ -1382,7 +1380,6 @@ weight_plot
 
 ggsave("UPGMA_weighted_unifrac_plot.png", plot=weight_plot, path=outdir)
 ```
-
 
 ## UPGMA Plot for Unweighted Unifrac Distance
 
@@ -1509,6 +1506,7 @@ pairwise_permanova <- function(dat, column_of_int, dissim){
 #out
 ```
 
+
 ```{r Methods to do pairwise Unifrac PERMANOVA comparisons, echo=FALSE, message=FALSE, warning=FALSE}
 pairwise_permanova_uni <- function(dat, column_of_int, weight){
   all_comparisons <- unique(sample_data(dat)[[column_of_int]])
@@ -1562,6 +1560,7 @@ test
 
 
 ```
+
 ## PERMANOVA Unweighted Unifrac 
 
 ```{r Permanova results Weighted Unifrac from qiime, echo=FALSE, message=FALSE, warning=FALSE}
@@ -1660,7 +1659,6 @@ pairwise_anosim_uni <- function(dat, column_of_int, weight){
 }
 
 ```
-
 
 
 ```{r echo=FALSE, fig.height=8, fig.width=10, message=FALSE, warning=FALSE}
@@ -1874,6 +1872,7 @@ pairwise_AMOVA_uni <- function(dat, column_of_int, weight){
 }
 ```
 
+
 ```{r AMOVA testing, echo=FALSE, message=FALSE, warning=FALSE}
 #library(poppr)
 
@@ -1918,7 +1917,6 @@ jaccard_amova_pairwise <- pairwise_AMOVA(cycle_1, ioi, 'jaccard')
 jaccard_amova_pairwise
 
 ```
-
 
 ## Lefse
 
