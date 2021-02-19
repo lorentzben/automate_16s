@@ -1638,7 +1638,9 @@ pairwise_anosim <- function(dat, column_of_int, dissim){
   colnames(tmp_2)<- c("group1", "group2", "statistic", "permutations", "dissimilarity", "p.val")
   result <- adjust_pvalue(tmp_2, p.col = "p.val", output.col = "p.adjust",method = "BH")
   result <- add_significance(result, p.col = "p.adjust", output.col = "p.signif")
-  return(result)
+  res_df <- data.frame(result)
+  res_df <- res_df[mixedorder(res_df$group1),]
+  return(res_df)
   
 }
 
@@ -1665,7 +1667,9 @@ pairwise_anosim_uni <- function(dat, column_of_int, weight){
   colnames(tmp_2)<- c("group1","group2", "statistic", "permutations", "p")
   result <- adjust_pvalue(tmp_2, p.col = "p", output.col = "p.adj",method = "BH")
   result <- add_significance(result, p.col="p.adj",output.col = "p.signif")
-  return(result)
+  res_df <- data.frame(result)
+  res_df <- res_df[mixedorder(res_df$group1),]
+  return(res_df)
   
 }
 
@@ -1682,9 +1686,7 @@ res <- anosim(tmp, sample_data(cycle_1)[[ioi]])
 res
 #Weighted Unifrac Anosim Pairwise
 w_uni_pear <- pairwise_anosim_uni(cycle_1, ioi, T) 
-w_uni_pear_df <- data.frame(w_uni_pear)
-w_uni_pear_df <- w_uni_pear_df[mixedorder(w_uni_pear_df$group1),]
-kable(w_uni_pear_df) %>%
+kable(w_uni_pear) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Weighted Unifrac ANOSIM Plot
 w_uni_plot <- autoplot(res, notch=F) + theme_bw() +labs(title = "ANOSIM Weighted Unifrac")  + stat_pvalue_manual(w_uni_pear, label = "p.signif", y.position = max(res$dis.rank)-(.5*median(res$dis.rank)),step.increase = .03, tip.length = 0.01)
@@ -1698,9 +1700,7 @@ res <- anosim(tmp, sample_data(cycle_1)[[ioi]])
 res
 #Unweighted Unifrac Anosim Pairwise
 uw_uni_pair <- pairwise_anosim_uni(cycle_1, ioi, T)
-uw_uni_pair_df <- data.frame(uw_uni_pair)
-uw_uni_pair_df <- uw_uni_pair_df[mixedorder(uw_uni_pair_df$group1),]
-kable(uw_uni_pair_df) %>% 
+kable(uw_uni_pair) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Unweighted Unifrac ANOSIM plot
 uw_uni_plot <- autoplot(res,notch = F) +theme_bw() + labs(title = "ANOSIM Unweighted Unifrac") +
@@ -1715,9 +1715,7 @@ ano <- anosim(distance(cycle_1, "bray"), grp)
 ano
 #Bray Curtis ANOSIM pairwise
 bray_pair <- pairwise_anosim(cycle_1, ioi, "bray")
-bray_pair_df <- data.frame(bray_pair)
-bray_pair <- bray_pair_df[mixedorder(bray_pair_df$group1),]
-kable(bray_pair_df) %>% 
+kable(bray_pair) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Bray Curtis ANOSIM plot
 bray_plot <- autoplot(ano, notch=F) + theme_bw() + labs(title ="ANOSIM Bray Curtis") + stat_pvalue_manual(bray_pair, label="p.signif", y.position = max(ano$dis.rank)-(.5*median(res$dis.rank)), step.increase = .03, tip.length = 0.01)
@@ -1731,9 +1729,7 @@ ano <- anosim(distance(cycle_1, "jaccard"), grp)
 ano
 #Jaccard ANOSIM pairwise
 jaccard_pair <- pairwise_anosim(cycle_1, ioi, "jaccard")
-jaccard_pair_df <- data.frame(jaccard_pair)
-jaccard_pair_df <- jaccard_pair_df[mixedorder(jaccard_pair_df$group1), ]
-kable(jaccard_pair_df) %>%
+kable(jaccard_pair) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 #Jaccard ANOSIM plot
 jaccard_plot <- autoplot(ano, notch =F) + theme_bw() + labs(title = "ANOSIM Jaccard") + stat_pvalue_manual(jaccard_pair, label = "p.signif", y.position = max(ano$dis.rank)-(.5*median(res$dis.rank)), step.increase = .03, tip.length = 0.01)
@@ -1765,7 +1761,9 @@ pairwise_MRPP <- function(dat, column_of_int, dissim){
   colnames(tmp_2)<- c("group1", "group2", "delta", "permutations", "dissimilarity", "p.val")
   result <- adjust_pvalue(tmp_2, p.col = "p.val", output.col = "p.adjust",method = "BH")
   result <- add_significance(result, p.col = "p.adjust", output.col = "p.signif")
-  return(result)
+  res_df <- data.frame(result)
+  res_df <- res_df[mixedorder(res_df$group1),]
+  return(res_df)
   
 }
 
@@ -1792,7 +1790,9 @@ pairwise_MRPP_uni <- function(dat, column_of_int, weight){
   colnames(tmp_2)<- c("group1","group2", "delta", "permutations", "p")
   result <- adjust_pvalue(tmp_2, p.col = "p", output.col = "p.adj",method = "BH")
   result <- add_significance(result, p.col="p.adj",output.col = "p.signif")
-  return(result)
+  res_df <- data.frame(result)
+  res_df <- res_df[mixedorder(res_df$group1),]
+  return(res_df)
   
 }
 ```
@@ -1809,8 +1809,6 @@ grp <- get_variable(cycle_1, ioi)
 mrpp(w_uni, grouping =  grp)
 #MRPP pairwise Weighted Unifrac
 w_uni_res <- pairwise_MRPP_uni(cycle_1, ioi, T)
-w_uni_res <- data.frame(w_uni_res)
-w_uni_res <- w_uni_res[mixedsort(w_uni_res$group1),]
 kable(w_uni_res) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
@@ -1822,8 +1820,6 @@ print("MRPP based on Unweighted Unifrac distance")
 mrpp(u_uni, grouping = grp)
 # MRPP pairwise Unweighted Unifrac
 u_uni_res <- pairwise_MRPP_uni(cycle_1, ioi, F)
-u_uni_res <- data.frame(u_uni_res)
-u_uni_res <- u_uni_res[mixedsort(u_uni_res$group1),]
 kable(u_uni_res) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
@@ -1833,8 +1829,6 @@ grp <- get_variable(cycle_1, ioi)
 mrpp(distance(cycle_1, "bray"), grouping =  grp)
 # MRPP pairwise Bray
 bray_res <- pairwise_MRPP(cycle_1, ioi, "bray")
-bray_res <- data.frame(bray_res)
-bray_res <- bray_res[mixedsort(bray_res$group1),]
 kable(bray_res) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
@@ -1845,8 +1839,6 @@ grp <- get_variable(cycle_1, ioi)
 mrpp(distance(cycle_1, "jaccard"), grouping =  grp)
 # MRPP pairwise Jaccard
 jaccard_res <- pairwise_MRPP(cycle_1, ioi, "jaccard")
-jaccard_res <- data.frame(jaccard_res)
-jaccard_res <- jaccard_res[mixedsort(jaccard_res$group1),]
 kable(jaccard_res) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
@@ -1875,7 +1867,9 @@ pairwise_AMOVA <- function(dat, column_of_int, dissim){
   colnames(tmp_2)<- c("group1", "group2", "MSD","distance", "p.val")
   result <- adjust_pvalue(tmp_2, p.col = "p.val", output.col = "p.adjust",method = "BH")
   result <- add_significance(result, p.col = "p.adjust", output.col = "p.signif")
-  return(result)
+  res_df <- data.frame(result)
+  res_df <- res_df[mixedorder(res_df$group1),]
+  return(res_df)
   
 }
 
@@ -1902,7 +1896,9 @@ pairwise_AMOVA_uni <- function(dat, column_of_int, weight){
   colnames(tmp_2)<- c("group1", "group2", "MSD","weighted", "p.val")
   result <- adjust_pvalue(tmp_2, p.col = "p.val", output.col = "p.adj",method = "BH")
   result <- add_significance(result, p.col="p.adj",output.col = "p.signif")
-  return(result)
+  res_df <- data.frame(result)
+  res_df <- res_df[mixedorder(res_df$group1),]
+  return(res_df)
   
 }
 ```
@@ -1921,8 +1917,6 @@ res <- pegas::amova(tmp ~ w_uni_grp)
 res
 #AMOVA Weighted unifrac pairwise
 w_uni_pair <- pairwise_AMOVA_uni(cycle_1, ioi, T)
-w_uni_pair <- data.frame(w_uni_pair)
-w_uni_pair <- w_uni_pair[mixedsort(w_uni_pair$group1),]
 kable(w_uni_pair) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
@@ -1933,8 +1927,6 @@ res <- pegas::amova(tmp ~ u_uni_grp)
 res
 #AMOVA Unweighted Unifrac pairwise
 u_uni_pair <- pairwise_AMOVA_uni(cycle_1, ioi, F)
-u_uni_pair <- data.frame(u_uni_pair)
-u_uni_pair <- u_uni_pair[mixedsort(u_uni_pair$group1),]
 kable(u_uni_pair) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
@@ -1946,8 +1938,6 @@ res <- pegas::amova(as.formula(dist ~ bray_grp))
 res
 #AMOVA bray curtis pairwise
 bray_amova_pairwise <- pairwise_AMOVA(cycle_1, ioi, 'bray')
-bray_amova_pairwise <- data.frame(bray_amova_pairwise)
-bray_amova_pairwise <- bray_amova_pairwise[mixedsort(bray_amova_pairwise$group1),]
 kable(bray_amova_pairwise) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
@@ -1958,8 +1948,6 @@ res <- pegas::amova(dist ~ jaccard_grp)
 res
 #AMOVA Jaccard Pairwise 
 jaccard_amova_pairwise <- pairwise_AMOVA(cycle_1, ioi, 'jaccard')
-jaccard_amova_pairwise <- data.frame(jaccard_amova_pairwise)
-jaccard_amova_pairwise <- jaccard_amova_pairwise[mixedsort(jaccard_amova_pairwise$group1),]
 kable(jaccard_amova_pairwise) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
