@@ -378,6 +378,7 @@ ggsave("stacked_bar_species_by_treatment.png", plot=by_treatment, path=outdir)
 ```{r phylo-tree", echo=FALSE, message=FALSE, warning=FALSE}
 
 tree_filenames <- list.files(pattern="image_.*_graph.png")
+tree_filenames <- mixedsort(tree_filenames)
 
 include_graphics(tree_filenames)
 
@@ -1565,8 +1566,6 @@ test <- pairwise_permanova_uni(cycle_1, ioi, T)
 
 kable(test) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
-
-
 ```
 
 ## PERMANOVA Unweighted Unifrac 
