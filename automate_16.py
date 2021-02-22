@@ -747,24 +747,6 @@ def generate_result_file(metadata):
     logger.info(result.stdout)
     logger.error(result.stderr)
 
-    '''
-    # TODO remove this block once confirmed bash export works
-    activate_env_command = "module load GDAL/3.0.2-foss-2019b-Python-3.7.4"
-    result = subprocess.run([activate_env_command], stdout=PIPE, stderr=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-
-    # Sequence to render the rnotebook into a html object
-    command = 'Rscript -e "rmarkdown::render(\'report.Rmd\', output_file=\'report_' + \
-        report_filename.strip() + '\', clean=TRUE)"'
-    result = subprocess.run([command], stdout=PIPE, stderr=PIPE, shell=True)
-    logger.info(result.stdout)
-    logger.error(result.stderr)
-    if result.returncode == 1:
-        logger.critical(
-            "there was an issue generating the report for this analysis")
-        exit(1)
-    '''
 
 
 def main(arg):
