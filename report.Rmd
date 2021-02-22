@@ -825,7 +825,6 @@ unweight_unifrac_pcoa <- jaccard$data$Vectors %>%
   geom_point() +
   geom_convexhull(alpha=0.5, aes_string(fill=ioi)) +
   theme_q2r() +
-  scale_size_continuous(name="Shannon Diversity") +
   scale_color_discrete(name=ioi)
 
 unweight_unifrac_pcoa 
@@ -838,9 +837,7 @@ unweight_unifrac_pcoa_no_polygon <- jaccard$data$Vectors %>%
   left_join(shannon) %>%
   ggplot(aes_string(x="PC1", y="PC2", color=ioi))+
   geom_point() +
-  geom_convexhull(alpha=0.5, aes_string(fill=ioi)) +
   theme_q2r() +
-  scale_size_continuous(name="Shannon Diversity") +
   scale_color_discrete(name=ioi)
 
 unweight_unifrac_pcoa_no_polygon
@@ -873,11 +870,10 @@ weighted_unifrac_pcoa <- jaccard$data$Vectors %>%
   select(SampleID, PC1, PC2) %>%
   left_join(metadata) %>%
   left_join(shannon) %>%
-  ggplot(aes_string(x="PC1", y="PC2", color=ioi, size="shannon_entropy"))+
+  ggplot(aes_string(x="PC1", y="PC2", color=ioi))+
   geom_point() +
   geom_convexhull(alpha=0.5, aes_string(fill=ioi)) +
   theme_q2r() +
-  scale_size_continuous(name="Shannon Diversity") +
   scale_color_discrete(name=ioi)
 
 weighted_unifrac_pcoa
@@ -888,11 +884,10 @@ weighted_unifrac_pcoa_no_polygon <- jaccard$data$Vectors %>%
   select(SampleID, PC1, PC2) %>%
   left_join(metadata) %>%
   left_join(shannon) %>%
-  ggplot(aes_string(x="PC1", y="PC2", color=ioi, size="shannon_entropy"))+
+  ggplot(aes_string(x="PC1", y="PC2", color=ioi))+
   geom_point() +
   geom_convexhull(alpha=0.5, aes_string(fill=ioi)) +
   theme_q2r() +
-  scale_size_continuous(name="Shannon Diversity") +
   scale_color_discrete(name=ioi)
 
 weighted_unifrac_pcoa_no_polygon
