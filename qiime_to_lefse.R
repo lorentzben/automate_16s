@@ -56,6 +56,7 @@ cycle_2 <- phyloseq(cycle_1@otu_table, cycle_1@tax_table, cycle_1@phy_tree, samp
 
 
 all_comparisons <- unique(cycle_2@sam_data[[ioi]])
+all_comparisons <- mixedsort(all_comparisons)
 combos <- split(combn(all_comparisons,2),  col(combn(all_comparisons,2)))
 
 for(item in combos){
