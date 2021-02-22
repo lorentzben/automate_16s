@@ -1959,6 +1959,7 @@ lefse_res_filenames <- list.files(pattern="*_res.png")
 lefse_clado_filenames <- list.files(pattern="*_better_cladogram.png")
 
 lefse_filenames <- do.call(c, list(lefse_res_filenames, lefse_clado_filenames))
+lefse_filenames <- mixedsort(lefse_filenames)
 
 include_graphics(lefse_filenames)
 
