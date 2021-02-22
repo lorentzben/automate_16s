@@ -3,7 +3,7 @@ require(dplyr)
 require(tibble)
 require(qiime2R)
 require(phyloseq)
-require(gtools)
+require(jamba)
 
 args = commandArgs(trailingOnly=TRUE)
 if (length(args)==0) {
@@ -56,7 +56,6 @@ cycle_2 <- phyloseq(cycle_1@otu_table, cycle_1@tax_table, cycle_1@phy_tree, samp
 
 
 all_comparisons <- unique(cycle_2@sam_data[[ioi]])
-all_comparisons <- mixedsort(all_comparisons)
 combos <- split(combn(all_comparisons,2),  col(combn(all_comparisons,2)))
 
 for(item in combos){
@@ -64,9 +63,11 @@ for(item in combos){
   
   # transforms phyloseq object into lefse input object
   lefse <- phyloseq_to_lefs(comp)
+  lefse <- lefse[, mixedOrder(lefse[which(rownames(lefse)==ioi),])]
   write.table(lefse, paste0(item[1],"_",item[2],"_lefse_formatted.txt"), sep="\t", row.names = T, col.names = F, quote = F)
 }
 
 mm <- phyloseq_to_lefs(cycle_2)
+mm <- mm [, mixedOrder(mm[which(rownames(mm)==ioi),])]
 
 write.table(mm, args[2] , sep="\t", row.names = T, col.names = F, quote = F)
