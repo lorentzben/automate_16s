@@ -43,7 +43,7 @@ phyloseq_to_lefs <- function(physeq){
 
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
 ordered <- mixedsort(levels(sample_data(cycle_1)[[ioi]]))
-samp_data(cycle_1)[[ioi]] <- factor(samp_data(cycle_1)[[ioi]], levels=ordered)
+sample_data(cycle_1)[[ioi]] <- factor(sample_data(cycle_1)[[ioi]], levels=ordered)
 
 # modifications to select item of interest and remove the rest of the metadata
 new_samp_2 <- data.frame(sample_data(cycle_1))
