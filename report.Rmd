@@ -21,7 +21,7 @@ if(!require(remotes)){install.packages("remotes")}
 if(!require(ggplot2)) {remotes::install_github("tidyverse/ggplot2@v3.3.2")}
 if(!require(tidyverse)) {install.packages("tidyverse", repos="http://cran.us.r-project.org")}
 if(!require(gplots)) {install.packages("gplots", repos="http://cran.us.r-project.org")}
-if (!requireNamespace("devtools", quietly = TRUE)){install.packages("devtools")}
+if (!require("devtools", quietly = TRUE)){install.packages("devtools")}
 if(!require(qiime2R)) {devtools::install_github("jbisanz/qiime2R")} # current version is 0.99.20
 if(!require(phyloseq)) {install.packages("phyloseq",repos="http://cran.us.r-project.org")}
 if(!require(gtools)) {install.packages("gtools",repos="http://cran.us.r-project.org")}
@@ -169,6 +169,7 @@ cycle_1_phylum <- merged %>%
 by_sample <- ggplot(cycle_1_phylum, aes(x=Sample, y=Abundance, fill=fct_relevel(fct_reorder(cycle_1_phylum[[level]], Abundance),"Other"))) + 
   geom_bar(stat= "identity") +
   xlab("Sample ID") +
+  ylab(label="Relative Abundance") +
   guides(fill=guide_legend(title=level))+
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90,vjust=0.5, hjust=1))+
@@ -192,6 +193,7 @@ by_treatment <- ggplot(cy_phylum, aes(x=Sample, y=Abundance, fill=fct_relevel(fc
   geom_bar(stat="identity") +
   guides(fill=guide_legend(title=level)) + 
   xlab(label = ioi) +
+  ylab(label="Relative Abundance") +
   theme_minimal()+
   theme(text=element_text(size = 20))
 
@@ -256,6 +258,7 @@ cycle_1_genus <- merged %>%
 by_sample <- ggplot(cycle_1_genus, aes(x=Sample, y=Abundance, fill=fct_relevel(fct_reorder(cycle_1_genus[[level]], Abundance),"Other"))) + 
   geom_bar(stat= "identity") +
   xlab("Sample ID") +
+  ylab(label="Relative Abundance") +
   guides(fill=guide_legend(title=level))+
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90,vjust=0.5, hjust=1)) +
@@ -279,6 +282,7 @@ by_treatment <- ggplot(cy_genus, aes(x=Sample, y=Abundance, fill=fct_relevel(fct
   geom_bar(stat="identity") +
   guides(fill=guide_legend(title=level)) + 
   xlab(label = ioi) +
+  ylab(label="Relative Abundance") +
   theme_minimal()+
   theme(text=element_text(size = 20))
 
@@ -342,6 +346,7 @@ cycle_1_species <- merged %>%
 by_sample <- ggplot(cycle_1_species, aes(x=Sample, y=Abundance, fill=fct_relevel(fct_reorder(cycle_1_species[[level]], Abundance),"Other"))) + 
   geom_bar(stat= "identity") +
   xlab("Sample ID") +
+  ylab(label="Relative Abundance") +
   guides(fill=guide_legend(title=level))+
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90,vjust=0.5, hjust=1)) +
@@ -364,6 +369,7 @@ cy_species$Sample <- reorder(as.factor(cy_species$Sample))
 #ggplot stacked bar chart separated by treatment
 by_treatment <- ggplot(cy_species, aes(x=Sample, y=Abundance, fill=fct_relevel(fct_reorder(cy_species[[level]],Abundance),"Other"))) + 
   geom_bar(stat="identity") +
+  ylab(label="Relative Abundance") +
   guides(fill=guide_legend(title=level)) + 
   xlab(label = ioi) +
   theme_minimal()+
@@ -468,7 +474,7 @@ dims = dim(obs_vals)
 obs_vals <- data.frame(obs_vals[2:dims[1],])
 obs_vals[[ioi]] <- reorder(as.factor(obs_vals[[ioi]]))
 obs_vals$observed_otus <- as.numeric(as.character(obs_vals$observed_otus))
-obs_boxplot <- ggplot(obs_vals, aes_string(x=ioi,y = obs_vals$observed_otus)) + geom_boxplot() + ylab("Observed Features") +theme_bw()
+obs_boxplot <- ggplot(obs_vals, aes_string(x=ioi,y = obs_vals$observed_otus, fill=ioi)) + geom_boxplot() + ylab("Observed Features") +theme_bw()
 obs_boxplot 
 
 ggsave("obs_boxplot.png", plot=obs_boxplot, path=outdir)
@@ -517,7 +523,7 @@ dims = dim(shannon_vals)
 shannon_vals <- data.frame(shannon_vals[2:dims[1],])
 shannon_vals[[ioi]] <- reorder(as.factor(shannon_vals[[ioi]]))
 shannon_vals$shannon <- as.numeric(as.character(shannon_vals$shannon))
-shannon_boxplot <- ggplot(shannon_vals, aes(x=shannon_vals[[ioi]], y=shannon_vals$shannon)) + geom_boxplot() + ylab("Shannon") + theme_bw() + xlab(ioi)
+shannon_boxplot <- ggplot(shannon_vals, aes_string(x=ioi, y=shannon_vals$shannon, fill=ioi)) + geom_boxplot() + ylab("Shannon") + theme_bw() + xlab(ioi)
 shannon_boxplot
 
 ggsave("shannon_boxplot.png", plot=shannon_boxplot, path=outdir)
@@ -560,7 +566,7 @@ dims = dim(simpson_vals)
 simpson_vals <- data.frame(simpson_vals[2:dims[1],])
 simpson_vals[[ioi]] <- reorder(as.factor(simpson_vals[[ioi]]))
 simpson_vals$simpson <- as.numeric(as.character(simpson_vals$simpson))
-simpson_boxplot <- ggplot(simpson_vals, aes(x=simpson_vals[[ioi]], y=simpson_vals$simpson)) + geom_boxplot() + ylab("Simpson") + theme_bw() + xlab(ioi)
+simpson_boxplot <- ggplot(simpson_vals, aes_string(x=simpson_vals[[ioi]], y=simpson_vals$simpson, fill=ioi)) + geom_boxplot() + ylab("Simpson") + theme_bw() + xlab(ioi)
 simpson_boxplot
 
 ggsave("simpson_boxplot.png", plot=simpson_boxplot, path=outdir)
@@ -603,7 +609,7 @@ dims = dim(chao1_vals)
 chao1_vals <- data.frame(chao1_vals[2:dims[1],])
 chao1_vals[[ioi]] <- reorder(as.factor(chao1_vals[[ioi]]))
 chao1_vals$chao1 <- as.numeric(as.character(chao1_vals$chao1))
-chao1_boxplot <- ggplot(chao1_vals, aes(x=chao1_vals[[ioi]], y=chao1_vals$chao1)) + geom_boxplot() + ylab("Chao 1") + theme_bw() + xlab(ioi)
+chao1_boxplot <- ggplot(chao1_vals, aes_string(x=chao1_vals[[ioi]], y=chao1_vals$chao1, fill=ioi)) + geom_boxplot() + ylab("Chao 1") + theme_bw() + xlab(ioi)
 chao1_boxplot
 
 ggsave("chao1_boxplot.png", plot=chao1_boxplot, path=outdir)
@@ -647,7 +653,7 @@ dims = dim(ace_vals)
 ace_vals <- data.frame(ace_vals[2:dims[1],])
 ace_vals[[ioi]] <- reorder(as.factor(ace_vals[[ioi]]))
 ace_vals$ace <- as.numeric(as.character(ace_vals$ace))
-ace_boxplot <- ggplot(ace_vals, aes(x=ace_vals[[ioi]], y=ace_vals$ace)) + geom_boxplot() + ylab("ACE") + theme_bw() + xlab(ioi)
+ace_boxplot <- ggplot(ace_vals, aes_string(x=ace_vals[[ioi]], y=ace_vals$ace, fill=ioi)) + geom_boxplot() + ylab("ACE") + theme_bw() + xlab(ioi)
 ace_boxplot
 
 ggsave("ace_boxplot.png", plot=ace_boxplot, path=outdir)
@@ -690,7 +696,7 @@ dims = dim(faith_pd_vals)
 faith_pd_vals <- data.frame(faith_pd_vals[2:dims[1],])
 faith_pd_vals[[ioi]] <- reorder(as.factor(faith_pd_vals[[ioi]]))
 faith_pd_vals$faith_pd <- as.numeric(as.character(faith_pd_vals$faith_pd))
-faith_pd_boxplot <- ggplot(faith_pd_vals, aes(x=faith_pd_vals[[ioi]], y=faith_pd_vals$faith_pd)) + geom_boxplot() + ylab("Faith PD") + theme_bw() + xlab(ioi)
+faith_pd_boxplot <- ggplot(faith_pd_vals, aes_string(x=faith_pd_vals[[ioi]], y=faith_pd_vals$faith_pd, fill=ioi)) + geom_boxplot() + ylab("Faith PD") + theme_bw() + xlab(ioi)
 faith_pd_boxplot
 
 ggsave("faith_pd_boxplot.png", plot=faith_pd_boxplot, path=outdir)
@@ -737,7 +743,6 @@ bray_pcoa <- qiime2R::read_qza("core-metrics-results/bray_curtis_pcoa_results.qz
 shannon<-qiime2R::read_qza("core-metrics-results/shannon_vector.qza")
 shannon <- shannon$data %>% rownames_to_column("SampleID")
 
-ggConvexHull::geom_convexhull()
 
 bray_curtis <- bray_pcoa$data$Vectors %>%
   select(SampleID, PC1, PC2) %>%
@@ -1743,15 +1748,24 @@ sample_data(cycle_1)[[ioi]] <- reorder(sample_data(cycle_1)[[ioi]])
 tmp <- UniFrac(cycle_1, weighted=T)
 res <- anosim(tmp, sample_data(cycle_1)[[ioi]])
 res
+
+
 #Weighted Unifrac Anosim Pairwise
 w_uni_pear <- pairwise_anosim_uni(cycle_1, ioi, T) 
 kable(w_uni_pear) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+
 #Weighted Unifrac ANOSIM Plot
-w_uni_plot <- autoplot(res, notch=F) + theme_bw() +labs(title = "ANOSIM Weighted Unifrac")  + stat_pvalue_manual(w_uni_pear, label = "p.signif", y.position = max(res$dis.rank)-(.5*median(res$dis.rank)),step.increase = .03, tip.length = 0.01) + xlab(as.character(ioi)) + ylab("Rank Value")
+w_uni_plot <- autoplot(res, notch=F) + theme_bw()+labs(title = "ANOSIM Weighted Unifrac") + xlab(ioi) + ylab("Rank Value")  + stat_pvalue_manual(w_uni_pear, label = "p.signif", y.position = max(res$dis.rank)-(.5*median(res$dis.rank)),step.increase = .03, tip.length = 0.01, guide="none") 
 w_uni_plot
 #Save image to disk
 ggsave("ANOSIM_weighted_unifrac_boxplot.png", plot = w_uni_plot,path = outdir)
+
+#Weighted Unifrac ANOSIM Plot No Bracket
+w_uni_plot_no_brac <- autoplot(res, notch=F) + theme_bw()+ aes(fill=res$class.vec) +labs(title = "ANOSIM Weighted Unifrac", fill=ioi)+ xlab(as.character(ioi)) + ylab("Rank Value")
+w_uni_plot_no_brac
+#Save image to disk
+ggsave("ANOSIM_weighted_unifrac_boxplot_no_signif.png", plot = w_uni_plot_no_brac,path = outdir)
 
 #Unweighted Unifrac
 tmp <- UniFrac(cycle_1, weighted = F)
@@ -1767,6 +1781,11 @@ uw_uni_plot <- autoplot(res,notch = F) +theme_bw() + labs(title = "ANOSIM Unweig
 uw_uni_plot
 #save to disk
 ggsave("ANOSIM_unweighted_unifrac_boxplot.png", plot=uw_uni_plot, path=outdir)
+#Unweighted Unifrac ANOSIM plot No bracket
+uw_uni_plot_no_brac <- autoplot(res,notch = F) +theme_bw() +aes(fill=res$class.vec)+ labs(title = "ANOSIM Unweighted Unifrac", fill=ioi) + xlab(as.character(ioi)) + ylab("Rank Value")
+uw_uni_plot_no_brac
+#save to disk
+ggsave("ANOSIM_unweighted_unifrac_boxplot_no_brackets.png", plot=uw_uni_plot_no_brac, path=outdir)
 
 #Bray Curtis Distance
 grp <- get_variable(cycle_1, ioi)
@@ -1781,6 +1800,11 @@ bray_plot <- autoplot(ano, notch=F) + theme_bw() + labs(title ="ANOSIM Bray Curt
 bray_plot
 #save to disk
 ggsave("ANOSIM_bray_curtis_boxplot.png", plot=bray_plot, path=outdir)
+#Bray Curtis ANOSIM plot No Bracket
+bray_plot_no_brac <- autoplot(ano, notch=F) + theme_bw() +aes(fill=ano$class.vec) + labs(title ="ANOSIM Bray Curtis", fill=ioi) + xlab(as.character(ioi)) + ylab("Rank Value")
+bray_plot_no_brac
+#save to disk
+ggsave("ANOSIM_bray_curtis_boxplot_no_bracket.png", plot=bray_plot_no_brac, path=outdir)
 
 #Jaccard Distance
 grp <- get_variable(cycle_1, ioi)
@@ -1795,6 +1819,11 @@ jaccard_plot <- autoplot(ano, notch =F) + theme_bw() + labs(title = "ANOSIM Jacc
 jaccard_plot
 #save to disk 
 ggsave("ANOSIM_jaccard_boxplot.png", plot=jaccard_plot, path = outdir)
+#Jaccard ANOSIM plot No Bracket
+jaccard_plot_no_brac <- autoplot(ano, notch =F) + theme_bw() +aes(fill=ano$class.vec) + labs(title = "ANOSIM Jaccard", fill=ioi) +  xlab(as.character(ioi)) + ylab("Rank Value")
+jaccard_plot_no_brac
+#save to disk 
+ggsave("ANOSIM_jaccard_boxplot_no_bracket.png", plot=jaccard_plot_no_brac, path = outdir)
 
 ```
 
@@ -2024,8 +2053,4 @@ lefse_filenames <- mixedsort(lefse_filenames)
 include_graphics(lefse_filenames)
 
 ```
-
-
-
-
 
