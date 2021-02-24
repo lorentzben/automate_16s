@@ -16,6 +16,7 @@ conda install -c biobakery lefse
 LEFSE="$(which lefse.py)"
 LEFSE_DIR="${LEFSE::-8}"
 cp plot_res.py $LEFSE_DIR
+cp plot_cladogram.py $LEFSE_DIR
 
 
 conda deactivate
