@@ -109,7 +109,7 @@ outdir <- paste0("./",outdir_name)
 
 ```
 
-## 1.Species Distribution
+## 1 Species Distribution
 
 ### 1.1 Relative Abundance of Top 10 Phyla
 
@@ -379,7 +379,7 @@ ggsave("stacked_bar_species_by_treatment.png", plot=by_treatment, path=outdir)
 
 ```
 
-## 2. Phylogentic Trees
+## 2 Phylogentic Trees
 
 ```{r phylo-tree", echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -391,7 +391,7 @@ include_graphics(tree_filenames)
 
 ```
 
-## 3. Species Abundance Heatmap
+## 3 Species Abundance Heatmap
 
 ```{r heatmap at the Genus level annotatted with item of interest, echo=FALSE, fig.height=10, fig.width=14, message=FALSE, warning=FALSE}
 devtools::source_gist("8d0ca4206a66be7ff6d76fc4ab8e66c6")
@@ -434,7 +434,7 @@ depth = read.csv("sampling_depth.csv", sep=",")
 depth %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
 ```
 
-## 4. Alpha Diversity Table
+## 4 Alpha Diversity Table
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 obs <- read.table("obs/metadata.tsv", header = TRUE)
@@ -455,7 +455,7 @@ alpha_summary <- Reduce(function(...) merge(..., by='id', all.x=TRUE), list(obs,
 alpha_summary
 ```
 
-## 5. Alpha Diversity Plot 
+## 5 Alpha Diversity Plot 
 
 ### 5.1 Observed Features 
 
