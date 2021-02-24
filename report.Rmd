@@ -97,12 +97,6 @@ library(ggConvexHull)
 <!-- core-metrics-results/weighted_unifrac_pcoa_results.qza -->
 <!-- alpha-rare/observed_otus.csv -->
 
-
-
-
-This is a report generated to summarize the major results from the analysis. It is not intended to be a full picture, rather a jumping off point. This report will reference the files displayed in case you would like to examine them further.
-
-
 ```{r parse item of interest and make outdir for figures, echo=FALSE, message=FALSE, warning=FALSE}
 #item of interest, comes from bash and python script that orchestrates everything
 ioi <- read.csv("item_of_interest.csv")
@@ -115,9 +109,9 @@ outdir <- paste0("./",outdir_name)
 
 ```
 
-## Species Distribution
+## 1.Species Distribution
 
-### Relative Abundance of Top 10 Phyla
+### 1.1 Relative Abundance of Top 10 Phyla
 
 ```{r stacked bar chart at Phylum level, echo=FALSE, fig.height=12, fig.width=18, message=FALSE, warning=FALSE}
 options(bitmapType='cairo')
@@ -208,7 +202,7 @@ ggsave("stacked_bar_phylum_by_treatment.png", plot=by_treatment, path=outdir)
 
 ```
 
-### Relative Abundance of Top 10 Genera
+### 1.2 Relative Abundance of Top 10 Genera
 
 ```{r stacked bar chart at Genus level, echo=FALSE, fig.height=12, fig.width=18, message=FALSE, warning=FALSE}
 level = "Genus"
@@ -296,7 +290,7 @@ ggsave("stacked_bar_genus_by_treatment.png", plot = by_treatment, path=outdir)
 
 ```
 
-### Relative Abundance of Top 10 Species
+### 1.3 Relative Abundance of Top 10 Species
 
 ```{r stacked bar chart at Species level, echo=FALSE, fig.height=12, fig.width=18, message=FALSE, warning=FALSE}
 level = "Species"
@@ -385,7 +379,7 @@ ggsave("stacked_bar_species_by_treatment.png", plot=by_treatment, path=outdir)
 
 ```
 
-## Phylogentic Trees
+## 2. Phylogentic Trees
 
 ```{r phylo-tree", echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -397,7 +391,7 @@ include_graphics(tree_filenames)
 
 ```
 
-## Species Abundance Heatmap
+## 3. Species Abundance Heatmap
 
 ```{r heatmap at the Genus level annotatted with item of interest, echo=FALSE, fig.height=10, fig.width=14, message=FALSE, warning=FALSE}
 devtools::source_gist("8d0ca4206a66be7ff6d76fc4ab8e66c6")
@@ -440,7 +434,7 @@ depth = read.csv("sampling_depth.csv", sep=",")
 depth %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
 ```
 
-## Alpha Diversity Table
+## 4. Alpha Diversity Table
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 obs <- read.table("obs/metadata.tsv", header = TRUE)
@@ -461,9 +455,9 @@ alpha_summary <- Reduce(function(...) merge(..., by='id', all.x=TRUE), list(obs,
 alpha_summary
 ```
 
-## Alpha Diversity Plot 
+## 5. Alpha Diversity Plot 
 
-### Observed Features 
+### 5.1 Observed Features 
 
 ```{r alpha diversity plot of obs, echo=FALSE, message=FALSE, warning=FALSE}
 #subsets and plots observed features in a boxplot format
@@ -515,7 +509,7 @@ p
 
 ```
 
-### Shannon
+### 5.2 Shannon
 
 ```{r alpha diversity plot of shannon diversity, echo=FALSE, message=FALSE, warning=FALSE}
 shannon_vals <- read.table("./shannon/metadata.tsv",sep = '\t', header = TRUE)
@@ -558,7 +552,7 @@ p <- p + stat_pvalue_manual(dunn_table, label = "p.adj.signif",hide.ns = TRUE)
 p
 ```
 
-### Simpson
+### 5.3 Simpson
 
 ```{r alpha diversity plot of simpson diversity, echo=FALSE, message=FALSE, warning=FALSE}
 simpson_vals <- read.table("./simpson/metadata.tsv",sep = '\t', header = TRUE)
@@ -601,7 +595,7 @@ p <- p+ stat_pvalue_manual(dunn_table, label = "p.adj.signif", hide.ns = TRUE)
 p
 ```
 
-### Chao 1
+### 5.4 Chao 1
 
 ```{r alpha diversity plot of Chao 1 diversity, echo=FALSE, message=FALSE, warning=FALSE}
 chao1_vals <- read.table("./chao1/metadata.tsv",sep = '\t', header = TRUE)
@@ -645,7 +639,7 @@ p
 ```
 
 
-### ACE
+### 5.5 ACE
 
 ```{r alpha diversity plot of ACE diversity, echo=FALSE, message=FALSE, warning=FALSE}
 ace_vals <- read.table("./ace/metadata.tsv",sep = '\t', header = TRUE)
@@ -688,7 +682,7 @@ p <- p+ stat_pvalue_manual(dunn_table, label = "p.adj.signif", hide.ns = TRUE)
 p
 ```
 
-### Phylogenetic Distance Over The whole Tree
+### 5.6 Phylogenetic Distance Over The whole Tree
 
 ```{r alpha diversity plot of PD_whole_tree, echo=FALSE, message=FALSE, warning=FALSE}
 faith_pd_vals <- read.table("./faith_pd/metadata.tsv",sep = '\t', header = TRUE)
@@ -731,9 +725,9 @@ p <- p+stat_pvalue_manual(dunn_table, label="p.adj.signif", hide.ns = TRUE)
 p
 ```
 
-## Beta diversity 
+## 6 Beta diversity 
 
-### Bray curtis ordination
+### 6.1 Bray curtis ordination
 
 ```{r beta diversity plot of bray curtis measurement, echo=FALSE, message=FALSE, warning=FALSE}
 library(qiime2R)
@@ -771,7 +765,7 @@ ggsave("bray_curtis_pcoa_ordination_no_polygon.png", plot=bray_curtis_no_poly, p
 
 ```
 
-### Jaccard ordination
+### 6.2 Jaccard ordination
 
 ```{r pcoa using Jaccard distance, echo=FALSE, message=FALSE, warning=FALSE}
 metadata<-read_q2metadata("metadata.tsv")
@@ -812,7 +806,7 @@ ggsave("jaccard_pcoa_ordination_no_polygons.png", plot=jaccard_pcoa_no_polygon, 
 
 ```
 
-### Unweighted unifrac ordination
+### 6.3 Unweighted unifrac ordination
 
 ```{r unweighted unifrac pcoa ordination, echo=FALSE, message=FALSE, warning=FALSE}
 metadata<-read_q2metadata("metadata.tsv")
@@ -852,7 +846,7 @@ ggsave("unweighted_unifrac_pcoa_ordination_no_polygons.png", plot=unweight_unifr
 
 ```
 
-### Weighted unifrac ordination
+### 6.4 Weighted unifrac ordination
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 metadata<-read_q2metadata("metadata.tsv")
@@ -898,7 +892,7 @@ weighted_unifrac_pcoa_no_polygon
 ggsave("weighted_unifrac_pcoa_ordination_no_polygons.png", plot=weighted_unifrac_pcoa_no_polygon, path=outdir)
 ```
 
-### Principal Components Analysis
+### 6.5 Principal Components Analysis
 
 ```{r PCA created by ampvis2, echo=FALSE, message=FALSE, warning=FALSE}
 devtools::source_gist("8d0ca4206a66be7ff6d76fc4ab8e66c6")
@@ -916,7 +910,7 @@ euclidean
 ggsave("PCA_euclidain_ordination_whith_boundries.png", plot=euclidean , path=outdir)
 ```
 
-## Rarefaction Curves
+## 7 Rarefaction Curves
 
 ```{r rarefaction curves, echo=FALSE, fig.height=10, fig.width=16, message=FALSE, warning=FALSE}
 
@@ -1271,7 +1265,7 @@ rarefy_curve_by_treatment
 ggsave("rarefaction_curve_by_treatment.png", plot=rarefy_curve_by_treatment, path=outdir)
 ```
 
-## Ranked Abundance Curves
+## 8 Ranked Abundance Curves
 
 ```{r, echo=FALSE, fig.height=10, fig.width=16, message=FALSE, warning=FALSE}
 library(ampvis2)
@@ -1296,7 +1290,7 @@ ggsave("rank_abundance_curve_by_treatment.png", plot=by_group, path=outdir)
 
 ```
 
-## Unifrac Heatmap 
+## 9 Unifrac Heatmap 
 
 ```{r echo=FALSE,fig.height=8, fig.width=14, message=FALSE, warning=FALSE}
 metadata<-read_q2metadata("metadata.tsv")
@@ -1319,9 +1313,9 @@ weight_heatmap
 ggsave("beta_div_heatmap_Weighted_unifrac.png", plot=weight_heatmap, path=outdir)
 ```
 
-## Beta Diversity Between Groups
+## 10 Beta Diversity Between Groups
 
-### Weighted boxplots
+### 10.1 Weighted boxplots
 
 ```{r generated Weighted boxplots, echo=FALSE, message=FALSE, warning=FALSE}
 weighted_measurements <- read.csv("weighted-sig/raw_data.tsv", sep="\t")
@@ -1339,7 +1333,7 @@ for(frame in split_weighted_measure){
 }
 ```
 
-### Unweighted boxplots
+### 10.2 Unweighted boxplots
 
 ```{r generated Unweighted boxplots, echo=FALSE, message=FALSE, warning=FALSE}
 unweighted_measurements <- read.csv("unweighted-sig/raw_data.tsv", sep="\t")
@@ -1359,7 +1353,7 @@ for(frame in split_data_frames){
 ```
 
 
-## UPGMA Plot for Weighted Unifrac Distance
+## 10.3 UPGMA Plot for Weighted Unifrac Distance
 
 ```{r UPGMA Plot of Weighted Unifrac Distance, echo=FALSE, fig.height=8, fig.width=10, message=FALSE, warning=FALSE}
 
@@ -1449,7 +1443,7 @@ weight_plot
 ggsave("UPGMA_weighted_unifrac_plot.png", plot=weight_plot, path=outdir)
 ```
 
-## UPGMA Plot for Unweighted Unifrac Distance
+## 10.4 UPGMA Plot for Unweighted Unifrac Distance
 
 ```{r UPGMA Plot of Unweighted Unifrac Distances, echo=FALSE, fig.height=8, fig.width=10, message=FALSE, warning=FALSE}
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
@@ -1539,7 +1533,7 @@ ggsave("UPGMA_unweighted_unifrac_plot.png", plot=unweight_plot, path=outdir)
 
 ```
 
-## PERMANOVA Weighted Unifrac
+## 10.5 PERMANOVA Weighted Unifrac
 
 ```{r Methods to do pairwise PERMANOVA comparisons, echo=FALSE, message=FALSE, warning=FALSE}
 pairwise_permanova <- function(dat, column_of_int, dissim){
@@ -1633,7 +1627,7 @@ kable(test) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-## PERMANOVA Unweighted Unifrac 
+## 10.6 PERMANOVA Unweighted Unifrac 
 
 ```{r Permanova results Weighted Unifrac from qiime, echo=FALSE, message=FALSE, warning=FALSE}
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
@@ -1649,7 +1643,7 @@ kable(test) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-## PERMANOVA Bray Curtis
+## 10.7 PERMANOVA Bray Curtis
 
 ```{r Bray Curtis PERMANOVA, echo=FALSE, message=FALSE, warning=FALSE}
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
@@ -1664,7 +1658,7 @@ kable(bray_pairwise) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-## PERMANOVA Jaccard 
+## 10.8 PERMANOVA Jaccard 
 
 ```{r Jaccard PERMANOVA, echo=FALSE, message=FALSE, warning=FALSE}
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
@@ -1680,7 +1674,7 @@ kable(jaccard_pairwise) %>%
 
 ```
 
-## ANOSIM
+## 10.8 ANOSIM
 
 ```{r Method to do pairwise anosim comparisons, echo=FALSE, message=FALSE, warning=FALSE}
 pairwise_anosim <- function(dat, column_of_int, dissim){
@@ -1827,7 +1821,7 @@ ggsave("ANOSIM_jaccard_boxplot_no_bracket.png", plot=jaccard_plot_no_brac, path 
 
 ```
 
-## Multi-response permutaiton procedure (MRPP)
+## 10.9 Multi-response permutaiton procedure (MRPP)
 
 ```{r Methods to do pairwise MRPP comparisons, echo=FALSE, message=FALSE, warning=FALSE}
 pairwise_MRPP <- function(dat, column_of_int, dissim){
@@ -1933,7 +1927,7 @@ kable(jaccard_res) %>%
 
 ```
 
-## AMOVA
+## 10.10 AMOVA
 
 ```{r Methods to do pairwise AMOVA comparisons, echo=FALSE, message=FALSE, warning=FALSE}
 pairwise_AMOVA <- function(dat, column_of_int, dissim){
@@ -2041,7 +2035,7 @@ kable(jaccard_amova_pairwise) %>%
 
 ```
 
-## Lefse
+## 11 Lefse
 
 ```{r Lefse analysis Results, echo=FALSE, message=FALSE, warning=FALSE, fig.height=25, fig.width=10}
 lefse_res_filenames <- list.files(pattern="*_res.png")
