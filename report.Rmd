@@ -1565,7 +1565,7 @@ pairwise_permanova <- function(dat, column_of_int, dissim){
   tmp_2 <- data.frame(p_res)
   #colnames(tmp_2)<- c("group1","group2", "statistic", "permutations", "p")
   result <- adjust_pvalue(tmp_2, p.col = "p", output.col = "p.adj",method = "BH")
-  result <- add_significance(result, p.col="p.adj",output.col = "p.signif",symbols =c("****", "***", "**", " *", "ns"))
+  result <- add_significance(result, p.col="p.adj",output.col = "p.signif",symbols =c("****", "***", "**", "$*$", "ns"))
   res_df <- data.frame(result)
   res_df <- res_df[mixedorder(res_df$group1),]
   return(res_df)
@@ -1607,7 +1607,7 @@ pairwise_permanova_uni <- function(dat, column_of_int, weight){
   tmp_2 <- data.frame(p_res)
   #colnames(tmp_2)<- c("group1","group2", "statistic", "permutations", "p")
   result <- adjust_pvalue(tmp_2, p.col = "p", output.col = "p.adj",method = "BH")
-  result <- add_significance(result, p.col="p.adj",output.col = "p.signif",symbols =c("****", "***", "**", " *", "ns"))
+  result <- add_significance(result, p.col="p.adj",output.col = "p.signif",symbols =c("****", "***", "**", "$*$", "ns"))
   res_df <- data.frame(result)
   res_df <- res_df[mixedorder(res_df$group1),]
   return(res_df)
@@ -1701,7 +1701,7 @@ pairwise_anosim <- function(dat, column_of_int, dissim){
   tmp_2 <- data.frame(p_res)
   colnames(tmp_2)<- c("group1", "group2", "statistic", "permutations", "dissimilarity", "p.val")
   result <- adjust_pvalue(tmp_2, p.col = "p.val", output.col = "p.adjust",method = "BH")
-  result <- add_significance(result, p.col = "p.adjust", output.col = "p.signif",symbols =c("****", "***", "**", " *", "ns"))
+  result <- add_significance(result, p.col = "p.adjust", output.col = "p.signif",symbols =c("****", "***", "**", "$*$", "ns"))
   res_df <- data.frame(result)
   res_df <- res_df[mixedorder(res_df$group1),]
   return(res_df)
@@ -1730,7 +1730,7 @@ pairwise_anosim_uni <- function(dat, column_of_int, weight){
   tmp_2 <- data.frame(p_res)
   colnames(tmp_2)<- c("group1","group2", "statistic", "permutations", "p")
   result <- adjust_pvalue(tmp_2, p.col = "p", output.col = "p.adj",method = "BH")
-  result <- add_significance(result, p.col="p.adj",output.col = "p.signif",symbols =c("****", "***", "**", " *", "ns"))
+  result <- add_significance(result, p.col="p.adj",output.col = "p.signif",symbols =c("****", "***", "**", "$*$", "ns"))
   res_df <- data.frame(result)
   res_df <- res_df[mixedorder(res_df$group1),]
   return(res_df)
@@ -1848,7 +1848,7 @@ pairwise_MRPP <- function(dat, column_of_int, dissim){
   tmp_2 <- data.frame(p_res)
   colnames(tmp_2)<- c("group1", "group2", "delta", "permutations", "dissimilarity", "p.val")
   result <- adjust_pvalue(tmp_2, p.col = "p.val", output.col = "p.adjust",method = "BH")
-  result <- add_significance(result, p.col = "p.adjust", output.col = "p.signif",symbols =c("****", "***", "**", " *", "ns"))
+  result <- add_significance(result, p.col = "p.adjust", output.col = "p.signif",symbols =c("****", "***", "**", "$*$", "ns"))
   res_df <- data.frame(result)
   res_df <- res_df[mixedorder(res_df$group1),]
   return(res_df)
@@ -1877,7 +1877,7 @@ pairwise_MRPP_uni <- function(dat, column_of_int, weight){
   tmp_2 <- data.frame(p_res)
   colnames(tmp_2)<- c("group1","group2", "delta", "permutations", "p")
   result <- adjust_pvalue(tmp_2, p.col = "p", output.col = "p.adj",method = "BH")
-  result <- add_significance(result, p.col="p.adj",output.col = "p.signif",symbols =c("****", "***", "**", " *", "ns"))
+  result <- add_significance(result, p.col="p.adj",output.col = "p.signif",symbols =c("****", "***", "**", "$*$", "ns"))
   res_df <- data.frame(result)
   res_df <- res_df[mixedorder(res_df$group1),]
   return(res_df)
@@ -1954,7 +1954,7 @@ pairwise_AMOVA <- function(dat, column_of_int, dissim){
   tmp_2 <- data.frame(p_res)
   colnames(tmp_2)<- c("group1", "group2", "MSD","distance", "p.val")
   result <- adjust_pvalue(tmp_2, p.col = "p.val", output.col = "p.adjust",method = "BH")
-  result <- add_significance(result, p.col = "p.adjust", output.col = "p.signif",symbols =c("****", "***", "**", " *", "ns"))
+  result <- add_significance(result, p.col = "p.adjust", output.col = "p.signif",symbols =c("****", "***", "**", "$*$", "ns"))
   res_df <- data.frame(result)
   res_df <- res_df[mixedorder(res_df$group1),]
   return(res_df)
@@ -1983,7 +1983,7 @@ pairwise_AMOVA_uni <- function(dat, column_of_int, weight){
   tmp_2 <- data.frame(p_res)
   colnames(tmp_2)<- c("group1", "group2", "MSD","weighted", "p.val")
   result <- adjust_pvalue(tmp_2, p.col = "p.val", output.col = "p.adj",method = "BH")
-  result <- add_significance(result, p.col="p.adj",output.col = "p.signif",symbols =c("****", "***", "**", " *", "ns"))
+  result <- add_significance(result, p.col="p.adj",output.col = "p.signif",symbols =c("****", "***", "**", "$*$", "ns"))
   res_df <- data.frame(result)
   res_df <- res_df[mixedorder(res_df$group1),]
   return(res_df)
