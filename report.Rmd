@@ -2049,3 +2049,20 @@ include_graphics(lefse_filenames)
 
 ```
 
+## 12 References
+
+[1] Bolyen, E., Rideout, J.R., Dillon, M.R. et al. Reproducible, interactive, scalable and extensible \\ microbiome data science using QIIME 2. Nat Biotechnol 37, 852–857 (2019). https://doi.org/10.1038/s41587-019-0209-9
+
+[1] qiime2R: Importing QIIME2 artifacts and associated data into R \\ sessions. Jordan E Bisanz (2018) https://github.com/jbisanz/qiime2R.
+
+[1] phyloseq: An R package for reproducible interactive analysis and \\ graphics of microbiome census data. Paul J. McMurdie and Susan Holmes \\ (2013) PLoS ONE 8(4):e61217. 
+
+[1] H. Wickham. ggplot2: Elegant Graphics for Data Analysis. \\ Springer-Verlag New York, 2016.
+
+[2] export2graphlan.py (ver. 0.2.1 of 27 October 2018). Convert MetaPhlAn, LEfSe,\\ and/or HUMAnN output to GraPhlAn input format. Authors: Francesco Asnicar 
+(f.asnicar@unitn.it)
+
+[2] Asnicar F, Weingart G, Tickle TL, Huttenhower C, Segata N. 2015. Compact graphical \\ representation of phylogenetic data and metadata with GraPhlAn. PeerJ 3:e1029 \\ https://doi.org/10.7717/peerj.1029
+
+
+
