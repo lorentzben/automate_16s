@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# This is a modified version of the plot_res.py script included in the lefse program 10.1186/gb-2011-12-6-r60 
+# The modification was adding a lambda call to sort classes correctly when classes are numeric as opposed to chars. 
+
 import os,sys
 import matplotlib
 matplotlib.use('Agg')

@@ -1,4 +1,7 @@
-#!/home/bjl34716/.conda/envs/python2/bin/python
+#!/usr/bin/env python
+
+# This is a modified version of the plot_cladogram.py script included in the lefse program 10.1186/gb-2011-12-6-r60 
+# The modification was changing axisbg to facecolor. axisbg was depricated in matplotlib.
 
 import os,sys,matplotlib,argparse,string
 matplotlib.use('Agg')
