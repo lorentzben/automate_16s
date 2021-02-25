@@ -1352,8 +1352,8 @@ for(frame in split_data_frames){
 }
 ```
 
-
-## 10.3 UPGMA Plot for Weighted Unifrac Distance
+## 11 UPGMA Plots
+### 11.1 UPGMA Plot for Weighted Unifrac Distance
 
 ```{r UPGMA Plot of Weighted Unifrac Distance, echo=FALSE, fig.height=8, fig.width=10, message=FALSE, warning=FALSE}
 
@@ -1443,7 +1443,7 @@ weight_plot
 ggsave("UPGMA_weighted_unifrac_plot.png", plot=weight_plot, path=outdir)
 ```
 
-## 10.4 UPGMA Plot for Unweighted Unifrac Distance
+## 11.2 UPGMA Plot for Unweighted Unifrac Distance
 
 ```{r UPGMA Plot of Unweighted Unifrac Distances, echo=FALSE, fig.height=8, fig.width=10, message=FALSE, warning=FALSE}
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
@@ -1533,7 +1533,9 @@ ggsave("UPGMA_unweighted_unifrac_plot.png", plot=unweight_plot, path=outdir)
 
 ```
 
-## 10.5 PERMANOVA Weighted Unifrac
+## 12 Beta Diversity Statistics
+
+## 12.1 PERMANOVA Weighted Unifrac
 
 ```{r Methods to do pairwise PERMANOVA comparisons, echo=FALSE, message=FALSE, warning=FALSE}
 pairwise_permanova <- function(dat, column_of_int, dissim){
@@ -1627,7 +1629,7 @@ kable(test) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-## 10.6 PERMANOVA Unweighted Unifrac 
+## 12.2 PERMANOVA Unweighted Unifrac 
 
 ```{r Permanova results Weighted Unifrac from qiime, echo=FALSE, message=FALSE, warning=FALSE}
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
@@ -1643,7 +1645,7 @@ kable(test) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-## 10.7 PERMANOVA Bray Curtis
+## 12.3 PERMANOVA Bray Curtis
 
 ```{r Bray Curtis PERMANOVA, echo=FALSE, message=FALSE, warning=FALSE}
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
@@ -1658,7 +1660,7 @@ kable(bray_pairwise) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-## 10.8 PERMANOVA Jaccard 
+## 12.4 PERMANOVA Jaccard 
 
 ```{r Jaccard PERMANOVA, echo=FALSE, message=FALSE, warning=FALSE}
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
@@ -1674,7 +1676,7 @@ kable(jaccard_pairwise) %>%
 
 ```
 
-## 10.8 ANOSIM
+## 12.5 ANOSIM
 
 ```{r Method to do pairwise anosim comparisons, echo=FALSE, message=FALSE, warning=FALSE}
 pairwise_anosim <- function(dat, column_of_int, dissim){
@@ -1821,7 +1823,7 @@ ggsave("ANOSIM_jaccard_boxplot_no_bracket.png", plot=jaccard_plot_no_brac, path 
 
 ```
 
-## 10.9 Multi-response permutaiton procedure (MRPP)
+## 12.6 Multi-response permutaiton procedure (MRPP)
 
 ```{r Methods to do pairwise MRPP comparisons, echo=FALSE, message=FALSE, warning=FALSE}
 pairwise_MRPP <- function(dat, column_of_int, dissim){
@@ -1927,7 +1929,7 @@ kable(jaccard_res) %>%
 
 ```
 
-## 10.10 AMOVA
+## 12.7 AMOVA
 
 ```{r Methods to do pairwise AMOVA comparisons, echo=FALSE, message=FALSE, warning=FALSE}
 pairwise_AMOVA <- function(dat, column_of_int, dissim){
@@ -2035,7 +2037,7 @@ kable(jaccard_amova_pairwise) %>%
 
 ```
 
-## 11 Lefse
+## 13 Lefse
 
 ```{r Lefse analysis Results, echo=FALSE, message=FALSE, warning=FALSE, fig.height=25, fig.width=10}
 lefse_res_filenames <- list.files(pattern="*_res.png")
@@ -2049,20 +2051,34 @@ include_graphics(lefse_filenames)
 
 ```
 
-## 12 References
+## 14 References
 
-[1] Bolyen, E., Rideout, J.R., Dillon, M.R. et al. Reproducible, interactive, scalable and extensible \\ microbiome data science using QIIME 2. Nat Biotechnol 37, 852–857 (2019). https://doi.org/10.1038/s41587-019-0209-9
+R Core Team (2020). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.URL https://www.R-project.org/.
 
-[1] qiime2R: Importing QIIME2 artifacts and associated data into R \\ sessions. Jordan E Bisanz (2018) https://github.com/jbisanz/qiime2R.
+Yihui Xie (2021). knitr: A General-Purpose Package for Dynamic Report Generation in R. R package version 1.31.
 
-[1] phyloseq: An R package for reproducible interactive analysis and \\ graphics of microbiome census data. Paul J. McMurdie and Susan Holmes \\ (2013) PLoS ONE 8(4):e61217. 
+[1] Bolyen, E., Rideout, J.R., Dillon, M.R. et al. Reproducible, interactive, scalable and extensible microbiome data science using QIIME 2. Nat Biotechnol 37, 852–857 (2019). https://doi.org/10.1038/s41587-019-0209-9
 
-[1] H. Wickham. ggplot2: Elegant Graphics for Data Analysis. \\ Springer-Verlag New York, 2016.
+[1] qiime2R: Importing QIIME2 artifacts and associated data into R sessions. Jordan E Bisanz (2018) https://github.com/jbisanz/qiime2R.
 
-[2] export2graphlan.py (ver. 0.2.1 of 27 October 2018). Convert MetaPhlAn, LEfSe,\\ and/or HUMAnN output to GraPhlAn input format. Authors: Francesco Asnicar 
+[1] phyloseq: An R package for reproducible interactive analysis and graphics of microbiome census data. Paul J. McMurdie and Susan Holmes (2013) PLoS ONE 8(4):e61217. 
+
+[1] H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York, 2016.
+
+[2] export2graphlan.py (ver. 0.2.1 of 27 October 2018). Convert MetaPhlAn, LEfSe, and/or HUMAnN output to GraPhlAn input format. Authors: Francesco Asnicar 
 (f.asnicar@unitn.it)
 
-[2] Asnicar F, Weingart G, Tickle TL, Huttenhower C, Segata N. 2015. Compact graphical \\ representation of phylogenetic data and metadata with GraPhlAn. PeerJ 3:e1029 \\ https://doi.org/10.7717/peerj.1029
+[2] Asnicar F, Weingart G, Tickle TL, Huttenhower C, Segata N. 2015. Compact graphical representation of phylogenetic data and metadata with GraPhlAn. PeerJ 3:e1029 https://doi.org/10.7717/peerj.1029
 
+[3] phyloseq_to_ampvis2.R Andersen K.S. (2019), GitHub gist, https://gist.github.com/KasperSkytte/8d0ca4206a66be7ff6d76fc4ab8e66c6 
 
+[3] ampvis2: an R package to analyse and visualise 16S rRNA amplicon  data. Andersen K.S., Kirkegaard R.H., Karst S.M., Albertsen M. (2018)  bioRxiv. doi: https://doi.org/10.1101/299537
+
+[5] Alboukadel Kassambara (2020). rstatix: Pipe-Friendly Framework for Basic Statistical Tests. R package version 0.6.0. https://CRAN.R-project.org/package=rstatix
+
+[6] Charles A. Martin (2017). ggConvexHull: Add a convex hull geom to ggplot2. R package version 0.1.0. http://github.com/cmartin/ggConvexHull
+
+[9]  Raivo Kolde (2019). pheatmap: Pretty Heatmaps. R package version 1.0.12. https://CRAN.R-project.org/package=pheatmap
+
+[10] Andrie de Vries and Brian D. Ripley (2020). ggdendro: Create Dendrograms and Tree Diagrams Using 'ggplot2'. R package version 0.1.22. https://CRAN.R-project.org/package=ggdendro
 
