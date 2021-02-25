@@ -20,7 +20,7 @@ if(!require(kableExtra)) {install.packages("kableExtra", repos="http://cran.us.r
 if(!require(remotes)){install.packages("remotes")}
 if(!require(ggplot2)) {remotes::install_github("tidyverse/ggplot2@v3.3.2")}
 if(!require(tidyverse)) {install.packages("tidyverse", repos="http://cran.us.r-project.org")}
-if(!require(gplots)) {install.packages("gplots", repos="http://cran.us.r-project.org")}
+
 if (!require("devtools", quietly = TRUE)){install.packages("devtools")}
 if(!require(qiime2R)) {devtools::install_github("jbisanz/qiime2R")} # current version is 0.99.20
 if(!require(phyloseq)) {install.packages("phyloseq",repos="http://cran.us.r-project.org")}
@@ -30,18 +30,17 @@ if(!require(forcats)) {install.packages("forcats",repos="http://cran.us.r-projec
 if(!require(gridExtra)) {install.packages("gridExtra",repos="http://cran.us.r-project.org")}
 if(!requireNamespace("BiocManager")){install.packages("BiocManager")}
 if(!require(microbiome)){BiocManager::install("microbiome")}
-if(!require(NMF)){install.packages("NMF",repos="http://cran.us.r-project.org")}
+
 if(!require(pheatmap)){install.packages("pheatmap",repos="http://cran.us.r-project.org")}
 if(!require(rstatix)){installl.packages("rstatix",repos="http://cran.us.r-project.org")}
 # if(!require(knitr)){install.packages("knitr")}
 if(!require(tidyverse)){install.packages("tidyverse",repos="http://cran.us.r-project.org")}
-if(!require(reshape2)){install.packages("reshape2",repos="http://cran.us.r-project.org")}
 if(!require(ampvis2)){remotes::install_github("MadsAlbertsen/ampvis2")}
 if(!require(devtools)) {install.packages("devtools",repos="http://cran.us.r-project.org")}
 if(!require(ggdendro)){install.packages("ggendro",repos="http://cran.us.r-project.org")}
 if(!require(vegan)){install.packages("vegan",repos="http://cran.us.r-project.org")}
 if(!require(pegas)){install.packages("pegas",repos="http://cran.us.r-project.org")}
-if(!require(microbiomeMarker)){remotes::install_github("yiluheihei/microbiomeMarker")}
+
 if(!require(ggvegan)){remotes::install_github("gavinsimpson/ggvegan")}
 if(!require(ggpubr)){install.packages("ggpubr")}
 if(!require(dplyr)){install.packages("dplyr")}
@@ -57,7 +56,7 @@ library(reshape2)
 library(forcats)
 library(gridExtra)
 #library(microbiome)
-library(NMF)
+
 library(pheatmap)
 library(rstatix)
 library(knitr)
@@ -68,7 +67,7 @@ library(ggdendro)
 library(vegan)
 library(pegas)
 library(ggvegan)
-library(microbiomeMarker)
+
 library(ggpubr)
 library(dplyr)
 library(jamba)
@@ -2094,6 +2093,9 @@ Yihui Xie (2021). knitr: A General-Purpose Package for Dynamic Report Generation
 
 [1] phyloseq: An R package for reproducible interactive analysis and graphics of microbiome census data. Paul J. McMurdie and Susan Holmes (2013) PLoS ONE 8(4):e61217. 
 
+[1] Hadley Wickham (2021). forcats: Tools for Working with Categorical Variables (Factors). R package version 0.5.1.
+https://CRAN.R-project.org/package=forcats
+
 [1] H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York, 2016.
 
 [2] export2graphlan.py (ver. 0.2.1 of 27 October 2018). Convert MetaPhlAn, LEfSe, and/or HUMAnN output to GraPhlAn input format. Authors: Francesco Asnicar 
@@ -2107,14 +2109,20 @@ Yihui Xie (2021). knitr: A General-Purpose Package for Dynamic Report Generation
 
 [5] Alboukadel Kassambara (2020). rstatix: Pipe-Friendly Framework for Basic Statistical Tests. R package version 0.6.0. https://CRAN.R-project.org/package=rstatix
 
+[5] Alboukadel Kassambara (2020). ggpubr: 'ggplot2' Based Publication Ready Plots. R package version 0.4.0.  https://CRAN.R-project.org/package=ggpubr
+
 [6] Charles A. Martin (2017). ggConvexHull: Add a convex hull geom to ggplot2. R package version 0.1.0. http://github.com/cmartin/ggConvexHull
 
 [6] Legendre, P. and Gallagher, E.D. (2001). Ecologically meaningful transformations for ordination of
 species data. Oecologia 129, 271-280.
 
+[7] Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software, 21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/
+
 [9]  Raivo Kolde (2019). pheatmap: Pretty Heatmaps. R package version 1.0.12. https://CRAN.R-project.org/package=pheatmap
 
 [11] Andrie de Vries and Brian D. Ripley (2020). ggdendro: Create Dendrograms and Tree Diagrams Using 'ggplot2'. R package version 0.1.22. https://CRAN.R-project.org/package=ggdendro
+
+[11] Sarkar, Deepayan (2008) Lattice: Multivariate Data Visualization with R. Springer, New York. ISBN 978-0-387-75968-5
 
 [12] Jari Oksanen, F. Guillaume Blanchet, Michael Friendly, Roeland Kindt, Pierre Legendre, Dan McGlinn, Peter R. Minchin, R. B. O'Hara, Gavin L. Simpson, Peter Solymos, M. Henry H. Stevens, Eduard Szoecs and Helene Wagner (2020). vegan: Community Ecology Package. R package version 2.5-7. https://CRAN.R-project.org/package=vegan
 
