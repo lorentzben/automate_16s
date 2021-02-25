@@ -460,7 +460,7 @@ kable(alpha_summary) %>%
 
 ### 5.1 Observed Features 
 
-```{r alpha diversity plot of obs, echo=FALSE, message=FALSE, warning=FALSE}
+```{r alpha diversity plot of obs, results = "asis", echo=FALSE, message=FALSE, warning=FALSE}
 #subsets and plots observed features in a boxplot format
 ioi <- read.csv("item_of_interest.csv")
 ioi<-as.character(ioi)
@@ -485,7 +485,7 @@ ggsave("obs_violin_plot.png", plot=p, path=outdir)
 ```
 
 
-```{r Kruskal-Wallace test for signifiance observed feat, echo=FALSE, message=FALSE, warning=FALSE}
+```{r Kruskal-Wallace test for signifiance observed feat,results = "asis", echo=FALSE, message=FALSE, warning=FALSE}
 library("ggpubr")
 obs <- read.table("obs/metadata.tsv", header = TRUE)
 obs_stat <- data.frame(obs[c('id',ioi,'observed_otus')])
@@ -538,7 +538,7 @@ p
 ggsave("shannon_violin_plot.png", plot=p, path=outdir)
 ```
 
-```{r Kuskal-Wallace test for significance shannon, echo=FALSE, message=FALSE, warning=FALSE}
+```{r Kuskal-Wallace test for significance shannon,results = "asis", echo=FALSE, message=FALSE, warning=FALSE}
 shannon <- read.table("shannon/metadata.tsv", header = TRUE, sep='\t')
 shannon_stat <- data.frame(shannon[c('id',ioi,'shannon')])
 
@@ -587,7 +587,7 @@ p
 ggsave("simpson_violin_plot.png", plot=p, path=outdir)
 ```
 
-```{r Kuskal-Wallace test for significance simpson, echo=FALSE, message=FALSE, warning=FALSE}
+```{r Kuskal-Wallace test for significance simpson,results = "asis", echo=FALSE, message=FALSE, warning=FALSE}
 simpson <- read.table("simpson/metadata.tsv", header = TRUE, sep='\t')
 simpson_stat <- data.frame(simpson[c('id',ioi,'simpson')])
 
@@ -636,7 +636,7 @@ p
 ggsave("chao1_violin_plot.png", plot=p, path=outdir)
 ```
 
-```{r Kuskal-Wallace test for significance chao1, echo=FALSE, message=FALSE, warning=FALSE}
+```{r Kuskal-Wallace test for significance chao1,results = "asis", echo=FALSE, message=FALSE, warning=FALSE}
 chao1 <- read.table("chao1/metadata.tsv", header = TRUE, sep='\t')
 chao1_stat <- data.frame(chao1[c('id',ioi,'chao1')])
 
@@ -686,7 +686,7 @@ p
 ggsave("ace_violin_plot.png", plot=p, path=outdir)
 ```
 
-```{r Kuskal-Wallace test for significance ace, echo=FALSE, message=FALSE, warning=FALSE}
+```{r Kuskal-Wallace test for significance ace,results = "asis", echo=FALSE, message=FALSE, warning=FALSE}
 ace <- read.table("ace/metadata.tsv", header = TRUE, sep='\t')
 ace_stat <- data.frame(ace[c('id',ioi,'ace')])
 
@@ -735,7 +735,7 @@ p
 ggsave("faith_pd_violin_plot.png", plot=p, path=outdir)
 ```
 
-```{r Kuskal-Wallace test for significance faith pd, echo=FALSE, message=FALSE, warning=FALSE}
+```{r Kuskal-Wallace test for significance faith pd,results = "asis", echo=FALSE, message=FALSE, warning=FALSE}
 faith_pd <- read.table("faith_pd/metadata.tsv", header = TRUE, sep='\t')
 faith_pd_stat <- data.frame(faith_pd[c('id',ioi,'faith_pd')])
 
