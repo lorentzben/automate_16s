@@ -860,10 +860,6 @@ weighted_unifrac_pcoa <- jaccard$data$Vectors %>%
   left_join(metadata) %>%
   left_join(shannon)
 
-weighted_unifrac_pcoa <- jaccard$data$Vectors %>%
-  select(SampleID, PC1, PC2)
-
-weighted_unifrac_pcoa
 
 weighted_unifrac_pcoa <- jaccard$data$Vectors %>%
   select(SampleID, PC1, PC2) %>%
@@ -1443,7 +1439,7 @@ weight_plot
 ggsave("UPGMA_weighted_unifrac_plot.png", plot=weight_plot, path=outdir)
 ```
 
-## 11.2 UPGMA Plot for Unweighted Unifrac Distance
+### 11.2 UPGMA Plot for Unweighted Unifrac Distance
 
 ```{r UPGMA Plot of Unweighted Unifrac Distances, echo=FALSE, fig.height=8, fig.width=10, message=FALSE, warning=FALSE}
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
@@ -1535,7 +1531,7 @@ ggsave("UPGMA_unweighted_unifrac_plot.png", plot=unweight_plot, path=outdir)
 
 ## 12 Beta Diversity Statistics
 
-## 12.1 PERMANOVA Weighted Unifrac
+### 12.1 PERMANOVA Weighted Unifrac
 
 ```{r Methods to do pairwise PERMANOVA comparisons, echo=FALSE, message=FALSE, warning=FALSE}
 pairwise_permanova <- function(dat, column_of_int, dissim){
@@ -1629,7 +1625,7 @@ kable(test) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-## 12.2 PERMANOVA Unweighted Unifrac 
+### 12.2 PERMANOVA Unweighted Unifrac 
 
 ```{r Permanova results Weighted Unifrac from qiime, echo=FALSE, message=FALSE, warning=FALSE}
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
@@ -1645,7 +1641,7 @@ kable(test) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-## 12.3 PERMANOVA Bray Curtis
+### 12.3 PERMANOVA Bray Curtis
 
 ```{r Bray Curtis PERMANOVA, echo=FALSE, message=FALSE, warning=FALSE}
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
@@ -1660,7 +1656,7 @@ kable(bray_pairwise) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-## 12.4 PERMANOVA Jaccard 
+### 12.4 PERMANOVA Jaccard 
 
 ```{r Jaccard PERMANOVA, echo=FALSE, message=FALSE, warning=FALSE}
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
@@ -1676,7 +1672,7 @@ kable(jaccard_pairwise) %>%
 
 ```
 
-## 12.5 ANOSIM
+### 12.5 ANOSIM
 
 ```{r Method to do pairwise anosim comparisons, echo=FALSE, message=FALSE, warning=FALSE}
 pairwise_anosim <- function(dat, column_of_int, dissim){
@@ -1823,7 +1819,7 @@ ggsave("ANOSIM_jaccard_boxplot_no_bracket.png", plot=jaccard_plot_no_brac, path 
 
 ```
 
-## 12.6 Multi-response permutaiton procedure (MRPP)
+### 12.6 Multi-response permutaiton procedure (MRPP)
 
 ```{r Methods to do pairwise MRPP comparisons, echo=FALSE, message=FALSE, warning=FALSE}
 pairwise_MRPP <- function(dat, column_of_int, dissim){
@@ -1929,7 +1925,7 @@ kable(jaccard_res) %>%
 
 ```
 
-## 12.7 AMOVA
+### 12.7 AMOVA
 
 ```{r Methods to do pairwise AMOVA comparisons, echo=FALSE, message=FALSE, warning=FALSE}
 pairwise_AMOVA <- function(dat, column_of_int, dissim){
@@ -1989,8 +1985,6 @@ pairwise_AMOVA_uni <- function(dat, column_of_int, weight){
 
 
 ```{r AMOVA testing, echo=FALSE, message=FALSE, warning=FALSE}
-#library(poppr)
-
 cycle_1 <- qza_to_phyloseq("table-dada2.qza","rooted-tree.qza","taxonomy.qza","metadata.tsv")
 sample_data(cycle_1)[[ioi]] <- reorder(as.factor(sample_data(cycle_1)[[ioi]]))
 
@@ -2080,5 +2074,23 @@ Yihui Xie (2021). knitr: A General-Purpose Package for Dynamic Report Generation
 
 [9]  Raivo Kolde (2019). pheatmap: Pretty Heatmaps. R package version 1.0.12. https://CRAN.R-project.org/package=pheatmap
 
-[10] Andrie de Vries and Brian D. Ripley (2020). ggdendro: Create Dendrograms and Tree Diagrams Using 'ggplot2'. R package version 0.1.22. https://CRAN.R-project.org/package=ggdendro
+[11] Andrie de Vries and Brian D. Ripley (2020). ggdendro: Create Dendrograms and Tree Diagrams Using 'ggplot2'. R package version 0.1.22. https://CRAN.R-project.org/package=ggdendro
+
+[12] Jari Oksanen, F. Guillaume Blanchet, Michael Friendly, Roeland Kindt, Pierre Legendre, Dan McGlinn, Peter R. Minchin, R. B. O'Hara, Gavin L. Simpson, Peter Solymos, M. Henry H. Stevens, Eduard Szoecs and Helene Wagner (2020). vegan: Community Ecology Package. R package version 2.5-7. https://CRAN.R-project.org/package=vegan
+
+[12] Kirill Müller and Hadley Wickham (2021). tibble: Simple Data Frames. R package version 3.0.6. https://CRAN.R-project.org/package=tibble
+
+[12] Gregory R. Warnes, Ben Bolker and Thomas Lumley (2020). gtools: Various R Programming Tools. R package version 3.8.2. https://CRAN.R-project.org/package=gtools
+
+[12] James M. Ward (2021). jamba: Jam Base Methods. R package version 0.0.61.900. http://github.com/jmw86069/jamba
+
+[12] Hao Zhu (2020). kableExtra: Construct Complex Table with 'kable' and Pipe Syntax. R package version 1.3.1. https://CRAN.R-project.org/package=kableExtra
+
+[12] Paradis E. 2010. pegas: an R package for population genetics with an integrated-modular approach. Bioinformatics 26: 419-420.
+
+[13] Segata N, Izard J, Waldron L, Gevers D, Miropolsky L, Garrett WS, Huttenhower C. Metagenomic biomarker discovery and explanation. Genome Biol. 2011 Jun 24;12(6):R60. doi: 10.1186/gb-2011-12-6-r60. PMID: 21702898; PMCID: PMC3218848.
+
+[13] Hadley Wickham, Romain François, Lionel Henry and Kirill Müller (2021). dplyr: A Grammar of Data Manipulation. R package version 1.0.4. https://CRAN.R-project.org/package=dplyr
+
+
 
