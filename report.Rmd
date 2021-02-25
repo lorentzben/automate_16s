@@ -452,7 +452,8 @@ ace <- data.frame(ace[c("id","ace")])
 faith_pd <- data.frame(faith_pd[c("id","faith_pd")])
 
 alpha_summary <- Reduce(function(...) merge(..., by='id', all.x=TRUE), list(obs,shannon,simpson,chao1,ace,faith_pd))
-alpha_summary
+kable(alpha_summary) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
 ## 5 Alpha Diversity Plot 
@@ -492,12 +493,17 @@ obs_stat <- data.frame(obs[c('id',ioi,'observed_otus')])
 
 form <- as.formula(paste0("observed_otus ~ ", ioi))
 kruskal_table <- rstatix::kruskal_test(data = obs_stat, formula = form)
-kruskal_table
+kruskal_table <- add_significance(kruskal_table, p.col="p",output.col = "p.signif",symbols =c("****", "***", "**", "$*$", "ns"))
+
+kable(kruskal_table) %>% 
+  kable_styling(bootstrap_options = c("hover", "condensed", "responsive"))
 
 form = as.formula(paste0("observed_otus ~", ioi))
 
 dunn_table <- rstatix::dunn_test(data = obs_stat, formula = form, p.adjust.method = "holm") %>% add_xy_position()
-dunn_table
+dunn_table<- add_significance(dunn_table, p.col="p.adj",output.col = "p.adj.signif",symbols =c("****", "***", "**", "$*$", "ns"))
+kable(dunn_table) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 p <- ggplot(obs_vals, aes(x=obs_vals[[ioi]], y=observed_otus)) + geom_violin()+ geom_boxplot(width=0.1)
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
@@ -537,12 +543,16 @@ shannon_stat <- data.frame(shannon[c('id',ioi,'shannon')])
 
 form <- as.formula(paste0("shannon ~ ", ioi))
 kruskal_table <- rstatix::kruskal_test(data = shannon_stat, formula =form)
-kruskal_table
+kruskal_table <- add_significance(kruskal_table, p.col="p",output.col = "p.signif",symbols =c("****", "***", "**", "$*$", "ns"))
+kable(kruskal_table) %>% 
+  kable_styling(bootstrap_options = c("hover", "condensed", "responsive"))
 
 form = as.formula(paste0("shannon ~", ioi))
 
 dunn_table <- rstatix::dunn_test(data = shannon_stat, formula = form, p.adjust.method = "holm") %>% add_xy_position()
-dunn_table
+dunn_table<- add_significance(dunn_table, p.col="p.adj",output.col = "p.adj.signif",symbols =c("****", "***", "**", "$*$", "ns"))
+kable(dunn_table) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 p <- ggplot(shannon_vals, aes(x=shannon_vals[[ioi]], y=shannon)) + geom_violin()+ geom_boxplot(width=0.1)
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
@@ -580,12 +590,16 @@ simpson_stat <- data.frame(simpson[c('id',ioi,'simpson')])
 
 form <- as.formula(paste0("simpson ~ ", ioi))
 kruskal_table <- rstatix::kruskal_test(data = simpson_stat, formula = form)
-kruskal_table
+kruskal_table <- add_significance(kruskal_table, p.col="p",output.col = "p.signif",symbols =c("****", "***", "**", "$*$", "ns"))
+kable(kruskal_table) %>% 
+  kable_styling(bootstrap_options = c("hover", "condensed", "responsive"))
 
 form = as.formula(paste0("simpson ~", ioi))
 
 dunn_table <- rstatix::dunn_test(data = simpson_stat, formula = form, p.adjust.method = "holm") %>% add_xy_position()
-dunn_table
+dunn_table<- add_significance(dunn_table, p.col="p.adj",output.col = "p.adj.signif",symbols =c("****", "***", "**", "$*$", "ns"))
+kable(dunn_table) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 p <- ggplot(simpson_vals, aes(x=simpson_vals[[ioi]], y=simpson)) + geom_violin()+ geom_boxplot(width=0.1)
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
@@ -623,12 +637,16 @@ chao1_stat <- data.frame(chao1[c('id',ioi,'chao1')])
 
 form <- as.formula(paste0("chao1 ~ ", ioi))
 kruskal_table <- rstatix::kruskal_test(data = chao1_stat , formula = form)
-kruskal_table
+kruskal_table <- add_significance(kruskal_table, p.col="p",output.col = "p.signif",symbols =c("****", "***", "**", "$*$", "ns"))
+kable(kruskal_table) %>% 
+  kable_styling(bootstrap_options = c("hover", "condensed", "responsive"))
 
 form = as.formula(paste0("chao1 ~", ioi))
 
 dunn_table <- rstatix::dunn_test(data = chao1_stat, formula = form, p.adjust.method = "holm") %>% add_xy_position()
-dunn_table
+dunn_table<- add_significance(dunn_table, p.col="p.adj",output.col = "p.adj.signif",symbols =c("****", "***", "**", "$*$", "ns"))
+kable(dunn_table) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 p <- ggplot(chao1_vals, aes(x=chao1_vals[[ioi]], y=chao1)) + geom_violin()+ geom_boxplot(width=0.1)
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
@@ -667,12 +685,16 @@ ace_stat <- data.frame(ace[c('id',ioi,'ace')])
 
 form <- as.formula(paste0("ace ~ ", ioi))
 kruskal_table <- rstatix::kruskal_test(data = ace_stat, formula = form)
-kruskal_table
+kruskal_table <- add_significance(kruskal_table, p.col="p",output.col = "p.signif",symbols =c("****", "***", "**", "$*$", "ns"))
+kable(kruskal_table) %>% 
+  kable_styling(bootstrap_options = c("hover", "condensed", "responsive"))
 
 form = as.formula(paste0("ace ~", ioi))
 
 dunn_table <- rstatix::dunn_test(data = ace_stat, formula = form, p.adjust.method = "holm") %>% add_xy_position()
-dunn_table
+dunn_table<- add_significance(dunn_table, p.col="p.adj",output.col = "p.adj.signif",symbols =c("****", "***", "**", "$*$", "ns"))
+kable(dunn_table) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 p <- ggplot(ace_vals, aes(x=ace_vals[[ioi]], y=ace)) + geom_violin()+ geom_boxplot(width=0.1)
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
@@ -710,12 +732,16 @@ faith_pd_stat <- data.frame(faith_pd[c('id',ioi,'faith_pd')])
 
 form <- as.formula(paste0("faith_pd ~ ", ioi))
 kruskal_table <- rstatix::kruskal_test(data = faith_pd_stat, formula = form)
-kruskal_table
+kruskal_table <- add_significance(kruskal_table, p.col="p",output.col = "p.signif",symbols =c("****", "***", "**", "$*$", "ns"))
+kable(kruskal_table) %>% 
+  kable_styling(bootstrap_options = c("hover", "condensed", "responsive"))
 
 form = as.formula(paste0("faith_pd ~", ioi))
 
 dunn_table <- rstatix::dunn_test(data = faith_pd_stat, formula = form, p.adjust.method = "holm") %>% add_xy_position()
-dunn_table
+dunn_table<- add_significance(dunn_table, p.col="p.adj",output.col = "p.adj.signif",symbols =c("****", "***", "**", "$*$", "ns"))
+kable(dunn_table) %>% 
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 p <- ggplot(faith_pd_vals, aes(x=faith_pd_vals[[ioi]], y=faith_pd)) + geom_violin()+ geom_boxplot(width=0.1)
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
