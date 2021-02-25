@@ -509,9 +509,10 @@ p <- ggplot(obs_vals, aes(x=obs_vals[[ioi]], y=observed_otus)) + geom_violin()+ 
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
 p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
 p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("Observed Features") + theme_bw()
+dunn_table<- add_significance(dunn_table, p.col="p.adj",output.col = "p.adj.signif")
 p <- p + stat_pvalue_manual(dunn_table, label = "p.adj.signif",hide.ns = TRUE )
 p
-
+ggsave("obs_boxplot_w_signif.png", plot=p, path=outdir)
 
 ```
 
@@ -558,8 +559,10 @@ p <- ggplot(shannon_vals, aes(x=shannon_vals[[ioi]], y=shannon)) + geom_violin()
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
 p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
 p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("Shannon") + theme_bw()
+dunn_table<- add_significance(dunn_table, p.col="p.adj",output.col = "p.adj.signif")
 p <- p + stat_pvalue_manual(dunn_table, label = "p.adj.signif",hide.ns = TRUE)
 p
+ggsave("shannon_boxplot_w_signif.png", plot=p, path=outdir)
 ```
 
 ### 5.3 Simpson
@@ -605,8 +608,10 @@ p <- ggplot(simpson_vals, aes(x=simpson_vals[[ioi]], y=simpson)) + geom_violin()
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
 p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
 p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("Simpson") + theme_bw()
+dunn_table<- add_significance(dunn_table, p.col="p.adj",output.col = "p.adj.signif")
 p <- p+ stat_pvalue_manual(dunn_table, label = "p.adj.signif", hide.ns = TRUE)
 p
+ggsave("simpson_boxplot_w_signif.png", plot=p, path=outdir)
 ```
 
 ### 5.4 Chao 1
@@ -652,8 +657,10 @@ p <- ggplot(chao1_vals, aes(x=chao1_vals[[ioi]], y=chao1)) + geom_violin()+ geom
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
 p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
 p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("Chao 1") + theme_bw()
+dunn_table<- add_significance(dunn_table, p.col="p.adj",output.col = "p.adj.signif")
 p <- p+stat_pvalue_manual(dunn_table, label="p.adj.signif", hide.ns = TRUE)
 p
+ggsave("chao1_boxplot_w_signif.png", plot=p, path=outdir)
 ```
 
 
@@ -700,8 +707,10 @@ p <- ggplot(ace_vals, aes(x=ace_vals[[ioi]], y=ace)) + geom_violin()+ geom_boxpl
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
 p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
 p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("ACE") + theme_bw()
+dunn_table<- add_significance(dunn_table, p.col="p.adj",output.col = "p.adj.signif")
 p <- p+ stat_pvalue_manual(dunn_table, label = "p.adj.signif", hide.ns = TRUE)
 p
+ggsave("ace_boxplot_w_signif.png", plot=p, path=outdir)
 ```
 
 ### 5.6 Phylogenetic Distance Over The whole Tree
@@ -747,8 +756,10 @@ p <- ggplot(faith_pd_vals, aes(x=faith_pd_vals[[ioi]], y=faith_pd)) + geom_violi
 p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
 p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
 p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("Faith PD") + theme_bw()
+dunn_table<- add_significance(dunn_table, p.col="p.adj",output.col = "p.adj.signif")
 p <- p+stat_pvalue_manual(dunn_table, label="p.adj.signif", hide.ns = TRUE)
 p
+ggsave("faith_pd_boxplot_w_signif.png", plot=p, path=outdir)
 ```
 
 ## 6 Beta diversity 
