@@ -2109,6 +2109,9 @@ Yihui Xie (2021). knitr: A General-Purpose Package for Dynamic Report Generation
 
 [6] Charles A. Martin (2017). ggConvexHull: Add a convex hull geom to ggplot2. R package version 0.1.0. http://github.com/cmartin/ggConvexHull
 
+[6] Legendre, P. and Gallagher, E.D. (2001). Ecologically meaningful transformations for ordination of
+species data. Oecologia 129, 271-280.
+
 [9]  Raivo Kolde (2019). pheatmap: Pretty Heatmaps. R package version 1.0.12. https://CRAN.R-project.org/package=pheatmap
 
 [11] Andrie de Vries and Brian D. Ripley (2020). ggdendro: Create Dendrograms and Tree Diagrams Using 'ggplot2'. R package version 0.1.22. https://CRAN.R-project.org/package=ggdendro
