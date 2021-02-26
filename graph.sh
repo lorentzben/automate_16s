@@ -10,6 +10,6 @@ export2graphlan.py -i otu-table-mod.biom -t tree.nwk -a annot.txt --discard_otus
 
 graphlan_annotate.py --annot annot.txt tree.nwk annotated_tree.txt
 
-graphlan.py annotated_tree.txt image_graph.png --format png --size 10 --dpi 300
+graphlan.py annotated_tree.txt image_graph.png --format png --size 10 --dpi 100
 
 conda deactivate
