@@ -935,11 +935,11 @@ cycle_1_amp <- phyloseq_to_ampvis2(cycle_1)
 
 euclidean_frame <- amp_ordinate(cycle_1_amp, filter_species = 0, type = "PCA", transform = "hellinger", print_caption = T,sample_color_by = ioi, sample_colorframe = T) 
 euclidean_frame
-ggsave("PCA_euclidain_ordination_whith_boundries.png", plot=euclidean_frame , path=outdir)
+ggsave("PCA_ordination_with_boundries.png", plot=euclidean_frame , path=outdir)
 euclidean <- amp_ordinate(cycle_1_amp, filter_species = 0, type = "PCA", transform = "hellinger", print_caption = T,sample_color_by = ioi) 
 euclidean
 
-ggsave("PCA_euclidain_ordination_whith_boundries.png", plot=euclidean , path=outdir)
+ggsave("PCA_ordination_without_boundries.png", plot=euclidean , path=outdir)
 ```
 
 ## 7 Rarefaction Curves
@@ -1855,7 +1855,7 @@ ggsave("ANOSIM_jaccard_boxplot_no_bracket.png", plot=jaccard_plot_no_brac, path 
 
 ```
 
-### 12.6 Multi-response permutaiton procedure (MRPP)
+### 12.6 Multi-response permutation procedure (MRPP)
 
 ```{r Methods to do pairwise MRPP comparisons, echo=FALSE, message=FALSE, warning=FALSE}
 pairwise_MRPP <- function(dat, column_of_int, dissim){
