@@ -1309,13 +1309,13 @@ cycle_1_amp <- phyloseq_to_ampvis2(cycle_1)
 
 by_sample <- ampvis2::amp_rankabundance(cycle_1_amp, group_by = "SampleID") + theme(text=element_text(size = 20))
 by_sample 
-ggsave("rank_abundance_curve_by_treatment.png", plot=by_sample, path=outdir)
+ggsave("rank_abundance_curve_by_sample.png", plot=by_sample, path=outdir)
 
 cycle_1_amp$metadata[[ioi]] <- reorder(cycle_1_amp$metadata[[ioi]])
 
 by_group <- ampvis2::amp_rankabundance(cycle_1_amp, group_by = ioi) + theme(text=element_text(size = 20))
 by_group
-ggsave("rank_abundance_curve_by_treatment.png", plot=by_group, path=outdir)
+ggsave("rank_abundance_curve_by_treatemnt.png", plot=by_group, path=outdir)
 
 
 
