@@ -1373,7 +1373,7 @@ for(frame in split_weighted_measure){
   p <- ggplot(frame, aes(x=frame$Group2, y=Distance)) + geom_violin()+ geom_boxplot(width=0.1)
   p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
   p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
-  p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab("Group") + ylab("Weighted Unifrac Distance") + theme_bw() + labs(title = (as.character(paste0("Distance to ",frame$Group1[1]))))
+  p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("Weighted Unifrac Distance") + theme_bw() + labs(title = (as.character(paste0("Distance to ",frame$Group1[1]))))
   print(p)
   ggsave(paste0("weighted_unifrac_boxplot_",frame$Group1[1],".png"), plot=p,path=outdir)
 }
@@ -1393,7 +1393,7 @@ for(frame in split_data_frames){
   p <- ggplot(frame, aes(x=frame$Group2, y=Distance)) + geom_violin()+ geom_boxplot(width=0.1)
   p<- p + stat_summary(fun.y=mean, geom="point", shape=23, size=2)
   p<-p + stat_summary(fun.y=median, geom="point", size=2, color="red")
-  p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab("Group") + ylab("Unweighted Unifrac Distance") + theme_bw() + labs(title = (as.character(paste0("Distance to ",frame$Group1[1]))))
+  p <- p+geom_jitter(shape=16, position=position_jitter(0.2)) + xlab(ioi) + ylab("Unweighted Unifrac Distance") + theme_bw() + labs(title = (as.character(paste0("Distance to ",frame$Group1[1]))))
   print(p)
   ggsave(paste0("unweighted_unifrac_boxplot_",frame$Group1[1],".png"), plot=p,path=outdir)
 }
