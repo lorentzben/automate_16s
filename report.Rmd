@@ -2104,7 +2104,7 @@ R Core Team (2020). R: A language and environment for statistical computing. R F
 
 Yihui Xie (2021). knitr: A General-Purpose Package for Dynamic Report Generation in R. R package version 1.31.
 
-
+\
 
 [1 Stacked Bar Plot References][1 Species Distribution]
 
@@ -2121,9 +2121,9 @@ https://CRAN.R-project.org/package=forcats
 
 * H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York, 2016.
 
+\
 
-
-2 Phylogenetic trees
+[2 Phylogenetic trees][2 Phylogentic Trees]
 
 ---
 
@@ -2132,9 +2132,9 @@ https://CRAN.R-project.org/package=forcats
 
 * Asnicar F, Weingart G, Tickle TL, Huttenhower C, Segata N. 2015. Compact graphical representation of phylogenetic data and metadata with GraPhlAn. PeerJ 3:e1029 https://doi.org/10.7717/peerj.1029
 
+\
 
-
-3 Heatmap Plot
+[3 Heatmap Plot][3 Species Abundance Heatmap]
 
 ---
 
@@ -2142,9 +2142,9 @@ https://CRAN.R-project.org/package=forcats
 
 * ampvis2: an R package to analyse and visualise 16S rRNA amplicon  data. Andersen K.S., Kirkegaard R.H., Karst S.M., Albertsen M. (2018)  bioRxiv. doi: https://doi.org/10.1101/299537
 
+\
 
-
-5 Alpha Diversity Plots
+[5 Alpha Diversity Plots][5 Alpha Diversity Plot]
 
 ---
 
@@ -2152,9 +2152,9 @@ https://CRAN.R-project.org/package=forcats
 
 * Alboukadel Kassambara (2020). ggpubr: 'ggplot2' Based Publication Ready Plots. R package version 0.4.0.  https://CRAN.R-project.org/package=ggpubr
 
+\
 
-
-6 Beta Diversity Ordinations
+[6 Beta Diversity Ordinations][6 Beta diversity]
 
 ---
 
@@ -2163,25 +2163,25 @@ https://CRAN.R-project.org/package=forcats
 *  Legendre, P. and Gallagher, E.D. (2001). Ecologically meaningful transformations for ordination of
 species data. Oecologia 129, 271-280.
 
+\
 
-
-7 Rarefaction Curve
+[7 Rarefaction Curve][7 Rarefaction Curves]
 
 ---
 
 * Hadley Wickham (2007). Reshaping Data with the reshape Package. Journal of Statistical Software, 21(12), 1-20. URL http://www.jstatsoft.org/v21/i12/
 
+\
 
-
-9 Unifrac Heatmap
+[9 Unifrac Heatmap][9 Unifrac Heatmap]
 
 ---
 
 * Raivo Kolde (2019). pheatmap: Pretty Heatmaps. R package version 1.0.12. https://CRAN.R-project.org/package=pheatmap
 
+\
 
-
-11 UPGMA Plots
+[11 UPGMA Plots][11 UPGMA Plots]
 
 ---
 
@@ -2189,9 +2189,9 @@ species data. Oecologia 129, 271-280.
 
 * Sarkar, Deepayan (2008) Lattice: Multivariate Data Visualization with R. Springer, New York. ISBN 978-0-387-75968-5
 
+\
 
-
-12 Beta Diversity Statistical Tests
+[12 Beta Diversity Statistical Tests][12 Beta Diversity Statistics]
 
 ---
 
@@ -2207,9 +2207,9 @@ species data. Oecologia 129, 271-280.
 
 * Paradis E. 2010. pegas: an R package for population genetics with an integrated-modular approach. Bioinformatics 26: 419-420.
 
+\
 
-
-13 Lefse
+[13 Lefse][13 Lefse]
 
 ---
 
