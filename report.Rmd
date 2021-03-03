@@ -2,7 +2,7 @@
 title: "16s Analysis Report"
 output:
   html_document:
-    df_print: knitr::kable
+    df_print: kable
     smart: false
 ---
 <!-- This is sometimes nessecary, it will manifest with a unable to load shared object '/usr/local/lib/R/ error -->
