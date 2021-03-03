@@ -4,6 +4,9 @@ output:
   html_document:
     df_print: kable
     smart: false
+  pdf_document:
+    df_print: kable
+    
 ---
 <!-- This is sometimes nessecary, it will manifest with a unable to load shared object '/usr/local/lib/R/ error -->
 <!-- you can run ldconfig -p|grep $BROKEN_PACKAGE -->
