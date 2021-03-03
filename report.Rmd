@@ -206,6 +206,7 @@ ggsave("stacked_bar_phylum_by_treatment.png", plot=by_treatment, path=outdir)
 ```
 
 \mbox{}
+\clearpage
 
 ### 1.2 Relative Abundance of Top 10 Genera
 
@@ -296,6 +297,7 @@ ggsave("stacked_bar_genus_by_treatment.png", plot = by_treatment, path=outdir)
 ```
 
 \mbox{}
+\clearpage
 
 ### 1.3 Relative Abundance of Top 10 Species
 
@@ -478,6 +480,7 @@ kable(alpha_summary) %>%
 ## 5 Alpha Diversity Plot 
 
 \mbox{}
+\clearpage
 
 ### 5.1 Observed Features 
 
@@ -541,6 +544,7 @@ ggsave("obs_boxplot_w_signif.png", plot=p, path=outdir)
 ```
 
 \mbox{}
+\clearpage
 
 ### 5.2 Shannon
 
@@ -594,6 +598,7 @@ ggsave("shannon_boxplot_w_signif.png", plot=p, path=outdir)
 ```
 
 \mbox{}
+\clearpage
 
 ### 5.3 Simpson
 
@@ -647,6 +652,7 @@ ggsave("simpson_boxplot_w_signif.png", plot=p, path=outdir)
 ```
 
 \mbox{}
+\clearpage
 
 ### 5.4 Chao 1
 
@@ -700,6 +706,7 @@ ggsave("chao1_boxplot_w_signif.png", plot=p, path=outdir)
 ```
 
 \mbox{}
+\clearpage
 
 ### 5.5 ACE
 
@@ -753,6 +760,7 @@ ggsave("ace_boxplot_w_signif.png", plot=p, path=outdir)
 ```
 
 \mbox{}
+\clearpage
 
 ### 5.6 Phylogenetic Distance Over The whole Tree
 
@@ -849,6 +857,7 @@ ggsave("bray_curtis_pcoa_ordination_no_polygon.png", plot=bray_curtis_no_poly, p
 ```
 
 \mbox{}
+\clearpage
 
 ### 6.2 Jaccard ordination
 
@@ -892,6 +901,7 @@ ggsave("jaccard_pcoa_ordination_no_polygons.png", plot=jaccard_pcoa_no_polygon, 
 ```
 
 \mbox{}
+\clearpage
 
 ### 6.3 Unweighted unifrac ordination
 
@@ -934,6 +944,7 @@ ggsave("unweighted_unifrac_pcoa_ordination_no_polygons.png", plot=unweight_unifr
 ```
 
 \mbox{}
+\clearpage
 
 ### 6.4 Weighted unifrac ordination
 
@@ -978,6 +989,7 @@ ggsave("weighted_unifrac_pcoa_ordination_no_polygons.png", plot=weighted_unifrac
 ```
 
 \mbox{}
+\clearpage
 
 ### 6.5 Principal Components Analysis
 
@@ -1434,6 +1446,7 @@ for(frame in split_weighted_measure){
 ```
 
 \mbox{}
+\clearpage
 
 ### 10.2 Unweighted boxplots
 
@@ -1550,6 +1563,7 @@ ggsave("UPGMA_weighted_unifrac_plot.png", plot=weight_plot, path=outdir)
 ```
 
 \mbox{}
+\clearpage
 
 ### 11.2 UPGMA Plot for Unweighted Unifrac Distance
 
@@ -1741,6 +1755,7 @@ kable(test) %>%
 ```
 
 \mbox{}
+\clearpage
 
 ### 12.2 PERMANOVA Unweighted Unifrac 
 
@@ -1759,6 +1774,7 @@ kable(test) %>%
 ```
 
 \mbox{}
+\clearpage
 
 ### 12.3 PERMANOVA Bray Curtis
 
@@ -1776,6 +1792,7 @@ kable(bray_pairwise) %>%
 ```
 
 \mbox{}
+\clearpage
 
 ### 12.4 PERMANOVA Jaccard 
 
@@ -1794,6 +1811,7 @@ kable(jaccard_pairwise) %>%
 ```
 
 \mbox{}
+\clearpage
 
 ### 12.5 ANOSIM
 
@@ -1943,6 +1961,7 @@ ggsave("ANOSIM_jaccard_boxplot_no_bracket.png", plot=jaccard_plot_no_brac, path 
 ```
 
 \mbox{}
+\clearpage
 
 ### 12.6 Multi-response permutation procedure (MRPP)
 
@@ -2051,6 +2070,7 @@ kable(jaccard_res) %>%
 ```
 
 \mbox{}
+\clearpage
 
 ### 12.7 AMOVA
 
@@ -2157,6 +2177,7 @@ kable(jaccard_amova_pairwise) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 ```
+
 \newpage
 \mbox{}
 
