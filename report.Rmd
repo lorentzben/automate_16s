@@ -378,6 +378,8 @@ ggsave("stacked_bar_species_by_treatment.png", plot=by_treatment, path=outdir)
 
 ```
 
+\newpage
+
 ## 2 Phylogentic Trees
 
 ```{r phylo-tree", echo=FALSE, message=FALSE, warning=FALSE}
@@ -389,6 +391,8 @@ include_graphics(tree_filenames)
 
 
 ```
+
+\newpage
 
 ## 3 Species Abundance Heatmap
 
@@ -433,6 +437,8 @@ depth = read.csv("sampling_depth.csv", sep=",")
 depth %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
 ```
 
+\newpage
+
 ## 4 Alpha Diversity Table
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
@@ -454,6 +460,8 @@ alpha_summary <- Reduce(function(...) merge(..., by='id', all.x=TRUE), list(obs,
 kable(alpha_summary) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
+
+\newpage
 
 ## 5 Alpha Diversity Plot 
 
@@ -774,6 +782,8 @@ p
 ggsave("faith_pd_boxplot_w_signif.png", plot=p, path=outdir)
 ```
 
+\newpage
+
 ## 6 Beta diversity 
 
 ### 6.1 Bray curtis ordination
@@ -954,6 +964,8 @@ euclidean
 
 ggsave("PCA_ordination_without_boundries.png", plot=euclidean , path=outdir)
 ```
+
+\newpage
 
 ## 7 Rarefaction Curves
 
@@ -1310,6 +1322,8 @@ rarefy_curve_by_treatment
 ggsave("rarefaction_curve_by_treatment.png", plot=rarefy_curve_by_treatment, path=outdir)
 ```
 
+\newpage
+
 ## 8 Ranked Abundance Curves
 
 ```{r, echo=FALSE, fig.height=10, fig.width=16, message=FALSE, warning=FALSE}
@@ -1335,6 +1349,8 @@ ggsave("rank_abundance_curve_by_treatemnt.png", plot=by_group, path=outdir)
 
 ```
 
+\newpage
+
 ## 9 Unifrac Heatmap 
 
 ```{r echo=FALSE,fig.height=8, fig.width=14, message=FALSE, warning=FALSE}
@@ -1357,6 +1373,8 @@ weight_heatmap
 
 ggsave("beta_div_heatmap_Weighted_unifrac.png", plot=weight_heatmap, path=outdir)
 ```
+
+\newpage
 
 ## 10 Beta Diversity Between Groups
 
@@ -1398,6 +1416,8 @@ for(frame in split_data_frames){
   ggsave(paste0("unweighted_unifrac_boxplot_",frame$Group1[1],".png"), plot=p,path=outdir)
 }
 ```
+
+\newpage
 
 ## 11 UPGMA Plots
 ### 11.1 UPGMA Plot for Weighted Unifrac Distance
@@ -1579,6 +1599,8 @@ unweight_plot
 ggsave("UPGMA_unweighted_unifrac_plot.png", plot=unweight_plot, path=outdir)
 
 ```
+
+\newpage
 
 ## 12 Beta Diversity Statistics
 
@@ -2081,6 +2103,7 @@ kable(jaccard_amova_pairwise) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 ```
+\newpage
 
 ## 13 Lefse
 
@@ -2095,6 +2118,7 @@ lefse_filenames <- mixedsort(lefse_filenames)
 include_graphics(lefse_filenames)
 
 ```
+\newpage
 
 ## 14 References
 
