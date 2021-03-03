@@ -205,6 +205,8 @@ ggsave("stacked_bar_phylum_by_treatment.png", plot=by_treatment, path=outdir)
 
 ```
 
+\mbox{}
+
 ### 1.2 Relative Abundance of Top 10 Genera
 
 ```{r stacked bar chart at Genus level, echo=FALSE, fig.height=12, fig.width=18, message=FALSE, warning=FALSE}
@@ -292,6 +294,8 @@ print(by_treatment)
 ggsave("stacked_bar_genus_by_treatment.png", plot = by_treatment, path=outdir)
 
 ```
+
+\mbox{}
 
 ### 1.3 Relative Abundance of Top 10 Species
 
@@ -473,6 +477,8 @@ kable(alpha_summary) %>%
 
 ## 5 Alpha Diversity Plot 
 
+\mbox{}
+
 ### 5.1 Observed Features 
 
 ```{r alpha diversity plot of obs, results = "asis", echo=FALSE, message=FALSE, warning=FALSE}
@@ -534,6 +540,8 @@ ggsave("obs_boxplot_w_signif.png", plot=p, path=outdir)
 
 ```
 
+\mbox{}
+
 ### 5.2 Shannon
 
 ```{r alpha diversity plot of shannon diversity, echo=FALSE, message=FALSE, warning=FALSE}
@@ -584,6 +592,8 @@ p <- p + stat_pvalue_manual(dunn_table, label = "p.adj.signif",hide.ns = TRUE)
 p
 ggsave("shannon_boxplot_w_signif.png", plot=p, path=outdir)
 ```
+
+\mbox{}
 
 ### 5.3 Simpson
 
@@ -636,6 +646,8 @@ p
 ggsave("simpson_boxplot_w_signif.png", plot=p, path=outdir)
 ```
 
+\mbox{}
+
 ### 5.4 Chao 1
 
 ```{r alpha diversity plot of Chao 1 diversity, echo=FALSE, message=FALSE, warning=FALSE}
@@ -687,6 +699,7 @@ p
 ggsave("chao1_boxplot_w_signif.png", plot=p, path=outdir)
 ```
 
+\mbox{}
 
 ### 5.5 ACE
 
@@ -738,6 +751,8 @@ p <- p+ stat_pvalue_manual(dunn_table, label = "p.adj.signif", hide.ns = TRUE)
 p
 ggsave("ace_boxplot_w_signif.png", plot=p, path=outdir)
 ```
+
+\mbox{}
 
 ### 5.6 Phylogenetic Distance Over The whole Tree
 
@@ -833,6 +848,8 @@ ggsave("bray_curtis_pcoa_ordination_no_polygon.png", plot=bray_curtis_no_poly, p
 
 ```
 
+\mbox{}
+
 ### 6.2 Jaccard ordination
 
 ```{r pcoa using Jaccard distance, echo=FALSE, message=FALSE, warning=FALSE}
@@ -874,6 +891,8 @@ ggsave("jaccard_pcoa_ordination_no_polygons.png", plot=jaccard_pcoa_no_polygon, 
 
 ```
 
+\mbox{}
+
 ### 6.3 Unweighted unifrac ordination
 
 ```{r unweighted unifrac pcoa ordination, echo=FALSE, message=FALSE, warning=FALSE}
@@ -913,6 +932,8 @@ ggsave("unweighted_unifrac_pcoa_ordination_no_polygons.png", plot=unweight_unifr
 
 
 ```
+
+\mbox{}
 
 ### 6.4 Weighted unifrac ordination
 
@@ -955,6 +976,8 @@ weighted_unifrac_pcoa_no_polygon <- jaccard$data$Vectors %>%
 weighted_unifrac_pcoa_no_polygon
 ggsave("weighted_unifrac_pcoa_ordination_no_polygons.png", plot=weighted_unifrac_pcoa_no_polygon, path=outdir)
 ```
+
+\mbox{}
 
 ### 6.5 Principal Components Analysis
 
@@ -1410,6 +1433,8 @@ for(frame in split_weighted_measure){
 }
 ```
 
+\mbox{}
+
 ### 10.2 Unweighted boxplots
 
 ```{r generated Unweighted boxplots, echo=FALSE, message=FALSE, warning=FALSE}
@@ -1523,6 +1548,8 @@ weight_plot
 
 ggsave("UPGMA_weighted_unifrac_plot.png", plot=weight_plot, path=outdir)
 ```
+
+\mbox{}
 
 ### 11.2 UPGMA Plot for Unweighted Unifrac Distance
 
@@ -1713,6 +1740,8 @@ kable(test) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
+\mbox{}
+
 ### 12.2 PERMANOVA Unweighted Unifrac 
 
 ```{r Permanova results Weighted Unifrac from qiime, echo=FALSE, message=FALSE, warning=FALSE}
@@ -1729,6 +1758,8 @@ kable(test) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
+\mbox{}
+
 ### 12.3 PERMANOVA Bray Curtis
 
 ```{r Bray Curtis PERMANOVA, echo=FALSE, message=FALSE, warning=FALSE}
@@ -1743,6 +1774,8 @@ bray_pairwise <- pairwise_permanova(cycle_1,ioi,"bray")
 kable(bray_pairwise) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
+
+\mbox{}
 
 ### 12.4 PERMANOVA Jaccard 
 
@@ -1759,6 +1792,8 @@ kable(jaccard_pairwise) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 ```
+
+\mbox{}
 
 ### 12.5 ANOSIM
 
@@ -1907,6 +1942,8 @@ ggsave("ANOSIM_jaccard_boxplot_no_bracket.png", plot=jaccard_plot_no_brac, path 
 
 ```
 
+\mbox{}
+
 ### 12.6 Multi-response permutation procedure (MRPP)
 
 ```{r Methods to do pairwise MRPP comparisons, echo=FALSE, message=FALSE, warning=FALSE}
@@ -2012,6 +2049,8 @@ kable(jaccard_res) %>%
 
 
 ```
+
+\mbox{}
 
 ### 12.7 AMOVA
 
