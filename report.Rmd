@@ -2205,7 +2205,7 @@ kable(jaccard_amova_pairwise) %>%
 
 ## 13 Lefse
 
-```{r Lefse analysis Results, echo=FALSE, message=FALSE, warning=FALSE, fig.height=25, fig.width=10, fig.pos='h', out.height="100%", fig.cap="\\newline{}"}
+```{r Lefse analysis Results, echo=FALSE, message=FALSE, warning=FALSE, fig.height=25, fig.width=10, fig.pos='h', out.height="100%",fig.align="center", fig.cap="\\newline{}"}
 
 if(getOutputFormat() == 'html_document') {
   lefse_res_filenames <- list.files(pattern="*_res.png")
