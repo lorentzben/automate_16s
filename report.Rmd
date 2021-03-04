@@ -19,6 +19,19 @@ Sys.setenv(PKG_CONFIG_PATH = "/lib64/pkgconfig")
 #Sys.setenv(R_REMOTES_NO_ERRORS_FROM_WARNINGS="true")
 ```
 
+```{r function to check how the document is being rendered, message=FALSE, warning=FALSE, include=FALSE}
+getOutputFormat <- function() {
+  output <- rmarkdown:::parse_yaml_front_matter(
+    readLines(knitr::current_input())
+    )$output
+  if (is.list(output)){
+    return(names(output)[1])
+  } else {
+    return(output[1])
+  }
+}
+```
+
 ```{r install/load libraries, message=FALSE, warning=FALSE, include=FALSE}
 if(!require(kableExtra)) {install.packages("kableExtra", repos="http://cran.us.r-project.org")}
 if(!require(remotes)){install.packages("remotes")}
@@ -394,13 +407,19 @@ ggsave("stacked_bar_species_by_treatment.png", plot=by_treatment, path=outdir)
 ## 2 Phylogentic Trees
 
 ```{r phylo-tree", echo=FALSE, message=FALSE, warning=FALSE}
+if(getOutputFormat() == 'html_document') {
+  tree_filenames <- list.files(pattern="image_.*_graph.png")
+  tree_filenames <- mixedsort(tree_filenames)
 
-tree_filenames <- list.files(pattern="image_.*_graph.png")
-tree_filenames <- mixedsort(tree_filenames)
+  include_graphics(tree_filenames)
+} 
 
-include_graphics(tree_filenames)
+if(getOutputFormat() =='pdf_document'){
+  tree_filenames <- list.files(pattern="image_.*_pdf_g.png")
+  tree_filenames <- mixedsort(tree_filenames)
 
-
+  include_graphics(tree_filenames)
+}
 ```
 
 \newpage
@@ -2184,14 +2203,27 @@ kable(jaccard_amova_pairwise) %>%
 ## 13 Lefse
 
 ```{r Lefse analysis Results, echo=FALSE, message=FALSE, warning=FALSE, fig.height=25, fig.width=10}
-lefse_res_filenames <- list.files(pattern="*_res.png")
-lefse_clado_filenames <- list.files(pattern="*_cladogram.png")
-#lefse_clado_filenames <- list.files(pattern="*_better_cladogram.png")
 
-lefse_filenames <- do.call(c, list(lefse_res_filenames, lefse_clado_filenames))
-lefse_filenames <- mixedsort(lefse_filenames)
+if(getOutputFormat() == 'html_document') {
+  lefse_res_filenames <- list.files(pattern="*_res.png")
+  lefse_clado_filenames <- list.files(pattern="*_cladogram.png")
+  
 
-include_graphics(lefse_filenames)
+  lefse_filenames <- do.call(c, list(lefse_res_filenames, lefse_clado_filenames))
+  lefse_filenames <- mixedsort(lefse_filenames)
+
+  include_graphics(lefse_filenames)
+} 
+
+if(getOutputFormat() =='pdf_document'){
+  lefse_res_filenames <- list.files(pattern="*_pdf_r.png")
+  lefse_clado_filenames <- list.files(pattern="*_pdf_qual_clad.png")
+  
+  lefse_filenames <- do.call(c, list(lefse_res_filenames, lefse_clado_filenames))
+  lefse_filenames <- mixedsort(lefse_filenames)
+
+  include_graphics(lefse_filenames)
+}
 
 ```
 \newpage

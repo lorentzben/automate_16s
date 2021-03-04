@@ -700,6 +700,13 @@ def generate_phylogenetic_trees(metadata, item_interest):
         logger.info(result.stdout)
         logger.error(result.stderr)
 
+        # renaming the output of the graping bash script so that it has meaning
+        rename_image = "cp image_pdf_graph.png image_"+item+"+_pdf_g.png"
+        result = subprocess.run(
+            [rename_image], shell=True, stdout=PIPE, stderr=PIPE)
+        logger.info(result.stdout)
+        logger.error(result.stderr)
+
 
 def lefse_analysis(item_interest):
     # call script to format the qiime data into lefse compatable format
