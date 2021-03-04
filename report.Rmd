@@ -2205,7 +2205,7 @@ kable(jaccard_amova_pairwise) %>%
 
 ## 13 Lefse
 
-```{r Lefse analysis Results, echo=FALSE, message=FALSE, warning=FALSE, fig.height=25, fig.width=10, fig.pos='h', out.height="100%",fig.align="center"}
+```{r Lefse analysis Results, echo=FALSE, message=FALSE, warning=FALSE, fig.height=25, fig.width=10, fig.pos='h', out.height="100%",fig.align="center", fig.cap="\\newline{}"}
 
 if(getOutputFormat() == 'html_document') {
   lefse_res_filenames <- list.files(pattern="*_res.png")
@@ -2217,7 +2217,7 @@ if(getOutputFormat() == 'html_document') {
 ```
 
 
-```{r Lefse analysis Results pdf style, echo=FALSE, message=FALSE, warning=FALSE, out.height="85%",dpi=72, out.width="85%", fig.cap="\\newline{}"}
+```{r Lefse analysis Results pdf style, echo=FALSE, message=FALSE, warning=FALSE, out.height="85%",dpi=36, out.width="85%", fig.cap="\\newline{}"}
 if(getOutputFormat() =='pdf_document'){
   print("see end of report")
   lefse_res_filenames <- list.files(pattern="*_pdf_r.png")
