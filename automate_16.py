@@ -701,7 +701,7 @@ def generate_phylogenetic_trees(metadata, item_interest):
         logger.error(result.stderr)
 
         # renaming the output of the graping bash script so that it has meaning
-        rename_image = "cp image_pdf_graph.png image_"+item+"+_pdf_g.png"
+        rename_image = "cp image_pdf_graph.png image_"+item+"_pdf_g.png"
         result = subprocess.run(
             [rename_image], shell=True, stdout=PIPE, stderr=PIPE)
         logger.info(result.stdout)
