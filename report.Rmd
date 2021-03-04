@@ -218,8 +218,8 @@ ggsave("stacked_bar_phylum_by_treatment.png", plot=by_treatment, path=outdir)
 
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 1.2 Relative Abundance of Top 10 Genera
 
@@ -309,8 +309,8 @@ ggsave("stacked_bar_genus_by_treatment.png", plot = by_treatment, path=outdir)
 
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 1.3 Relative Abundance of Top 10 Species
 
@@ -401,8 +401,8 @@ ggsave("stacked_bar_species_by_treatment.png", plot=by_treatment, path=outdir)
 
 ```
 
-\newpage
-\mbox{}
+
+
 
 ## 2 Phylogentic Trees
 
@@ -423,8 +423,8 @@ if(getOutputFormat() =='pdf_document'){
 }
 ```
 
-\newpage
-\mbox{}
+
+
 
 ## 3 Species Abundance Heatmap
 
@@ -469,8 +469,8 @@ depth = read.csv("sampling_depth.csv", sep=",")
 depth %>% kbl() %>% kable_styling(bootstrap_options = c("striped","condensed","responsive"))
 ```
 
-\newpage
-\mbox{}
+
+
 
 ## 4 Alpha Diversity Table
 
@@ -494,13 +494,13 @@ kable(alpha_summary) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-\newpage
-\mbox{}
+
+
 
 ## 5 Alpha Diversity Plot 
 
-\mbox{}
-\newpage
+
+
 
 ### 5.1 Observed Features 
 
@@ -563,8 +563,8 @@ ggsave("obs_boxplot_w_signif.png", plot=p, path=outdir)
 
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 5.2 Shannon
 
@@ -617,8 +617,8 @@ p
 ggsave("shannon_boxplot_w_signif.png", plot=p, path=outdir)
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 5.3 Simpson
 
@@ -671,8 +671,8 @@ p
 ggsave("simpson_boxplot_w_signif.png", plot=p, path=outdir)
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 5.4 Chao 1
 
@@ -725,8 +725,8 @@ p
 ggsave("chao1_boxplot_w_signif.png", plot=p, path=outdir)
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 5.5 ACE
 
@@ -779,8 +779,8 @@ p
 ggsave("ace_boxplot_w_signif.png", plot=p, path=outdir)
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 5.6 Phylogenetic Distance Over The whole Tree
 
@@ -833,8 +833,8 @@ p
 ggsave("faith_pd_boxplot_w_signif.png", plot=p, path=outdir)
 ```
 
-\newpage
-\mbox{}
+
+
 
 ## 6 Beta diversity 
 
@@ -876,8 +876,8 @@ ggsave("bray_curtis_pcoa_ordination_no_polygon.png", plot=bray_curtis_no_poly, p
 
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 6.2 Jaccard ordination
 
@@ -920,8 +920,8 @@ ggsave("jaccard_pcoa_ordination_no_polygons.png", plot=jaccard_pcoa_no_polygon, 
 
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 6.3 Unweighted unifrac ordination
 
@@ -963,8 +963,8 @@ ggsave("unweighted_unifrac_pcoa_ordination_no_polygons.png", plot=unweight_unifr
 
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 6.4 Weighted unifrac ordination
 
@@ -1008,8 +1008,8 @@ weighted_unifrac_pcoa_no_polygon
 ggsave("weighted_unifrac_pcoa_ordination_no_polygons.png", plot=weighted_unifrac_pcoa_no_polygon, path=outdir)
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 6.5 Principal Components Analysis
 
@@ -1029,8 +1029,8 @@ euclidean
 ggsave("PCA_ordination_without_boundries.png", plot=euclidean , path=outdir)
 ```
 
-\newpage
-\mbox{}
+
+
 
 ## 7 Rarefaction Curves
 
@@ -1387,8 +1387,8 @@ rarefy_curve_by_treatment
 ggsave("rarefaction_curve_by_treatment.png", plot=rarefy_curve_by_treatment, path=outdir)
 ```
 
-\newpage
-\mbox{}
+
+
 
 ## 8 Ranked Abundance Curves
 
@@ -1415,8 +1415,8 @@ ggsave("rank_abundance_curve_by_treatemnt.png", plot=by_group, path=outdir)
 
 ```
 
-\newpage
-\mbox{}
+
+
 
 ## 9 Unifrac Heatmap 
 
@@ -1441,8 +1441,8 @@ weight_heatmap
 ggsave("beta_div_heatmap_Weighted_unifrac.png", plot=weight_heatmap, path=outdir)
 ```
 
-\newpage
-\mbox{}
+
+
 
 ## 10 Beta Diversity Between Groups
 
@@ -1465,8 +1465,8 @@ for(frame in split_weighted_measure){
 }
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 10.2 Unweighted boxplots
 
@@ -1488,8 +1488,8 @@ for(frame in split_data_frames){
 }
 ```
 
-\newpage
-\mbox{}
+
+
 
 ## 11 UPGMA Plots
 ### 11.1 UPGMA Plot for Weighted Unifrac Distance
@@ -1582,8 +1582,8 @@ weight_plot
 ggsave("UPGMA_weighted_unifrac_plot.png", plot=weight_plot, path=outdir)
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 11.2 UPGMA Plot for Unweighted Unifrac Distance
 
@@ -1675,8 +1675,8 @@ ggsave("UPGMA_unweighted_unifrac_plot.png", plot=unweight_plot, path=outdir)
 
 ```
 
-\newpage
-\mbox{}
+
+
 
 ## 12 Beta Diversity Statistics
 
@@ -1774,8 +1774,8 @@ kable(test) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 12.2 PERMANOVA Unweighted Unifrac 
 
@@ -1793,8 +1793,8 @@ kable(test) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 12.3 PERMANOVA Bray Curtis
 
@@ -1811,8 +1811,8 @@ kable(bray_pairwise) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 12.4 PERMANOVA Jaccard 
 
@@ -1830,8 +1830,8 @@ kable(jaccard_pairwise) %>%
 
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 12.5 ANOSIM
 
@@ -1980,8 +1980,8 @@ ggsave("ANOSIM_jaccard_boxplot_no_bracket.png", plot=jaccard_plot_no_brac, path 
 
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 12.6 Multi-response permutation procedure (MRPP)
 
@@ -2089,8 +2089,8 @@ kable(jaccard_res) %>%
 
 ```
 
-\mbox{}
-\newpage
+
+
 
 ### 12.7 AMOVA
 
@@ -2198,8 +2198,8 @@ kable(jaccard_amova_pairwise) %>%
 
 ```
 
-\newpage
-\mbox{}
+
+
 
 ## 13 Lefse
 
@@ -2227,7 +2227,7 @@ if(getOutputFormat() =='pdf_document'){
 }
 
 ```
-\newpage
+
 
 ## 14 References
 
