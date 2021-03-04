@@ -406,7 +406,7 @@ ggsave("stacked_bar_species_by_treatment.png", plot=by_treatment, path=outdir)
 
 ## 2 Phylogentic Trees
 
-```{r phylo-tree", echo=FALSE, message=FALSE, warning=FALSE, out.height="100%"}
+```{r phylo-tree", echo=FALSE, message=FALSE, warning=FALSE, out.extra='style="display:block; margin:auto;"', out.width="100%"}
 if(getOutputFormat() == 'html_document') {
   tree_filenames <- list.files(pattern="image_.*_graph.png")
   tree_filenames <- mixedsort(tree_filenames)
@@ -2203,7 +2203,7 @@ kable(jaccard_amova_pairwise) %>%
 
 ## 13 Lefse
 
-```{r Lefse analysis Results, echo=FALSE, message=FALSE, warning=FALSE, fig.height=25, fig.width=10, out.height="100%"}
+```{r Lefse analysis Results, echo=FALSE, message=FALSE, warning=FALSE, fig.height=25, fig.width=10, out.extra='style="display:block; margin:auto;"', out.width="100%"}
 
 if(getOutputFormat() == 'html_document') {
   lefse_res_filenames <- list.files(pattern="*_res.png")
