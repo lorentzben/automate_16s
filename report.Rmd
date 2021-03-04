@@ -406,6 +406,7 @@ ggsave("stacked_bar_species_by_treatment.png", plot=by_treatment, path=outdir)
 
 ## 2 Phylogentic Trees
 
+
 ```{r phylo-tree", echo=FALSE, message=FALSE, warning=FALSE, fig.pos='h', out.width="100%", fig.cap="\\newline{}"}
 if(getOutputFormat() == 'html_document') {
   tree_filenames <- list.files(pattern="image_.*_graph.png")
@@ -415,6 +416,7 @@ if(getOutputFormat() == 'html_document') {
 } 
 
 if(getOutputFormat() =='pdf_document'){
+  print("see end of report")
   tree_filenames <- list.files(pattern="image_.*_pdf_g.png")
   tree_filenames <- mixedsort(tree_filenames)
 
@@ -2203,25 +2205,44 @@ kable(jaccard_amova_pairwise) %>%
 
 ## 13 Lefse
 
-```{r Lefse analysis Results, echo=FALSE, message=FALSE, warning=FALSE, fig.height=25, fig.width=10, fig.pos='h', out.width="100%", fig.cap="\\newline{}"}
+```{r Lefse analysis Results, echo=FALSE, message=FALSE, warning=FALSE, fig.height=25, fig.width=10, fig.pos='h', out.height="100%", fig.cap="\\newline{}"}
 
 if(getOutputFormat() == 'html_document') {
   lefse_res_filenames <- list.files(pattern="*_res.png")
-  lefse_clado_filenames <- list.files(pattern="*_cladogram.png")
-  
 
-  lefse_filenames <- do.call(c, list(lefse_res_filenames, lefse_clado_filenames))
-  lefse_filenames <- mixedsort(lefse_filenames)
+  lefse_filenames <- mixedsort(lefse_res_filenames)
 
   include_graphics(lefse_filenames)
 } 
 
 if(getOutputFormat() =='pdf_document'){
+  print("see end of report")
   lefse_res_filenames <- list.files(pattern="*_pdf_r.png")
+
+  lefse_filenames <- mixedsort(lefse_res_filenames)
+
+  include_graphics(lefse_filenames)
+}
+
+```
+
+
+```{r Lefse cladograms, echo=FALSE, message=FALSE, warning=FALSE, fig.height=25, fig.width=10, fig.pos='h', out.width="100%", fig.cap="\\newline{}}
+
+if(getOutputFormat() == 'html_document') {
+  
+  lefse_clado_filenames <- list.files(pattern="*_cladogram.png")
+  
+  lefse_filenames <- mixedsort(lefse_clado_filenames)
+
+  include_graphics(lefse_filenames)
+} 
+
+if(getOutputFormat() =='pdf_document'){
+  print("see end of report")
   lefse_clado_filenames <- list.files(pattern="*_pdf_qual_clad.png")
   
-  lefse_filenames <- do.call(c, list(lefse_res_filenames, lefse_clado_filenames))
-  lefse_filenames <- mixedsort(lefse_filenames)
+  lefse_filenames <- mixedsort(lefse_clado_filenames)
 
   include_graphics(lefse_filenames)
 }
